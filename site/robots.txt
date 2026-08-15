@@ -2,7 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /admin/
 Disallow: /api/
-Disallow: /breezy-ev/
-Disallow: /golf-carts/
-Disallow: /guides/
 Sitemap: https://polkcountygolfcarts.com/sitemap.xml

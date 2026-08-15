@@ -1612,7 +1612,7 @@ def page_breezy_lineup():
             "PCGC carries the full Breezy EV lineup: Breeze 4, Breeze 4L, Breeze 6L, and Terrain 6. Authorized dealer, Texas-based service, free pickup & delivery within 25 miles of Livingston.",
             "/breezy-ev/",
             og_slug="carts",
-            noindex=True,
+
             structured_data=_json.dumps(sd),
         )
         + header("/breezy-ev/")
@@ -1855,7 +1855,7 @@ def page_breezy_compare():
             "Side-by-side comparison of the Breeze 4, Breeze 4L, Breeze 6L, and Terrain 6 — seats, lift, range, tires, dimensions, and price.",
             "/breezy-ev/compare/",
             og_slug="carts",
-            noindex=True,
+
             structured_data=_json.dumps(sd),
         )
         + header("/breezy-ev/")
@@ -1924,7 +1924,7 @@ def page_breezy_model(slug):
             f"{name} at Polk County Golf Carts in Livingston, TX. {_strip_tags(m['summary'])[:120]}",
             f"/breezy-ev/{slug}/",
             og_slug="carts",
-            noindex=True,
+
             structured_data=sd,
         )
         + header("/breezy-ev/")
@@ -2118,7 +2118,7 @@ def page_breezy_financing():
             "Finance your Breezy EV at Polk County Golf Carts. We work with Lendmark Financial and Dealer Direct — soft credit pulls, same-day decisions, terms 24-84 months.",
             "/breezy-ev/financing/",
             og_slug="carts",
-            noindex=True,
+
             structured_data=sd,
         )
         + header("/breezy-ev/")
@@ -2263,7 +2263,7 @@ def page_breezy_street_legal():
             "Make your Breezy EV street legal in Texas. PCGC installs the LSV kit (lights, signals, mirrors, seat belts) and handles the registration paperwork. Drive on any road posted 35 mph or less.",
             "/breezy-ev/street-legal/",
             og_slug="carts",
-            noindex=True,
+
             structured_data=sd,
         )
         + header("/breezy-ev/")
@@ -2415,7 +2415,7 @@ def page_breezy_lithium_vs_lead_acid():
             "Lithium vs lead-acid golf cart batteries: real numbers on cost, range, lifespan, and maintenance. Polk County Golf Carts breaks down the math, sells both, and tells you which to pick.",
             "/breezy-ev/lithium-vs-lead-acid/",
             og_slug="carts",
-            noindex=True,
+
             structured_data=sd,
         )
         + header("/breezy-ev/")
@@ -2847,7 +2847,7 @@ def page_guide(slug):
             g["summary"],
             f"/guides/{slug}/",
             og_slug="home",
-            noindex=True,
+
             structured_data=sd,
         )
         + header(f"/guides/{slug}/")
@@ -2924,7 +2924,7 @@ def page_guides_index():
             "Pillar buyer's guides from Polk County Golf Carts — costs, comparisons, used-cart inspections, and Lake Livingston local advice from a real Texas dealer.",
             "/guides/",
             og_slug="home",
-            noindex=True,
+
             structured_data=_json.dumps(sd),
         )
         + header("/guides/")
@@ -2989,7 +2989,7 @@ def page_town(slug):
             f"Polk County Golf Carts delivers brand-new Breezy EV carts, refurbished and used carts to {t['name']}. {t['hook']} Call {BIZ['phone_primary']} for a quote.",
             f"/golf-carts/{slug}/",
             og_slug="carts",
-            noindex=True,
+
             structured_data=_json.dumps(sd),
         )
         + header(f"/golf-carts/{slug}/")
@@ -3085,7 +3085,7 @@ def page_town_index():
             "Polk County Golf Carts delivers and services golf carts across Livingston, Onalaska, Coldspring, Huntsville, Lufkin, and Woodville. Free pickup & delivery within 25 miles, extended up to 75.",
             "/golf-carts/",
             og_slug="carts",
-            noindex=True,
+
             structured_data=_json.dumps(sd),
         )
         + header("/golf-carts/")
@@ -3207,7 +3207,7 @@ def page_404():
             f"That page took a wrong turn. Back to the lineup, or call {BIZ['phone_primary']}.",
             "/404.html",
             og_slug="home",
-            noindex=True,
+
         )
         + header("/404.html")
         + dedent(f"""\
@@ -3324,12 +3324,27 @@ def main():
             # Blocking via robots.txt prevents the crawl, which is
             # exactly what causes Google to index the URL anyway when
             # it finds it via external links.
-            "Disallow: /breezy-ev/\n"
-            "Disallow: /golf-carts/\n"
-            "Disallow: /guides/\n"
+            #
+            # Phase 1 (/breezy-ev/), Phase 2 (/golf-carts/), and
+            # Phase 3 (/guides/) trees are now PUBLIC — the
+            # `Disallow: /breezy-ev/`, `/golf-carts/`, `/guides/`
+            # lines that used to live here were removed during the
+            # SEO Priority 1 launch.
             "Sitemap: https://polkcountygolfcarts.com/sitemap.xml\n"
         )
+    # Public URLs for the sitemap. Phase 1-3 pages (Breezy EV product
+    # tree, town service-area pages, pillar guides) added below.
     urls = ["/", "/carts/", "/services/", "/financing/", "/about-us/", "/contact/", "/privacy/", "/leave-a-review/"]
+    urls += [
+        "/breezy-ev/",
+        "/breezy-ev/compare/",
+        "/breezy-ev/financing/",
+        "/breezy-ev/street-legal/",
+        "/breezy-ev/lithium-vs-lead-acid/",
+    ]
+    urls += [f"/breezy-ev/{s}/" for s in BREEZY_EV_MODELS]
+    urls += ["/guides/"] + [f"/guides/{s}/" for s in GUIDES]
+    urls += ["/golf-carts/"] + [f"/golf-carts/{s}/" for s in TOWN_PAGES]
     sm = ['<?xml version="1.0" encoding="UTF-8"?>',
           '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
     for u in urls:
