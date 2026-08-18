@@ -59,6 +59,7 @@ BIZ = {
 NAV = [
     ("Home", "/"),
     ("Carts", "/carts/"),
+    ("Rentals", "/rentals/"),
     ("Service", "/services/"),
     ("Financing", "/financing/"),
     ("About", "/about-us/"),
@@ -3334,7 +3335,7 @@ def main():
         )
     # Public URLs for the sitemap. Phase 1-3 pages (Breezy EV product
     # tree, town service-area pages, pillar guides) added below.
-    urls = ["/", "/carts/", "/services/", "/financing/", "/about-us/", "/contact/", "/privacy/", "/leave-a-review/"]
+    urls = ["/", "/carts/", "/services/", "/rentals/", "/financing/", "/about-us/", "/contact/", "/privacy/", "/leave-a-review/"]
     urls += [
         "/breezy-ev/",
         "/breezy-ev/compare/",
