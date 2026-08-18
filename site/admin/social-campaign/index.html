@@ -23,14 +23,25 @@
     .camp-meta div b { display: block; color: var(--teal-dk); font-size: 1.4rem; }
     .camp-meta div span { color: var(--ink-soft); font-size: .82rem; text-transform: uppercase; letter-spacing: .05em; }
 
-    .camp-controls {
-      display: flex; gap: .5rem; align-items: center; flex-wrap: wrap;
+    .camp-note {
+      background: #fff9f4; border: 1px solid #f3c3bc; border-radius: 8px;
+      padding: .5rem .75rem; font-size: .8rem; color: var(--ink-soft);
       margin-bottom: 1.5rem;
     }
-    .camp-controls select, .camp-controls input {
-      font: inherit; padding: .4rem .6rem; border: 1px solid var(--line); border-radius: 6px; background: #fff;
+
+    .camp-section {
+      margin-bottom: 2.5rem;
     }
-    .camp-controls .filter-count { color: var(--ink-soft); font-size: .88rem; margin-left: auto; }
+    .camp-section h2 {
+      color: var(--teal-dk); font-size: 1.4rem; margin: 0 0 .35rem;
+      display: flex; gap: .5rem; align-items: baseline;
+    }
+    .camp-section h2 .count {
+      font-size: .7rem; color: var(--ink-soft);
+      font-family: ui-monospace, monospace;
+      text-transform: uppercase; letter-spacing: .05em;
+    }
+    .camp-section p.section-sub { color: var(--ink-soft); margin: 0 0 1rem; font-size: .9rem; }
 
     .camp-grid {
       display: grid; gap: 1.5rem;
@@ -45,7 +56,7 @@
     }
     .camp-post-head { display: flex; justify-content: space-between; align-items: baseline; gap: .5rem; flex-wrap: wrap; }
     .camp-post-day { font-weight: 700; color: var(--teal-dk); font-family: Georgia, serif; }
-    .camp-post-type {
+    .camp-post-kind {
       font: 700 .68rem ui-monospace, monospace;
       letter-spacing: .1em; text-transform: uppercase;
       color: var(--coral); background: #fff9f4; border: 1px solid #f3c3bc;
@@ -65,9 +76,9 @@
     .camp-caption {
       background: var(--bg); border: 1px solid var(--line); border-radius: 6px;
       padding: .75rem .9rem;
-      font-size: .9rem; line-height: 1.5;
+      font-size: .9rem; line-height: 1.55;
       white-space: pre-wrap;
-      max-height: 220px; overflow-y: auto;
+      max-height: 260px; overflow-y: auto;
     }
     .camp-actions { display: flex; gap: .5rem; flex-wrap: wrap; }
     .camp-actions button {
@@ -81,13 +92,6 @@
     .camp-actions button:hover { border-color: var(--teal-dk); background: var(--bg); }
     .camp-actions button.primary { background: var(--coral); color: #fff; border-color: var(--coral); }
     .camp-actions button.primary:hover { background: var(--coral-dk); }
-
-    .camp-note {
-      background: #fff9f4; border: 1px solid #f3c3bc; border-radius: 8px;
-      padding: .5rem .75rem; font-size: .8rem; color: var(--ink-soft);
-    }
-
-    #camp-status { text-align: center; padding: 3rem; color: var(--ink-soft); }
   </style>
 </head>
 <body>
@@ -101,7 +105,6 @@
   </header>
 
   <main class="camp-page">
-    <!-- Login gate (same shape as /admin/rentals/) -->
     <section id="login-view" hidden>
       <h1>PCGC Admin</h1>
       <p class="sub">Sign in to review the social campaign.</p>
@@ -118,8 +121,8 @@
     <section id="camp-view" hidden>
       <header style="display:flex; align-items:baseline; justify-content:space-between; gap:1rem; flex-wrap:wrap;">
         <div>
-          <h1>30-Day Rental Campaign · Facebook</h1>
-          <p class="sub">Every post drives traffic to <a href="/rentals/">polkcountygolfcarts.com/rentals</a>. Review, tweak, and schedule as-is or copy captions into Buffer / Meta Business Suite.</p>
+          <h1>Rentals Social Campaign · Facebook</h1>
+          <p class="sub">8 posts across 3 message types. Every image is 1080×1080 and drives traffic to <a href="/rentals/">polkcountygolfcarts.com/rentals</a>.</p>
         </div>
         <div style="display:flex; gap:.5rem;">
           <a href="/admin/rentals/" class="btn btn-ghost" style="font-size:.92rem;">← Bookings</a>
@@ -134,33 +137,23 @@
       </nav>
 
       <div class="camp-meta">
-        <div><b id="meta-total">30</b><span>Posts</span></div>
-        <div><b id="meta-days">30</b><span>Days</span></div>
-        <div><b>1</b><span>Post per day</span></div>
+        <div><b>8</b><span>Posts</span></div>
+        <div><b>3</b><span>Message types</span></div>
+        <div><b>1080×1080</b><span>Image spec</span></div>
         <div><b>FB</b><span>Platform</span></div>
       </div>
 
       <div class="camp-note">
-        <b>Image compliance:</b> All 30 images are real PCGC cart photos with brand-typography overlays — no AI-generated people, no fabricated testimonials or before/afters. Facebook's "AI info" toggle should stay OFF for these posts. Every image is 1080×1080, safe for Facebook feed + Instagram cross-post if you want.
+        <b>Image compliance:</b> All 8 images are real PCGC cart photos with brand-typography overlays and the PCGC logo — no AI-generated people, no fabricated testimonials, no before/afters. Facebook's "AI info" toggle should stay OFF for these posts.
       </div>
 
-      <div class="camp-controls">
-        <label style="font-weight:600; font-size:.9rem;">Filter type:</label>
-        <select id="filter-type">
-          <option value="">All types</option>
-        </select>
-        <button type="button" id="download-all-btn" class="camp-actions" style="border:1px solid var(--line); background:#fff; padding:.4rem .8rem; border-radius:6px; cursor:pointer;">💾 Download all 30 images</button>
-        <span class="filter-count" id="filter-count"></span>
-      </div>
-
-      <div id="camp-status" hidden>Loading…</div>
-      <div class="camp-grid" id="camp-grid"></div>
+      <div id="camp-sections"></div>
     </section>
   </main>
 
   <script>
   (() => {
-    // ------------------------- Auth wiring (same as /admin/rentals/)
+    // ------------------------- Auth wiring
     const loginView = document.getElementById("login-view");
     const campView = document.getElementById("camp-view");
     const loginForm = document.getElementById("login-form");
@@ -215,361 +208,227 @@
       logoutBtn.disabled = false;
     });
 
-    // ------------------------- Campaign data (30 posts)
-    // Each post: day, type, photo path, headline (on-image), caption (Facebook post text)
+    // ------------------------- Campaign data (8 posts, 3 sections)
+    // Layout template: photo top 55%, solid cream panel bottom 45% with
+    // logo + brand line, big teal serif headline, subhead, optional
+    // coral price pill, URL + phone.
+
+    const HASHTAGS = "#PolkCountyGolfCarts #LakeLivingston #GolfCartRentals #LivingstonTX #EastTexas #FamilyOwned";
+    const HASHTAGS_GROUP = "#LakeLivingston #LivingstonTX #PolkCountyTX #EastTexas #ShopLocal";
+
     const POSTS = [
-      // ---------- WEEK 1: LAUNCH + INTRODUCE THE SERVICE ----------
-      { day: 1, type: "Launch", photo: "/assets/photos/rental-fleet-resort.jpg",
-        headline: "Book Online.",
-        subhead: "Rentals are live.",
+      // ---------- 1. RENTAL NOW AVAILABLE (2 posts) ----------
+      {
+        section: "rental-available",
+        num: 1,
+        photo: "/assets/photos/rental-fleet-resort.jpg",
+        headline: ["Rentals Now", "Available"],
+        subhead: "Book online in 3 minutes · Free delivery within 25 mi",
         caption:
-`Big news 🎉 Our online golf cart rentals are officially LIVE.
+`🎉 Big news — our online golf cart rentals are officially LIVE!
 
-Pick your dates, pick your cart, sign the agreement online — done in 3 minutes. We call you back to take payment and confirm delivery.
+Pick your dates. Pick your cart. Sign the rental agreement online. Done in about 3 minutes. We call to confirm and take payment.
 
-Fleet: 4× 4-seater Yamahas ($75/day) + 1× 6-seater Limo ($125/day).
-Free pickup + delivery within 25 miles of Livingston.
+📍 Family-owned in Livingston, TX
+🚛 Free pickup + delivery within 25 miles
+⛳ 5-cart fleet (4× 4-seater Yamahas + 1× 6-seater Limo)
+📅 Weekend / holiday 2-day minimum
 
 Book now → https://polkcountygolfcarts.com/rentals
 Call → 936-223-1182
 
-#LakeLivingston #PolkCountyTX #GolfCartRentals` },
+${HASHTAGS}`,
+      },
+      {
+        section: "rental-available",
+        num: 2,
+        photo: "/assets/photos/breezy-ev-lakeside.jpg",
+        headline: ["Lake days.", "Loaded."],
+        subhead: "Reserve your cart online · We deliver to your door",
+        caption:
+`Renting a lake house for the weekend? Kids coming into town? Extended family piling in?
 
-      { day: 2, type: "Fleet spotlight", photo: "/assets/photos/rentals/limo.jpg",
-        headline: "The Limo.",
-        subhead: "Cart #2 · 6 seats · $125/day",
+Bring the cart with you — we deliver FREE within 25 miles of Livingston. Just give us the address on the booking form and we'll drop it off before your weekend starts.
+
+$75/day for a 4-seater · $125/day for the 6-seater Limo
+
+Book online in 3 minutes → https://polkcountygolfcarts.com/rentals
+Call → 936-223-1182
+
+${HASHTAGS}`,
+      },
+
+      // ---------- 2. SPECIFIC CARTS WITH PRICING (4 posts) ----------
+      {
+        section: "cart-spotlight",
+        num: 3,
+        photo: "/assets/photos/rentals/limo.jpg",
+        cartTag: "Cart #2",
+        headline: ["The Limo"],
+        subhead: "6 seats · Three rows · Room for the whole crew",
+        pricePill: { amount: "$125", per: "/ day" },
         caption:
 `Meet Cart #2 — The Limo 🚐
 
-6 seats. Three rows. Room for the whole crew — family reunions, wedding parties, group trips to the lake. When you show up in this thing, everyone knows the party's here.
+6 seats. Three rows. This is the cart for family reunions, wedding parties, corporate outings, or any weekend where you don't want to leave anyone behind.
 
-$125/day · 2-day min on weekends and holidays · free delivery within 25 mi
+💵 $125/day
+⏱ 2-day minimum on weekends & holidays
+🚛 Free delivery within 25 mi of Livingston
 
 Reserve it → https://polkcountygolfcarts.com/rentals
+Call → 936-223-1182
 
-#PolkCountyGolfCarts #LakeLivingstonTX` },
-
-      { day: 3, type: "Fleet spotlight", photo: "/assets/photos/rentals/4-seater-a.jpg",
-        headline: "Four seats.",
-        subhead: "$75/day · Rear flip seat",
+${HASHTAGS}`,
+      },
+      {
+        section: "cart-spotlight",
+        num: 4,
+        photo: "/assets/photos/rentals/4-seater-a.jpg",
+        cartTag: "Cart #3",
+        headline: ["4-Seater", "Yamaha"],
+        subhead: "Gas-powered · Rear flip seat · Family favorite",
+        pricePill: { amount: "$75", per: "/ day" },
         caption:
-`Our 4-seater Yamahas — Cart #3, #4, #5, and #6.
+`Cart #3 — one of our four 4-seater Yamahas.
 
-4 seats each with a rear flip seat that adds two more when the kids come along. Gas-powered, no charging worries, dead-reliable.
+Gas-powered, rear flip seat for the kids, dead-reliable. No dead batteries at 4 pm — just fill up like a car and keep going.
 
-$75/day · book online in 3 minutes
+💵 $75/day
+⏱ 1-day mid-week · 2-day min weekends & holidays
+🚛 Free delivery within 25 mi
 
-Grab one → https://polkcountygolfcarts.com/rentals` },
+Reserve it → https://polkcountygolfcarts.com/rentals
+Call → 936-223-1182
 
-      { day: 4, type: "How it works", photo: "/assets/photos/rental-fleet-resort.jpg",
-        headline: "4 steps.",
-        subhead: "Booking in ~3 minutes",
+${HASHTAGS}`,
+      },
+      {
+        section: "cart-spotlight",
+        num: 5,
+        photo: "/assets/photos/rentals/4-seater-b.jpg",
+        cartTag: "Cart #4",
+        headline: ["4-Seater", "Yamaha"],
+        subhead: "Same solid Yamaha · Book two for the big crew",
+        pricePill: { amount: "$75", per: "/ day" },
         caption:
-`How to book a cart with us:
+`Cart #4 — the second of our 4-seater Yamahas. Book two together if your group's bigger than one cart can hold.
 
-1️⃣ Pick your dates
-2️⃣ Pick your cart (we show real-time availability)
-3️⃣ Fill in contact info + sign the agreement online
-4️⃣ We call to take payment + confirm delivery
+💵 $75/day each
+📌 Combine with Cart #3 or the Limo for bigger groups
+🚛 Free delivery within 25 mi of Livingston
 
-That's it. No accounts to make, no forms to print, no back-and-forth. → https://polkcountygolfcarts.com/rentals` },
+Reserve online → https://polkcountygolfcarts.com/rentals
+Call → 936-223-1182
 
-      { day: 5, type: "Free delivery", photo: "/assets/photos/truck-towing-orange-cart.jpg",
-        headline: "We deliver.",
-        subhead: "Free within 25 miles",
+${HASHTAGS}`,
+      },
+      {
+        section: "cart-spotlight",
+        num: 6,
+        photo: "/assets/photos/rentals/4-seater-a.jpg",
+        cartTag: "Cart #6",
+        headline: ["4-Seater", "Yamaha"],
+        subhead: "Grey trim · Same reliable Yamaha · $75/day",
+        pricePill: { amount: "$75", per: "/ day" },
         caption:
-`Renting a lake house? Staying with family? We bring the cart to you — FREE within 25 miles of Livingston.
+`Cart #6 — our grey Yamaha 4-seater. Same reliable Yamaha as our tan carts, just a different color if you're renting alongside another and want them to stand apart.
 
-That covers Onalaska, Point Blank, Trinity, Coldspring, most of Lake Livingston shore.
+💵 $75/day
+⏱ 1 day mid-week · 2-day min weekends
+🚛 Free delivery within 25 mi
 
-Farther out? We do extended delivery up to 100 miles — just ask.
+Book online → https://polkcountygolfcarts.com/rentals
+Call → 936-223-1182
 
-Book online + tell us where to drop it → https://polkcountygolfcarts.com/rentals` },
+${HASHTAGS}`,
+      },
 
-      { day: 6, type: "Lifestyle", photo: "/assets/photos/sunset-carts-sign.jpg",
-        headline: "Lake days.",
-        subhead: "Loaded.",
+      // ---------- 3. GROUP SHARES (2 posts) ----------
+      // Written to feel like a helpful neighbor sharing info, not an ad.
+      // Owner: share these into Lake Livingston / Polk County / East Texas
+      // Facebook groups.
+      {
+        section: "group-share",
+        num: 7,
+        photo: "/assets/photos/sunset-carts-sign.jpg",
+        headline: ["Lake weekend", "coming up?"],
+        subhead: "Local family-owned shop · Book a cart online",
         caption:
-`Sunset over the lake, cart out front, kids finally quiet. That's what a good weekend looks like.
+`👋 For anyone planning a Lake Livingston weekend —
 
-Book yours → https://polkcountygolfcarts.com/rentals
+The family that runs Polk County Golf Carts here in Livingston just put their rentals online. Been meaning to share since it makes booking way easier.
 
-#LakeLivingston #EastTexas` },
+Whole thing takes about 3 minutes on your phone. They deliver free within 25 miles (so Onalaska, Point Blank, most of the lake shore is covered), and prices are straightforward — $75/day for a 4-seater, $125 for the 6-seater Limo. No sneaky fees.
 
-      { day: 7, type: "CTA", photo: "/assets/photos/rentals/4-seater-b.jpg",
-        headline: "Week 1: booked.",
-        subhead: "Thanks, East Texas.",
+They're BBB accredited, family-owned since 2020, and John usually answers the phone himself.
+
+Site: https://polkcountygolfcarts.com/rentals
+Phone: 936-223-1182
+
+${HASHTAGS_GROUP}`,
+      },
+      {
+        section: "group-share",
+        num: 8,
+        photo: "/assets/photos/shop-exterior.jpg",
+        headline: ["Support", "small & local"],
+        subhead: "Family-owned golf cart rentals · Livingston, TX",
         caption:
-`One week since we launched online rentals. Thanks to everyone who's booked so far.
+`Sharing for anyone who might need this —
 
-Next weekend still has a couple carts open. If you're planning a trip in the next month, get on the calendar before someone else does.
+Polk County Golf Carts (1732 FM 3277 here in Livingston) has an online booking system now for their rentals. If out-of-town family is coming for a lake weekend and needs a cart, easiest thing to do is book one online for them and have John drop it at their rental house before they arrive.
 
-→ https://polkcountygolfcarts.com/rentals` },
+Fleet: 4× 4-seater Yamahas at $75/day, 1× 6-seater Limo at $125/day. Free delivery within 25 miles. Weekend/holiday rentals need a 2-day minimum.
 
-      // ---------- WEEK 2: ANSWER FAQ ----------
-      { day: 8, type: "FAQ", photo: "/assets/photos/rentals/4-seater-a.jpg",
-        headline: "How long?",
-        subhead: "2-day min on weekends",
-        caption:
-`Q: What's the minimum rental?
+Small family shop, BBB accredited, worth supporting over the big chains.
 
-A: 1 day mid-week. 2 days for weekends + holidays. That's it — no big minimums, no all-week nonsense.
+Book: https://polkcountygolfcarts.com/rentals
+Phone: 936-223-1182
 
-Weekends fill up quick — book by Friday for weekend pickup → https://polkcountygolfcarts.com/rentals` },
-
-      { day: 9, type: "FAQ", photo: "/assets/photos/shop-exterior.jpg",
-        headline: "How do we pay?",
-        subhead: "Phone, after we confirm",
-        caption:
-`Q: When do you take payment?
-
-A: Not upfront. Submit the online booking, we call you to confirm cart + dates + delivery, THEN take payment over the phone. No online card entry, no surprise charges.
-
-Book → https://polkcountygolfcarts.com/rentals · Call → 936-223-1182` },
-
-      { day: 10, type: "FAQ", photo: "/assets/photos/rentals/limo.jpg",
-        headline: "Bigger cart?",
-        subhead: "Try the Limo.",
-        caption:
-`Q: We're 6-7 adults. Any cart big enough?
-
-A: The Limo. Cart #2. 6 seats, three rows, room to actually spread out. $125/day and worth every penny for a big group.
-
-Reserve it → https://polkcountygolfcarts.com/rentals` },
-
-      { day: 11, type: "Fleet spotlight", photo: "/assets/photos/rentals/4-seater-a.jpg",
-        headline: "Rear flip seat.",
-        subhead: "4 becomes 6",
-        caption:
-`Our 4-seaters have a rear flip seat — folds up out of the way when it's just adults, folds down for the kids on the trip to the boat.
-
-Perfect for families with young kids. $75/day. Book yours → https://polkcountygolfcarts.com/rentals` },
-
-      { day: 12, type: "Weekend push", photo: "/assets/photos/rentals/limo.jpg",
-        headline: "Weekend push.",
-        subhead: "Book Fri, ride Sat.",
-        caption:
-`It's Wednesday. Weekend's coming.
-
-Two 4-seaters + the Limo still open for this Saturday. If your neighbors book first, you're the ones stuck walking.
-
-→ https://polkcountygolfcarts.com/rentals` },
-
-      { day: 13, type: "Cancellation policy", photo: "/assets/photos/rentals/4-seater-b.jpg",
-        headline: "Life happens.",
-        subhead: "Cancel 7+ days · 100%",
-        caption:
-`Our cancellation policy in one screenshot:
-
-• Cancel 7+ days before your first day → 100% refund
-• Cancel 4-6 days before → 50% refund
-• Cancel 3 days or less → no refund
-
-No small print. No hoops. Book with confidence → https://polkcountygolfcarts.com/rentals` },
-
-      { day: 14, type: "Lifestyle", photo: "/assets/photos/breezy-ev-lakeside.jpg",
-        headline: "Lakeside.",
-        subhead: "Cart · Cooler · Sunset.",
-        caption:
-`Sunday nights on Lake Livingston are the whole reason. Cart parked, cooler open, sun going down.
-
-Book your next weekend → https://polkcountygolfcarts.com/rentals` },
-
-      // ---------- WEEK 3: TRUST + LOCAL ----------
-      { day: 15, type: "Trust", photo: "/assets/photos/owner-john.jpg",
-        headline: "Family-owned.",
-        subhead: "Since 2020.",
-        caption:
-`Polk County Golf Carts has been family-owned since 2020. That's John (pictured) and Callie running the shop day-to-day, plus a small team.
-
-BBB Accredited. Same folks answering the phone every time you call.
-
-Rent from a small business that answers the phone → https://polkcountygolfcarts.com/rentals` },
-
-      { day: 16, type: "Trust", photo: "/assets/photos/shop-exterior.jpg",
-        headline: "BBB Accredited.",
-        subhead: "A+ rating",
-        caption:
-`We take BBB Accreditation seriously — it's the only third-party stamp that means we've been vetted for how we do business, not just how many carts we sell.
-
-A+ rating, family-owned, been at 1732 FM 3277 since 2020. Come by anytime.
-
-Rent → https://polkcountygolfcarts.com/rentals` },
-
-      { day: 17, type: "Local", photo: "/assets/photos/breezy-ev-lake-grass.jpg",
-        headline: "Lake tips.",
-        subhead: "For cart renters",
-        caption:
-`Renting a cart for Lake Livingston? Two tips from us:
-
-1) Keep it under 15 mph on gravel — those roads chew up tires faster than pavement
-2) Pack water. It's East Texas. Bring more than you think.
-
-Book the cart → https://polkcountygolfcarts.com/rentals` },
-
-      { day: 18, type: "Fleet spotlight", photo: "/assets/photos/rentals/4-seater-b.jpg",
-        headline: "Gas-powered.",
-        subhead: "No dead batteries.",
-        caption:
-`All our rental carts are gas-powered — Yamaha 4-seaters + a Club Car Limo.
-
-Why gas? No charging headaches. No dead batteries at 4 pm. Fill up like a car and keep going.
-
-Reserve one → https://polkcountygolfcarts.com/rentals` },
-
-      { day: 19, type: "Service area", photo: "/assets/photos/truck-towing-orange-cart.jpg",
-        headline: "We come to you.",
-        subhead: "Free within 25 mi",
-        caption:
-`Where we deliver — free:
-
-📍 Livingston · Onalaska · Point Blank · Coldspring · Trinity · most of Lake Livingston shore
-
-Farther out? We do 25-100 miles for a small delivery fee. Just tell us your address on the booking form.
-
-Book → https://polkcountygolfcarts.com/rentals` },
-
-      { day: 20, type: "Legal", photo: "/assets/photos/rentals/4-seater-a.jpg",
-        headline: "16 and up.",
-        subhead: "With a valid DL",
-        caption:
-`One legal thing to know: anyone driving our carts has to be 16+ with a valid driver's license. That means teenagers with a license are welcome to drive — great for the older kids on family trips.
-
-Every driver's license goes on the rental agreement (upload or text a photo). Book online → https://polkcountygolfcarts.com/rentals` },
-
-      { day: 21, type: "Weekend push", photo: "/assets/photos/rentals/4-seater-a.jpg",
-        headline: "This weekend.",
-        subhead: "Fleet open.",
-        caption:
-`Update on the fleet for this weekend:
-
-Fri-Sun availability: 3 carts open as of today.
-
-If your family's coming into town, grab one now — this is the last "quiet" weekend before holiday traffic picks up.
-
-→ https://polkcountygolfcarts.com/rentals` },
-
-      // ---------- WEEK 4: PUSH + WRAP ----------
-      { day: 22, type: "Why us", photo: "/assets/photos/shop-exterior.jpg",
-        headline: "Why us?",
-        subhead: "Small. Local. Fast.",
-        caption:
-`Why rent from us instead of a big rental company?
-
-• Same family answering every call
-• Same-day answers, not a support ticket
-• No surprise fees, no upsells
-• 5-cart fleet means every unit gets serviced weekly
-• Free delivery within 25 mi
-
-That's it. Small, local, fast. Book → https://polkcountygolfcarts.com/rentals` },
-
-      { day: 23, type: "How it works", photo: "/assets/photos/rentals/limo.jpg",
-        headline: "Sign online.",
-        subhead: "60 seconds",
-        caption:
-`New this month: sign your rental agreement ONLINE. No printing, no faxing, no DocuSign account.
-
-Takes about 60 seconds — read the terms, tick the box, sign with your finger, upload a driver's license photo. Done.
-
-Try it → https://polkcountygolfcarts.com/rentals` },
-
-      { day: 24, type: "FAQ", photo: "/assets/photos/rentals/4-seater-b.jpg",
-        headline: "What we need.",
-        subhead: "At time of payment",
-        caption:
-`When we call for payment, we'll ask you to text us:
-
-📸 Driver's license (for everyone driving)
-📸 Photo of your auto insurance
-📸 Photo of your vehicle's license plate (pickup only)
-
-You can also upload those on the online booking form so we don't have to wait.
-
-Book → https://polkcountygolfcarts.com/rentals` },
-
-      { day: 25, type: "Weekend push", photo: "/assets/photos/sunset-carts-sign.jpg",
-        headline: "Weekend's coming.",
-        subhead: "Grab one now.",
-        caption:
-`Weekend's coming. Carts are going fast.
-
-If you've been meaning to book one for a family trip, this is your reminder to actually do it.
-
-Takes 3 minutes → https://polkcountygolfcarts.com/rentals` },
-
-      { day: 26, type: "Fleet spotlight", photo: "/assets/photos/rentals/limo.jpg",
-        headline: "6 seats · $125/day",
-        subhead: "The Limo",
-        caption:
-`Cart #2 — The Limo. 6 seats, three rows.
-
-Family reunion? Corporate outing? Wedding party going between the ceremony and reception? This is the cart. $125/day, 2-day min on weekends.
-
-Reserve it → https://polkcountygolfcarts.com/rentals` },
-
-      { day: 27, type: "Free delivery", photo: "/assets/photos/branded-truck.jpg",
-        headline: "Friday drop-off.",
-        subhead: "So the weekend starts early",
-        caption:
-`Renting for Saturday? We usually drop the cart off Friday evening so it's ready when you wake up. No extra charge.
-
-Free delivery + Friday drop-off = you start the weekend on time.
-
-Book → https://polkcountygolfcarts.com/rentals` },
-
-      { day: 28, type: "Simple pitch", photo: "/assets/photos/rentals/4-seater-a.jpg",
-        headline: "3 minutes.",
-        subhead: "That's the whole booking.",
-        caption:
-`Whole booking flow: 3 minutes.
-
-Pick dates → pick cart → fill contact + billing → sign agreement → done. We handle the rest.
-
-If online forms aren't your thing, call us: 936-223-1182. Same result, longer conversation about the weather.
-
-Book online → https://polkcountygolfcarts.com/rentals` },
-
-      { day: 29, type: "Recap", photo: "/assets/photos/rental-fleet-resort.jpg",
-        headline: "One month.",
-        subhead: "Of online rentals",
-        caption:
-`One month since we launched online rentals. Thanks to every family that's booked with us so far — your reviews on Google make our week.
-
-If you've had a good experience, drop a review: https://polkcountygolfcarts.com/leave-a-review
-
-And if you haven't rented yet, come find out what your neighbors are talking about → https://polkcountygolfcarts.com/rentals` },
-
-      { day: 30, type: "Final CTA", photo: "/assets/photos/hero-sign-corvette.jpg",
-        headline: "Ready?",
-        subhead: "Book in 3 minutes.",
-        caption:
-`Ready to book?
-
-Online in 3 minutes → https://polkcountygolfcarts.com/rentals
-Or call → 936-223-1182
-
-We'll see you at Lake Livingston.
-
-— John, Callie, and the PCGC team` },
+${HASHTAGS_GROUP}`,
+      },
     ];
 
-    // Fallback path if any image is missing
+    const SECTIONS = [
+      {
+        id: "rental-available",
+        title: "Rentals Now Available",
+        sub: "Two announcement posts — publish first, then rotate weekly to remind followers the service exists.",
+      },
+      {
+        id: "cart-spotlight",
+        title: "Specific Cart Spotlights (with pricing)",
+        sub: "Four cart-specific posts — schedule one per week to give each cart its own moment. Includes price pill for scannability.",
+      },
+      {
+        id: "group-share",
+        title: "Group Shares",
+        sub: "Two neighbor-tone posts written for you to share into Lake Livingston / Polk County / East Texas Facebook groups. Softer sell than a paid ad.",
+      },
+    ];
+
     const FALLBACK_PHOTO = "/assets/photos/rental-fleet-resort.jpg";
+    const LOGO_PATH = "/assets/logos/logo-color.png";
 
     // ------------------------- Image generation (Canvas)
-    // Reuse the same visual language as the per-booking share card:
-    // full-bleed photo → dark bottom gradient → coral brand tag
-    // top-left → big serif headline + subhead → coral footer bar.
+    // NEW template — high-contrast, super legible:
+    //   Top 55% (0 to 594px): full-bleed photo
+    //   Bottom 45% (594px to 1080px): SOLID CREAM PANEL with
+    //     [logo, brand text] top-left of panel
+    //     Big teal serif headline (up to 2 lines) centered
+    //     Ink-soft sans subhead centered under headline
+    //     Optional coral price pill
+    //     URL + phone at very bottom
 
-    const IMG_CACHE = Object.create(null); // photo path -> loaded Image
-
+    const IMG_CACHE = Object.create(null);
     function loadImage(src) {
       if (IMG_CACHE[src]) return Promise.resolve(IMG_CACHE[src]);
       return new Promise((resolve, reject) => {
         const img = new Image();
+        img.crossOrigin = "anonymous";
         img.onload = () => { IMG_CACHE[src] = img; resolve(img); };
-        img.onerror = reject;
+        img.onerror = () => reject(new Error("load: " + src));
         img.src = src;
       });
     }
@@ -581,192 +440,254 @@ We'll see you at Lake Livingston.
       else         { sh = img.width / dr;  sy = (img.height - sh) / 2; }
       ctx.drawImage(img, sx, sy, sw, sh, dx, dy, dw, dh);
     }
+    function drawContain(ctx, img, dx, dy, dw, dh) {
+      const sr = img.width / img.height;
+      const dr = dw / dh;
+      let outW, outH;
+      if (sr > dr) { outW = dw; outH = dw / sr; }
+      else         { outH = dh; outW = dh * sr; }
+      const offX = dx + (dw - outW) / 2;
+      const offY = dy + (dh - outH) / 2;
+      ctx.drawImage(img, offX, offY, outW, outH);
+    }
+    // Fit headline text into the given width by ratcheting the font
+    // size down. Returns the size used.
+    function fitText(ctx, text, maxWidth, startSize, minSize, weight, family) {
+      let size = startSize;
+      ctx.font = `${weight} ${size}px ${family}`;
+      while (ctx.measureText(text).width > maxWidth && size > minSize) {
+        size -= 4;
+        ctx.font = `${weight} ${size}px ${family}`;
+      }
+      return size;
+    }
 
     async function generatePostImage(post) {
       const W = 1080, H = 1080;
-      const FOOTER_H = 150;
-      const PHOTO_H = H - FOOTER_H;
+      const PHOTO_H = 594;   // top 55%
+      const PANEL_Y = PHOTO_H;
+      const PANEL_H = H - PHOTO_H; // 486
+
       const c = document.createElement("canvas");
       c.width = W; c.height = H;
       const ctx = c.getContext("2d");
 
-      // 1. Full-bleed photo
+      // 1. Full-bleed photo up top
       const img = await loadImage(post.photo).catch(() => loadImage(FALLBACK_PHOTO));
       if (img) drawCover(ctx, img, 0, 0, W, PHOTO_H);
       else { ctx.fillStyle = "#1f5a68"; ctx.fillRect(0, 0, W, PHOTO_H); }
 
-      // 2. Bottom gradient for text legibility
-      const grad = ctx.createLinearGradient(0, PHOTO_H * 0.4, 0, PHOTO_H);
-      grad.addColorStop(0.0, "rgba(0,0,0,0)");
-      grad.addColorStop(0.55, "rgba(0,0,0,0.55)");
-      grad.addColorStop(1.0, "rgba(15,40,50,0.9)");
-      ctx.fillStyle = grad;
-      ctx.fillRect(0, 0, W, PHOTO_H);
-
-      // 3. Top-left brand tag
-      ctx.textAlign = "left";
-      ctx.textBaseline = "alphabetic";
-      ctx.fillStyle = "rgba(255,255,255,0.95)";
-      ctx.font = "700 28px system-ui, -apple-system, Segoe UI, sans-serif";
-      const brand = "POLK COUNTY GOLF CARTS";
-      ctx.fillText(brand, 60, 78);
-      const brandW = ctx.measureText(brand).width;
+      // Thin coral divider between photo and panel
       ctx.fillStyle = "#e85a4f";
-      ctx.fillRect(60, 92, brandW, 3);
+      ctx.fillRect(0, PHOTO_H - 6, W, 6);
 
-      // Day tag top-right — helps the owner track the campaign
-      ctx.textAlign = "right";
-      ctx.fillStyle = "rgba(255,255,255,0.65)";
-      ctx.font = "600 20px system-ui, sans-serif";
-      ctx.fillText(`DAY ${String(post.day).padStart(2, "0")} / 30`, W - 60, 78);
+      // 2. Solid cream panel bottom half
+      ctx.fillStyle = "#fbf8f3";
+      ctx.fillRect(0, PANEL_Y, W, PANEL_H);
 
-      // 4. Left text stack anchored to the photo bottom
-      ctx.textAlign = "left";
-      //   Subhead (soft coral)
-      ctx.fillStyle = "#f8bcb6";
-      ctx.font = "600 30px system-ui, sans-serif";
-      ctx.fillText(post.subhead, 60, PHOTO_H - 40);
-      //   Headline (huge serif, one line — try to fit)
-      ctx.fillStyle = "#fff";
-      let headlineSize = 96;
-      ctx.font = `800 ${headlineSize}px Georgia, "Times New Roman", serif`;
-      let mw = ctx.measureText(post.headline).width;
-      while (mw > W - 120 && headlineSize > 56) {
-        headlineSize -= 6;
-        ctx.font = `800 ${headlineSize}px Georgia, "Times New Roman", serif`;
-        mw = ctx.measureText(post.headline).width;
+      // 3. Logo + brand text row at top of panel
+      const logo = await loadImage(LOGO_PATH).catch(() => null);
+      const LOGO_H = 66;
+      const LOGO_TOP = PANEL_Y + 34;
+      const LOGO_X = 50;
+      if (logo) {
+        const scale = LOGO_H / logo.height;
+        const logoW = logo.width * scale;
+        ctx.drawImage(logo, LOGO_X, LOGO_TOP, logoW, LOGO_H);
+        // Brand text right of the logo
+        ctx.textAlign = "left";
+        ctx.textBaseline = "alphabetic";
+        ctx.fillStyle = "#e85a4f";
+        ctx.font = "700 26px system-ui, -apple-system, Segoe UI, sans-serif";
+        ctx.fillText("POLK COUNTY GOLF CARTS", LOGO_X + logoW + 16, LOGO_TOP + LOGO_H / 2 + 1);
+        // Small tagline beneath
+        ctx.fillStyle = "#4a4a4a";
+        ctx.font = "500 18px system-ui, sans-serif";
+        ctx.fillText("Livingston, TX  ·  Family-owned since 2020", LOGO_X + logoW + 16, LOGO_TOP + LOGO_H / 2 + 26);
       }
-      ctx.fillText(post.headline, 60, PHOTO_H - 100);
-      //   Type label above the headline (pre-header, coral small caps)
-      ctx.fillStyle = "#e85a4f";
-      ctx.font = "700 22px system-ui, sans-serif";
-      ctx.fillText(post.type.toUpperCase(), 60, PHOTO_H - 190);
 
-      // 5. Solid coral footer bar
-      ctx.fillStyle = "#e85a4f";
-      ctx.fillRect(0, PHOTO_H, W, FOOTER_H);
+      // Optional cart-# tag top-right (cart-spotlight posts only)
+      if (post.cartTag) {
+        ctx.textAlign = "right";
+        ctx.fillStyle = "#1f5a68";
+        ctx.font = "800 30px Georgia, serif";
+        ctx.fillText(post.cartTag, W - 50, LOGO_TOP + 24);
+        ctx.fillStyle = "rgba(31,90,104,0.5)";
+        ctx.font = "600 16px ui-monospace, monospace";
+        ctx.fillText("RENTAL FLEET", W - 50, LOGO_TOP + 48);
+      }
+
+      // 4. Big centered headline (1-2 lines) — teal on cream
       ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillStyle = "#fff";
-      ctx.font = "700 34px Georgia, serif";
-      ctx.fillText("polkcountygolfcarts.com/rentals", W / 2, PHOTO_H + 55);
-      ctx.font = "500 24px system-ui, sans-serif";
-      ctx.fillStyle = "rgba(255,255,255,0.92)";
-      ctx.fillText("Livingston, TX  ·  936-223-1182", W / 2, PHOTO_H + 100);
+      ctx.textBaseline = "alphabetic";
+      ctx.fillStyle = "#1f5a68";
+      const headlineLines = Array.isArray(post.headline) ? post.headline : [post.headline];
+      const HEADLINE_START_Y = PANEL_Y + 200;
+      const HEADLINE_MAX_W = W - 100;
+      // Pick a font size that fits BOTH lines
+      let size = 108;
+      const fam = 'Georgia, "Times New Roman", serif';
+      ctx.font = `800 ${size}px ${fam}`;
+      let widest = Math.max(...headlineLines.map(l => ctx.measureText(l).width));
+      while (widest > HEADLINE_MAX_W && size > 56) {
+        size -= 4;
+        ctx.font = `800 ${size}px ${fam}`;
+        widest = Math.max(...headlineLines.map(l => ctx.measureText(l).width));
+      }
+      const lineH = size * 1.05;
+      const stackH = lineH * headlineLines.length;
+      let y = HEADLINE_START_Y + (headlineLines.length === 1 ? lineH / 2 : 0);
+      for (const line of headlineLines) {
+        ctx.fillText(line, W / 2, y);
+        y += lineH;
+      }
+
+      // 5. Subhead under headline — ink-soft on cream
+      const SUBHEAD_Y = HEADLINE_START_Y + stackH + 26;
+      ctx.fillStyle = "#4a4a4a";
+      // Auto-size subhead to fit width
+      const subSize = fitText(ctx, post.subhead, W - 120, 32, 20, "500", "system-ui, -apple-system, Segoe UI, sans-serif");
+      ctx.font = `500 ${subSize}px system-ui, -apple-system, Segoe UI, sans-serif`;
+      ctx.fillText(post.subhead, W / 2, SUBHEAD_Y);
+
+      // 6. Optional price pill — coral background, white text
+      if (post.pricePill) {
+        const pillY = SUBHEAD_Y + 32;
+        // Measure the full pill text so we can draw a background
+        ctx.font = "800 62px Georgia, serif";
+        const amountW = ctx.measureText(post.pricePill.amount).width;
+        ctx.font = "500 30px system-ui, sans-serif";
+        const perW = ctx.measureText(post.pricePill.per).width;
+        const gap = 12;
+        const contentW = amountW + gap + perW;
+        const padX = 32, padY = 18;
+        const pillW = contentW + padX * 2;
+        const pillH = 78;
+        const pillX = (W - pillW) / 2;
+        // Pill background
+        ctx.fillStyle = "#e85a4f";
+        // Rounded rect
+        const r = 18;
+        ctx.beginPath();
+        ctx.moveTo(pillX + r, pillY);
+        ctx.arcTo(pillX + pillW, pillY, pillX + pillW, pillY + pillH, r);
+        ctx.arcTo(pillX + pillW, pillY + pillH, pillX, pillY + pillH, r);
+        ctx.arcTo(pillX, pillY + pillH, pillX, pillY, r);
+        ctx.arcTo(pillX, pillY, pillX + pillW, pillY, r);
+        ctx.closePath();
+        ctx.fill();
+        // Pill text — amount + per baseline aligned
+        const textY = pillY + pillH / 2 + 22;
+        let cursor = pillX + padX;
+        ctx.fillStyle = "#fff";
+        ctx.textAlign = "left";
+        ctx.font = "800 62px Georgia, serif";
+        ctx.fillText(post.pricePill.amount, cursor, textY);
+        cursor += amountW + gap;
+        ctx.font = "500 30px system-ui, sans-serif";
+        ctx.fillStyle = "rgba(255,255,255,0.85)";
+        ctx.fillText(post.pricePill.per, cursor, textY);
+      }
+
+      // 7. URL + phone at very bottom of panel
+      ctx.textAlign = "center";
+      ctx.fillStyle = "#1f5a68";
+      ctx.font = "700 30px Georgia, serif";
+      ctx.fillText("polkcountygolfcarts.com/rentals", W / 2, PANEL_Y + PANEL_H - 44);
+      ctx.fillStyle = "#4a4a4a";
+      ctx.font = "500 22px system-ui, sans-serif";
+      ctx.fillText("Call 936-223-1182  ·  Free delivery within 25 mi", W / 2, PANEL_Y + PANEL_H - 18);
 
       return c;
     }
 
-    // ------------------------- Render 30 post cards
+    // ------------------------- Render 8 post cards in 3 sections
     async function renderCampaign() {
-      const grid = document.getElementById("camp-grid");
-      grid.innerHTML = "";
+      const container = document.getElementById("camp-sections");
+      container.innerHTML = "";
 
-      // Populate filter dropdown with unique types
-      const types = [...new Set(POSTS.map(p => p.type))].sort();
-      const sel = document.getElementById("filter-type");
-      sel.innerHTML = '<option value="">All types</option>' + types.map(t => `<option value="${t}">${t}</option>`).join("");
-      sel.onchange = () => renderCampaign();
-
-      const filter = sel.value;
-      const shown = filter ? POSTS.filter(p => p.type === filter) : POSTS;
-      document.getElementById("filter-count").textContent = `Showing ${shown.length} of ${POSTS.length}`;
-
-      for (const post of shown) {
-        const card = document.createElement("article");
-        card.className = "camp-post";
-        card.innerHTML = `
-          <div class="camp-post-head">
-            <span class="camp-post-day">Day ${post.day}</span>
-            <span class="camp-post-type">${post.type}</span>
-            <span class="camp-post-cadence">1080×1080</span>
-          </div>
-          <div class="camp-preview"><div class="loading">Rendering image…</div></div>
-          <div class="camp-caption">${post.caption}</div>
-          <div class="camp-actions">
-            <button type="button" data-act="copy">📝 Copy caption</button>
-            <button type="button" data-act="download" class="primary">💾 Download 1080×1080</button>
-          </div>
+      for (const section of SECTIONS) {
+        const wrap = document.createElement("section");
+        wrap.className = "camp-section";
+        const posts = POSTS.filter(p => p.section === section.id);
+        wrap.innerHTML = `
+          <h2>${section.title} <span class="count">${posts.length} POST${posts.length === 1 ? "" : "S"}</span></h2>
+          <p class="section-sub">${section.sub}</p>
+          <div class="camp-grid"></div>
         `;
-        grid.appendChild(card);
+        container.appendChild(wrap);
+        const grid = wrap.querySelector(".camp-grid");
 
-        // Generate image asynchronously so all 30 don't block the paint
-        (async () => {
-          try {
-            const canvas = await generatePostImage(post);
-            // Downscale display copy to card width
-            const preview = card.querySelector(".camp-preview");
-            preview.innerHTML = "";
-            // Save the full-res canvas on the card element for the download button
-            card._fullCanvas = canvas;
-            // Display a scaled-down clone
-            const display = document.createElement("canvas");
-            const scale = 400 / canvas.width;
-            display.width = 400;
-            display.height = 400;
-            display.getContext("2d").drawImage(canvas, 0, 0, 400, 400);
-            preview.appendChild(display);
-          } catch (e) {
-            card.querySelector(".camp-preview").innerHTML = `<div class="loading">Image failed: ${e?.message || e}</div>`;
-          }
-        })();
+        for (const post of posts) {
+          const card = document.createElement("article");
+          card.className = "camp-post";
+          const kindLabel = section.id === "rental-available" ? "AVAILABLE"
+                          : section.id === "cart-spotlight"   ? (post.cartTag || "CART SPOTLIGHT")
+                          : "GROUP SHARE";
+          card.innerHTML = `
+            <div class="camp-post-head">
+              <span class="camp-post-day">Post ${post.num}</span>
+              <span class="camp-post-kind">${kindLabel}</span>
+              <span class="camp-post-cadence">1080×1080</span>
+            </div>
+            <div class="camp-preview"><div class="loading">Rendering image…</div></div>
+            <div class="camp-caption">${post.caption}</div>
+            <div class="camp-actions">
+              <button type="button" data-act="copy">📝 Copy caption</button>
+              <button type="button" data-act="download" class="primary">💾 Download 1080×1080</button>
+            </div>
+          `;
+          grid.appendChild(card);
 
-        card.querySelector('[data-act="copy"]').addEventListener("click", async (ev) => {
-          const btn = ev.currentTarget;
-          try {
-            await navigator.clipboard.writeText(post.caption);
-            const prev = btn.textContent; btn.textContent = "Copied ✓";
-            setTimeout(() => { btn.textContent = prev; }, 2000);
-          } catch (_) { alert("Couldn't copy — long-press the caption to copy manually."); }
-        });
+          (async () => {
+            try {
+              const canvas = await generatePostImage(post);
+              const preview = card.querySelector(".camp-preview");
+              preview.innerHTML = "";
+              card._fullCanvas = canvas;
+              const display = document.createElement("canvas");
+              display.width = 400; display.height = 400;
+              display.getContext("2d").drawImage(canvas, 0, 0, 400, 400);
+              preview.appendChild(display);
+            } catch (e) {
+              card.querySelector(".camp-preview").innerHTML = `<div class="loading">Image failed: ${e?.message || e}</div>`;
+            }
+          })();
 
-        card.querySelector('[data-act="download"]').addEventListener("click", async (ev) => {
-          const btn = ev.currentTarget;
-          const prev = btn.textContent;
-          btn.disabled = true; btn.textContent = "Building…";
-          try {
-            const canvas = card._fullCanvas || await generatePostImage(post);
-            canvas.toBlob((blob) => {
-              const url = URL.createObjectURL(blob);
-              const a = document.createElement("a");
-              a.href = url;
-              a.download = `pcgc-day${String(post.day).padStart(2, "0")}-${post.type.toLowerCase().replace(/\s+/g, "-")}.png`;
-              document.body.appendChild(a); a.click(); a.remove();
-              setTimeout(() => URL.revokeObjectURL(url), 1000);
-              btn.textContent = "Downloaded ✓";
+          card.querySelector('[data-act="copy"]').addEventListener("click", async (ev) => {
+            const btn = ev.currentTarget;
+            try {
+              await navigator.clipboard.writeText(post.caption);
+              const prev = btn.textContent; btn.textContent = "Copied ✓";
+              setTimeout(() => { btn.textContent = prev; }, 2000);
+            } catch (_) { alert("Couldn't copy — long-press the caption to copy manually."); }
+          });
+
+          card.querySelector('[data-act="download"]').addEventListener("click", async (ev) => {
+            const btn = ev.currentTarget;
+            const prev = btn.textContent;
+            btn.disabled = true; btn.textContent = "Building…";
+            try {
+              const canvas = card._fullCanvas || await generatePostImage(post);
+              canvas.toBlob((blob) => {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                const slug = section.id;
+                a.download = `pcgc-${slug}-${String(post.num).padStart(2, "0")}.png`;
+                document.body.appendChild(a); a.click(); a.remove();
+                setTimeout(() => URL.revokeObjectURL(url), 1000);
+                btn.textContent = "Downloaded ✓";
+                setTimeout(() => { btn.textContent = prev; btn.disabled = false; }, 2000);
+              }, "image/png");
+            } catch (e) {
+              btn.textContent = "Failed";
               setTimeout(() => { btn.textContent = prev; btn.disabled = false; }, 2000);
-            }, "image/png");
-          } catch (e) {
-            btn.textContent = "Failed";
-            setTimeout(() => { btn.textContent = prev; btn.disabled = false; }, 2000);
-          }
-        });
+            }
+          });
+        }
       }
     }
-
-    // ------------------------- Bulk download (all 30 as a zip-less run)
-    document.getElementById("download-all-btn").addEventListener("click", async () => {
-      const btn = document.getElementById("download-all-btn");
-      const prev = btn.textContent;
-      btn.disabled = true;
-      for (let i = 0; i < POSTS.length; i++) {
-        btn.textContent = `📥 Downloading ${i + 1}/${POSTS.length}…`;
-        const post = POSTS[i];
-        const canvas = await generatePostImage(post);
-        await new Promise(resolve => {
-          canvas.toBlob((blob) => {
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = `pcgc-day${String(post.day).padStart(2, "0")}-${post.type.toLowerCase().replace(/\s+/g, "-")}.png`;
-            document.body.appendChild(a); a.click(); a.remove();
-            setTimeout(() => { URL.revokeObjectURL(url); resolve(); }, 400);
-          }, "image/png");
-        });
-      }
-      btn.textContent = "All 30 downloaded ✓";
-      setTimeout(() => { btn.textContent = prev; btn.disabled = false; }, 3000);
-    });
 
     // Kick off
     probe().then(ok => { if (ok) renderCampaign(); });
