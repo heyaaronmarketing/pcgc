@@ -144,7 +144,7 @@
       </div>
 
       <div class="camp-note">
-        <b>Image compliance:</b> All 8 images are real PCGC cart photos with brand-typography overlays and the PCGC logo — no AI-generated people, no fabricated testimonials, no before/afters. Facebook's "AI info" toggle should stay OFF for these posts.
+        <b>Image compliance:</b> All 8 images are real PCGC cart photos — no overlays, no logos on the photo, no AI generation, no fabricated testimonials, no before/afters. All copy (headline, price, hashtags) lives in the Facebook caption. Facebook's "AI info" toggle should stay OFF for these posts.
       </div>
 
       <div id="camp-sections"></div>
@@ -463,141 +463,15 @@ ${HASHTAGS_GROUP}`,
     }
 
     async function generatePostImage(post) {
+      // Photo-only 1080x1080 — no text, no overlays, no logo.
+      // All copy (headline, price, hashtags) lives in the caption panel.
       const W = 1080, H = 1080;
-      const PHOTO_H = 594;   // top 55%
-      const PANEL_Y = PHOTO_H;
-      const PANEL_H = H - PHOTO_H; // 486
-
       const c = document.createElement("canvas");
       c.width = W; c.height = H;
       const ctx = c.getContext("2d");
-
-      // 1. Full-bleed photo up top
       const img = await loadImage(post.photo).catch(() => loadImage(FALLBACK_PHOTO));
-      if (img) drawCover(ctx, img, 0, 0, W, PHOTO_H);
-      else { ctx.fillStyle = "#1f5a68"; ctx.fillRect(0, 0, W, PHOTO_H); }
-
-      // Thin coral divider between photo and panel
-      ctx.fillStyle = "#e85a4f";
-      ctx.fillRect(0, PHOTO_H - 6, W, 6);
-
-      // 2. Solid cream panel bottom half
-      ctx.fillStyle = "#fbf8f3";
-      ctx.fillRect(0, PANEL_Y, W, PANEL_H);
-
-      // 3. Logo + brand text row at top of panel
-      const logo = await loadImage(LOGO_PATH).catch(() => null);
-      const LOGO_H = 66;
-      const LOGO_TOP = PANEL_Y + 34;
-      const LOGO_X = 50;
-      if (logo) {
-        const scale = LOGO_H / logo.height;
-        const logoW = logo.width * scale;
-        ctx.drawImage(logo, LOGO_X, LOGO_TOP, logoW, LOGO_H);
-        // Brand text right of the logo
-        ctx.textAlign = "left";
-        ctx.textBaseline = "alphabetic";
-        ctx.fillStyle = "#e85a4f";
-        ctx.font = "700 26px system-ui, -apple-system, Segoe UI, sans-serif";
-        ctx.fillText("POLK COUNTY GOLF CARTS", LOGO_X + logoW + 16, LOGO_TOP + LOGO_H / 2 + 1);
-        // Small tagline beneath
-        ctx.fillStyle = "#4a4a4a";
-        ctx.font = "500 18px system-ui, sans-serif";
-        ctx.fillText("Livingston, TX  ·  Family-owned since 2020", LOGO_X + logoW + 16, LOGO_TOP + LOGO_H / 2 + 26);
-      }
-
-      // Optional cart-# tag top-right (cart-spotlight posts only)
-      if (post.cartTag) {
-        ctx.textAlign = "right";
-        ctx.fillStyle = "#1f5a68";
-        ctx.font = "800 30px Georgia, serif";
-        ctx.fillText(post.cartTag, W - 50, LOGO_TOP + 24);
-        ctx.fillStyle = "rgba(31,90,104,0.5)";
-        ctx.font = "600 16px ui-monospace, monospace";
-        ctx.fillText("RENTAL FLEET", W - 50, LOGO_TOP + 48);
-      }
-
-      // 4. Big centered headline (1-2 lines) — teal on cream
-      ctx.textAlign = "center";
-      ctx.textBaseline = "alphabetic";
-      ctx.fillStyle = "#1f5a68";
-      const headlineLines = Array.isArray(post.headline) ? post.headline : [post.headline];
-      const HEADLINE_START_Y = PANEL_Y + 200;
-      const HEADLINE_MAX_W = W - 100;
-      // Pick a font size that fits BOTH lines
-      let size = 108;
-      const fam = 'Georgia, "Times New Roman", serif';
-      ctx.font = `800 ${size}px ${fam}`;
-      let widest = Math.max(...headlineLines.map(l => ctx.measureText(l).width));
-      while (widest > HEADLINE_MAX_W && size > 56) {
-        size -= 4;
-        ctx.font = `800 ${size}px ${fam}`;
-        widest = Math.max(...headlineLines.map(l => ctx.measureText(l).width));
-      }
-      const lineH = size * 1.05;
-      const stackH = lineH * headlineLines.length;
-      let y = HEADLINE_START_Y + (headlineLines.length === 1 ? lineH / 2 : 0);
-      for (const line of headlineLines) {
-        ctx.fillText(line, W / 2, y);
-        y += lineH;
-      }
-
-      // 5. Subhead under headline — ink-soft on cream
-      const SUBHEAD_Y = HEADLINE_START_Y + stackH + 26;
-      ctx.fillStyle = "#4a4a4a";
-      // Auto-size subhead to fit width
-      const subSize = fitText(ctx, post.subhead, W - 120, 32, 20, "500", "system-ui, -apple-system, Segoe UI, sans-serif");
-      ctx.font = `500 ${subSize}px system-ui, -apple-system, Segoe UI, sans-serif`;
-      ctx.fillText(post.subhead, W / 2, SUBHEAD_Y);
-
-      // 6. Optional price pill — coral background, white text
-      if (post.pricePill) {
-        const pillY = SUBHEAD_Y + 32;
-        // Measure the full pill text so we can draw a background
-        ctx.font = "800 62px Georgia, serif";
-        const amountW = ctx.measureText(post.pricePill.amount).width;
-        ctx.font = "500 30px system-ui, sans-serif";
-        const perW = ctx.measureText(post.pricePill.per).width;
-        const gap = 12;
-        const contentW = amountW + gap + perW;
-        const padX = 32, padY = 18;
-        const pillW = contentW + padX * 2;
-        const pillH = 78;
-        const pillX = (W - pillW) / 2;
-        // Pill background
-        ctx.fillStyle = "#e85a4f";
-        // Rounded rect
-        const r = 18;
-        ctx.beginPath();
-        ctx.moveTo(pillX + r, pillY);
-        ctx.arcTo(pillX + pillW, pillY, pillX + pillW, pillY + pillH, r);
-        ctx.arcTo(pillX + pillW, pillY + pillH, pillX, pillY + pillH, r);
-        ctx.arcTo(pillX, pillY + pillH, pillX, pillY, r);
-        ctx.arcTo(pillX, pillY, pillX + pillW, pillY, r);
-        ctx.closePath();
-        ctx.fill();
-        // Pill text — amount + per baseline aligned
-        const textY = pillY + pillH / 2 + 22;
-        let cursor = pillX + padX;
-        ctx.fillStyle = "#fff";
-        ctx.textAlign = "left";
-        ctx.font = "800 62px Georgia, serif";
-        ctx.fillText(post.pricePill.amount, cursor, textY);
-        cursor += amountW + gap;
-        ctx.font = "500 30px system-ui, sans-serif";
-        ctx.fillStyle = "rgba(255,255,255,0.85)";
-        ctx.fillText(post.pricePill.per, cursor, textY);
-      }
-
-      // 7. URL + phone at very bottom of panel
-      ctx.textAlign = "center";
-      ctx.fillStyle = "#1f5a68";
-      ctx.font = "700 30px Georgia, serif";
-      ctx.fillText("polkcountygolfcarts.com/rentals", W / 2, PANEL_Y + PANEL_H - 44);
-      ctx.fillStyle = "#4a4a4a";
-      ctx.font = "500 22px system-ui, sans-serif";
-      ctx.fillText("Call 936-223-1182  ·  Free delivery within 25 mi", W / 2, PANEL_Y + PANEL_H - 18);
-
+      if (img) drawCover(ctx, img, 0, 0, W, H);
+      else { ctx.fillStyle = "#1f5a68"; ctx.fillRect(0, 0, W, H); }
       return c;
     }
 
