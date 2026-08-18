@@ -52,7 +52,7 @@ const TAX_RATE = 0.0825;
 const STORAGE_KEY = "pcgc.rental.v6";
 const state = loadState() || {
   step: 1,
-  dates: { start: "", end: "" },
+  dates: { start: "", end: "", pickupTime: "am", dropoffTime: "am" },
   selection: {},          // { cartId: qty }
   bookedIds: [],          // cart ids unavailable for the selected dates
   availabilityOk: true,   // false if /api/availability errored
@@ -87,6 +87,28 @@ function daysBetween(a, b) {
   const start = new Date(a + "T00:00:00");
   const end = new Date(b + "T00:00:00");
   return Math.max(0, Math.round((end - start) / 86400000));
+}
+
+// Charged rental length in half-day units. Standard rental math:
+//   pickup before noon  → full day counted for pickup day
+//   pickup after noon   → half day counted for pickup day
+//   dropoff before noon → half day counted for dropoff day
+//   dropoff after noon  → full day counted for dropoff day
+// Base = inclusive-day count (Fri→Sat = 2). Subtract 0.5 for an
+// afternoon pickup or a morning dropoff. Same-day rentals collapse
+// naturally (Fri am→Fri pm = 1, Fri pm→Fri pm = 0.5, etc.).
+function chargedDays(startIso, endIso, pickupTime, dropoffTime) {
+  if (!startIso || !endIso) return 0;
+  const inclusive = daysBetween(startIso, endIso) + 1;
+  let d = inclusive;
+  if (pickupTime === "pm") d -= 0.5;
+  if (dropoffTime === "am") d -= 0.5;
+  return Math.max(0, d);
+}
+
+// Human label for fractional days: "1 day", "1.5 days", "0.5 day".
+function fmtDaysLabel(d) {
+  return `${d} day${d === 1 ? "" : "s"}`;
 }
 
 // US federal + observable holidays that trigger the 2-day minimum.
@@ -144,7 +166,7 @@ function perDayCarts() {
 }
 
 function computePrice() {
-  const days = daysBetween(state.dates.start, state.dates.end);
+  const days = chargedDays(state.dates.start, state.dates.end, state.dates.pickupTime, state.dates.dropoffTime);
   const perDay = perDayCarts();
   const subtotal = perDay * Math.max(0, days);
   const deliveryFee = state.delivery === "extended" ? DELIVERY_EXTENDED_FEE : 0;
@@ -271,13 +293,13 @@ function updateTotalBar() {
   const total = totalCarts();
   if (total === 0) { bar.hidden = true; return; }
   bar.hidden = false;
-  const days = daysBetween(state.dates.start, state.dates.end);
+  const days = chargedDays(state.dates.start, state.dates.end, state.dates.pickupTime, state.dates.dropoffTime);
   const perDay = perDayCarts();
   $("#total-count").textContent = total;
   $("#total-count-s").textContent = total === 1 ? "" : "s";
   // We have dates by the time we hit step 2 — show the trip total.
   if (days > 0) {
-    $("#total-amount").textContent = `${fmtMoney(perDay * days)} (${days} day${days === 1 ? "" : "s"})`;
+    $("#total-amount").textContent = `${fmtMoney(perDay * days)} (${fmtDaysLabel(days)})`;
   } else {
     $("#total-amount").textContent = `${fmtMoneyShort(perDay)} / day`;
   }
@@ -321,16 +343,22 @@ function syncDatesStep() {
 function updateDurationLine() {
   const start = $("#date-start").value;
   const end = $("#date-end").value;
+  const pickupSel = $("#pickup-time");
+  const dropoffSel = $("#dropoff-time");
+  const pickupTime = pickupSel ? pickupSel.value : state.dates.pickupTime;
+  const dropoffTime = dropoffSel ? dropoffSel.value : state.dates.dropoffTime;
   state.dates.start = start;
   state.dates.end = end;
-  const d = daysBetween(start, end);
+  state.dates.pickupTime = pickupTime;
+  state.dates.dropoffTime = dropoffTime;
+  const d = chargedDays(start, end, pickupTime, dropoffTime);
   const out = $("#duration-out");
-  // Only surface the invalid-range warning on Step 1. Pricing math
-  // used to live here too, but on Step 1 no carts are picked yet
-  // (that happens Step 2) so it always read "$0/day = $0.00" —
-  // pulled per owner request. Real pricing appears on Steps 2 + 4.
-  if (start && end && d < 1) {
-    out.textContent = "Return date must be after pickup date.";
+  // Show the charged length once both dates + times are chosen so the
+  // customer sees the half-day math ("1.5 days") before continuing.
+  if (start && end && d < 0.5) {
+    out.textContent = "That's less than a half day — pick a later dropoff or move the dropoff to the afternoon.";
+  } else if (start && end && d > 0) {
+    out.textContent = `Charged length: ${fmtDaysLabel(d)}.`;
   } else {
     out.textContent = "";
   }
@@ -395,6 +423,16 @@ function initStep1() {
   }
   mountFlatpickr();
 
+  // Time-of-day selects (before-noon / after-noon) drive the half-day
+  // pricing. Restore any saved selection and re-run the duration line
+  // when either changes so the "Charged length" note updates live.
+  const pickupSel = $("#pickup-time");
+  const dropoffSel = $("#dropoff-time");
+  if (pickupSel && state.dates.pickupTime) pickupSel.value = state.dates.pickupTime;
+  if (dropoffSel && state.dates.dropoffTime) dropoffSel.value = state.dates.dropoffTime;
+  if (pickupSel) pickupSel.addEventListener("change", updateDurationLine);
+  if (dropoffSel) dropoffSel.addEventListener("change", updateDurationLine);
+
   function formatIso(d) {
     const y = d.getFullYear();
     const m = String(d.getMonth() + 1).padStart(2, "0");
@@ -410,9 +448,9 @@ function initStep1() {
       errEl.hidden = false;
       return;
     }
-    const days = daysBetween(state.dates.start, state.dates.end);
-    if (days < 1) {
-      errEl.textContent = "Return date must be at least one day after pickup.";
+    const days = chargedDays(state.dates.start, state.dates.end, state.dates.pickupTime, state.dates.dropoffTime);
+    if (days < 0.5) {
+      errEl.textContent = "Rental must be at least a half day. Pick a later dropoff date or set the dropoff time to after noon.";
       errEl.hidden = false;
       return;
     }
@@ -578,7 +616,7 @@ function renderPaymentSummary() {
     const qty = state.selection[cart.id] | 0;
     if (!qty) continue;
     const lineTotal = cart.price * qty * p.days;
-    lines.push(`<div class="row"><span>${cart.name} × ${qty} · ${p.days} day${p.days === 1 ? "" : "s"}</span><span>${fmtMoney(lineTotal)}</span></div>`);
+    lines.push(`<div class="row"><span>${cart.name} × ${qty} · ${fmtDaysLabel(p.days)}</span><span>${fmtMoney(lineTotal)}</span></div>`);
   }
   lines.push(`<div class="row"><span>Subtotal</span><span>${fmtMoney(p.subtotal)}</span></div>`);
   if (state.delivery === "extended") {
@@ -1557,7 +1595,9 @@ async function generateAgreementPdf(booking) {
   }
   y += 6;
 
-  paragraph(`Rental period: ${booking.dates?.start || "—"} → ${booking.dates?.end || "—"}${booking.dates?.days ? ` (${booking.dates.days} day${booking.dates.days === 1 ? "" : "s"})` : ""}`, 10);
+  const pt = booking.dates?.pickupTime === "pm" ? "after noon" : "before noon";
+  const dt = booking.dates?.dropoffTime === "pm" ? "after noon" : "before noon";
+  paragraph(`Rental period: ${booking.dates?.start || "—"} (${pt}) → ${booking.dates?.end || "—"} (${dt})${booking.dates?.days ? ` — ${booking.dates.days} day${booking.dates.days === 1 ? "" : "s"} charged` : ""}`, 10);
   const locText = booking.delivery === "pickup"
     ? "Pickup at PCGC shop (1732 FM 3277, Livingston, TX)"
     : `Delivery drop-off: ${c.address || "—"}`;

@@ -87,15 +87,18 @@
 }
 .rental-field em { font-style: normal; color: var(--ink-soft); font-weight: 400; }
 .rental-field input,
-.rental-field textarea {
+.rental-field textarea,
+.rental-field select {
   font: 16px/1.4 inherit; color: var(--ink);
   border: 1px solid var(--line); border-radius: 10px;
   padding: .75rem .85rem;
   background: var(--bg);
   width: 100%;
 }
+.rental-field select { appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path fill='%231f5a68' d='M0 0h12L6 8z'/></svg>"); background-repeat: no-repeat; background-position: right .95rem center; background-size: 10px 7px; padding-right: 2.2rem; }
 .rental-field input:focus,
-.rental-field textarea:focus {
+.rental-field textarea:focus,
+.rental-field select:focus {
   outline: none; border-color: var(--coral); background: #fff;
 }
 .rental-grid-2 {

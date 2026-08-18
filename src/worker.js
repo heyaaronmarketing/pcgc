@@ -369,8 +369,9 @@ async function sendCustomerConfirmationEmail(record, env, agreementPath) {
     <p style="margin:.25rem 0 1rem; color:#666;">Confirmation code: <b>${escHtml(record.id)}</b></p>
 
     <table style="width:100%; border-collapse:collapse; font-size:14px; margin-bottom:1rem;">
-      <tr><td style="width:100px; color:#888; padding:4px 0;">Pickup</td><td style="padding:4px 0;"><b>${escHtml(dates.start)}</b></td></tr>
-      <tr><td style="color:#888; padding:4px 0;">Return</td><td style="padding:4px 0;"><b>${escHtml(dates.end)}</b></td></tr>
+      <tr><td style="width:100px; color:#888; padding:4px 0;">Pickup</td><td style="padding:4px 0;"><b>${escHtml(dates.start)}</b> · ${dates.pickupTime === "pm" ? "after noon (half day)" : "before noon (full day)"}</td></tr>
+      <tr><td style="color:#888; padding:4px 0;">Return</td><td style="padding:4px 0;"><b>${escHtml(dates.end)}</b> · ${dates.dropoffTime === "pm" ? "after noon (full day)" : "before noon (half day)"}</td></tr>
+      ${dates.days ? `<tr><td style="color:#888; padding:4px 0;">Length</td><td style="padding:4px 0;"><b>${dates.days} day${dates.days === 1 ? "" : "s"}</b> charged</td></tr>` : ""}
     </table>
 
     <table style="width:100%; border-collapse:collapse; font-size:14px; border-top:1px solid #ddd;">
@@ -414,8 +415,9 @@ async function sendCustomerConfirmationEmail(record, env, agreementPath) {
     ``,
     `Confirmation code: ${record.id}`,
     ``,
-    `Pickup: ${dates.start}`,
-    `Return: ${dates.end}`,
+    `Pickup: ${dates.start} · ${dates.pickupTime === "pm" ? "after noon (half day)" : "before noon (full day)"}`,
+    `Return: ${dates.end} · ${dates.dropoffTime === "pm" ? "after noon (full day)" : "before noon (half day)"}`,
+    dates.days ? `Length: ${dates.days} day${dates.days === 1 ? "" : "s"} charged` : null,
     ``,
     ...(record.items || []).map(it => `  ${it.name} x ${it.qty}  ${fmtMoney(it.lineTotal)}`),
     `  Tax  ${fmtMoney(p.tax)}`,
@@ -527,9 +529,9 @@ function renderBookingHtml(r) {
 
     <h3 style="margin:1rem 0 .35rem;">Booking</h3>
     <table style="width:100%; border-collapse:collapse; font-size:14px;">
-      <tr><td style="width:120px; color:#888;">Pickup</td><td><b>${escHtml(d.start)}</b></td></tr>
-      <tr><td style="color:#888;">Return</td><td><b>${escHtml(d.end)}</b></td></tr>
-      <tr><td style="color:#888;">Days</td><td>${p.days || ""}</td></tr>
+      <tr><td style="width:120px; color:#888;">Pickup</td><td><b>${escHtml(d.start)}</b> · ${d.pickupTime === "pm" ? "after noon (half day)" : "before noon (full day)"}</td></tr>
+      <tr><td style="color:#888;">Return</td><td><b>${escHtml(d.end)}</b> · ${d.dropoffTime === "pm" ? "after noon (full day)" : "before noon (half day)"}</td></tr>
+      <tr><td style="color:#888;">Days</td><td>${d.days ?? p.days ?? ""}</td></tr>
       <tr><td style="color:#888;">Delivery</td><td>${escHtml(deliveryLabel)}</td></tr>
     </table>
 
@@ -566,9 +568,9 @@ function renderBookingText(r) {
     c.notes ? `  Notes:    ${c.notes}` : null,
     ``,
     `Booking`,
-    `  Pickup:   ${d.start}`,
-    `  Return:   ${d.end}`,
-    `  Days:     ${p.days}`,
+    `  Pickup:   ${d.start} · ${d.pickupTime === "pm" ? "after noon (half day)" : "before noon (full day)"}`,
+    `  Return:   ${d.end} · ${d.dropoffTime === "pm" ? "after noon (full day)" : "before noon (half day)"}`,
+    `  Days:     ${d.days ?? p.days ?? ""}`,
     `  Delivery: ${deliveryLabel}`,
     ``,
     `Carts`,

@@ -29,7 +29,7 @@
        an attachment through Resend. -->
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js" defer></script>
   <link rel="stylesheet" href="/assets/site.css">
-  <link rel="stylesheet" href="/assets/rentals.css?v=7f443b37">
+  <link rel="stylesheet" href="/assets/rentals.css?v=halfday01">
   <meta property="og:title" content="Rent a Golf Cart · Polk County Golf Carts">
   <meta property="og:description" content="Book a golf cart rental in East Texas — up to 8 carts per booking, free delivery within 25 miles of Livingston, extended service up to 75 miles.">
   <meta property="og:image" content="https://polkcountygolfcarts.com/assets/og/rentals.png">
@@ -73,12 +73,26 @@
       <p class="lede-text">Pick your dates first — we'll show you which carts are available for those days.</p>
       <div class="rental-grid-2">
         <label class="rental-field">
-          <span>Pickup</span>
+          <span>Pickup date</span>
           <input type="date" id="date-start" required>
         </label>
         <label class="rental-field">
-          <span>Return</span>
+          <span>Pickup time</span>
+          <select id="pickup-time" required>
+            <option value="am">Before noon (full-day pickup)</option>
+            <option value="pm">After noon (half-day pickup)</option>
+          </select>
+        </label>
+        <label class="rental-field">
+          <span>Return date</span>
           <input type="date" id="date-end" required>
+        </label>
+        <label class="rental-field">
+          <span>Return time</span>
+          <select id="dropoff-time" required>
+            <option value="am">Before noon (half-day return)</option>
+            <option value="pm">After noon (full-day return)</option>
+          </select>
         </label>
       </div>
       <p class="rental-meta" id="duration-out" aria-live="polite"></p>
@@ -87,7 +101,7 @@
         <button class="btn btn-coral" id="to-step-2" type="button">Continue →</button>
       </div>
     </div>
-    <p class="rental-fineprint">Weekend/holiday rentals: 2-day minimum. Cancellations: 7+ days out = 100% refund, 4&ndash;6 days = 50%, 3 days or less = no refund.</p>
+    <p class="rental-fineprint">Half days available: before-noon = full-day charge; after-noon = half-day charge for that day. Weekend/holiday rentals: 2-day minimum. Cancellations: 7+ days out = 100% refund, 4&ndash;6 days = 50%, 3 days or less = no refund.</p>
   </section>
 
   <!-- ============ STEP 2 · CARTS (filtered by availability) ============ -->
@@ -452,6 +466,6 @@
   Polk County Golf Carts · 1732 FM 3277, Livingston, TX · <a href="tel:9362231182">936-223-1182</a>
 </footer>
 
-<script src="/assets/rentals.js?v=cc5e48bb"></script>
+<script src="/assets/rentals.js?v=halfday01"></script>
 </body>
 </html>

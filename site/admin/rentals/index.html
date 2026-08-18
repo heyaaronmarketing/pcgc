@@ -258,7 +258,10 @@
         `;
         const cells = grid.querySelectorAll(".field span");
         cells[0].textContent = (c.name || "—") + " · " + (c.guests || 1) + " guests";
-        cells[1].textContent = fmtDate(b.dates?.start) + " → " + fmtDate(b.dates?.end) + " (" + (b.dates?.days || 0) + " day" + ((b.dates?.days || 0) === 1 ? "" : "s") + ")";
+        const pt = b.dates?.pickupTime === "pm" ? " (after noon)" : b.dates?.pickupTime === "am" ? " (before noon)" : "";
+        const dt = b.dates?.dropoffTime === "pm" ? " (after noon)" : b.dates?.dropoffTime === "am" ? " (before noon)" : "";
+        const dayNum = b.dates?.days ?? 0;
+        cells[1].textContent = fmtDate(b.dates?.start) + pt + " → " + fmtDate(b.dates?.end) + dt + " (" + dayNum + " day" + (dayNum === 1 ? "" : "s") + ")";
         cells[2].textContent = (c.phone || "—") + " · " + (c.email || "—");
         cells[3].textContent = fmtAddress(c) || "—";
         cells[4].textContent = deliveryLabel[b.delivery] || b.delivery || "—";
