@@ -2,3 +2,5 @@ __pycache__/
 *.pyc
 .DS_Store
 crawl.log
+# Wrangler local dev state (miniflare KV/D1/R2 shadows)
+.wrangler/
