@@ -339,8 +339,54 @@
             ${statusOptions.map(s => `<option value="${s}"${s === status ? " selected" : ""}>${statusLabel[s]}</option>`).join("")}
           </select>
           <span class="bk-status-msg"></span>
+          <button type="button" class="bk-delete-btn" data-id="${b.id}" style="margin-left:auto; background:#fff; color:#b3392e; border:1px solid #b3392e; border-radius:6px; padding:.35rem .7rem; font-size:.82rem; font-weight:600; cursor:pointer;">Delete</button>
         `;
         wrap.appendChild(statusRow);
+
+        const delBtn = statusRow.querySelector(".bk-delete-btn");
+        let confirmArmed = false;
+        let confirmTimer = null;
+        delBtn.addEventListener("click", async () => {
+          if (!confirmArmed) {
+            confirmArmed = true;
+            delBtn.textContent = "Click again to confirm";
+            delBtn.style.background = "#b3392e";
+            delBtn.style.color = "#fff";
+            confirmTimer = setTimeout(() => {
+              confirmArmed = false;
+              delBtn.textContent = "Delete";
+              delBtn.style.background = "#fff";
+              delBtn.style.color = "#b3392e";
+            }, 4000);
+            return;
+          }
+          clearTimeout(confirmTimer);
+          delBtn.disabled = true;
+          delBtn.textContent = "Deleting…";
+          try {
+            const res = await fetch(`/api/booking/${encodeURIComponent(b.id)}`, {
+              method: "DELETE",
+              credentials: "same-origin",
+            });
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok) {
+              delBtn.disabled = false;
+              delBtn.textContent = "Delete failed";
+              msg.textContent = `Delete failed: ${data.error || res.status}`;
+              msg.className = "bk-status-msg error";
+              return;
+            }
+            wrap.style.transition = "opacity .25s ease, transform .25s ease";
+            wrap.style.opacity = "0";
+            wrap.style.transform = "translateX(-8px)";
+            setTimeout(() => wrap.remove(), 260);
+          } catch (e) {
+            delBtn.disabled = false;
+            delBtn.textContent = "Delete";
+            msg.textContent = "Network error: " + e.message;
+            msg.className = "bk-status-msg error";
+          }
+        });
 
         const sel = statusRow.querySelector("select");
         const msg = statusRow.querySelector(".bk-status-msg");

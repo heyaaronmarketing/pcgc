@@ -44,6 +44,9 @@ export default {
     if (url.pathname.startsWith("/api/booking/") && request.method === "PATCH") {
       return updateBookingStatus(request, env, url);
     }
+    if (url.pathname.startsWith("/api/booking/") && request.method === "DELETE") {
+      return deleteBooking(request, env, url);
+    }
     if (url.pathname === "/api/availability" && request.method === "GET") {
       return checkAvailability(request, env, url);
     }
@@ -706,6 +709,34 @@ async function updateBookingStatus(request, env, url) {
   }
 
   return json({ ok: true, status: newStatus, prevStatus, email: emailResult });
+}
+
+async function deleteBooking(request, env, url) {
+  const auth = await checkAdminAuth(request, env);
+  if (auth) return auth;
+  if (!env.FEEDBACK_KV) return json({ error: "kv not configured" }, 503);
+
+  const id = decodeURIComponent(url.pathname.replace(/^\/api\/booking\//, ""));
+  if (!id) return json({ error: "id required" }, 400);
+
+  let match = null;
+  let cursor;
+  do {
+    const page = await env.FEEDBACK_KV.list({ prefix: "booking:", cursor });
+    for (const k of page.keys) {
+      const raw = await env.FEEDBACK_KV.get(k.name);
+      if (!raw) continue;
+      let rec;
+      try { rec = JSON.parse(raw); } catch { continue; }
+      if (rec.id === id) { match = { key: k.name, rec }; break; }
+    }
+    if (match) break;
+    cursor = page.list_complete ? undefined : page.cursor;
+  } while (cursor);
+  if (!match) return json({ error: "booking not found", id }, 404);
+
+  await env.FEEDBACK_KV.delete(match.key);
+  return json({ ok: true, deleted: id });
 }
 
 // Customer-facing thank-you email sent when status transitions to
