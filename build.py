@@ -161,34 +161,6 @@ def bbb_seal(klass=""):
     )
 
 
-def contact_strip():
-    return dedent(f"""\
-        <section class="contact-strip">
-          <div class="container contact-strip-inner">
-            <div>
-              <h3>Call us</h3>
-              <a class="big" href="tel:{BIZ['phone_primary'].replace('-','')}">{BIZ['phone_primary']}</a><br>
-              <a href="tel:{BIZ['phone_secondary'].replace('-','')}">{BIZ['phone_secondary']}</a>
-            </div>
-            <div>
-              <h3>Email</h3>
-              <a href="mailto:{BIZ['email']}">{BIZ['email']}</a>
-            </div>
-            <div>
-              <h3>Visit</h3>
-              <a href="https://maps.google.com/?q={BIZ['addr'].replace(' ','+')}">{BIZ['addr']}</a>
-            </div>
-            <div>
-              <h3>Hours</h3>
-              <span>Tue–Fri · 9a–4p</span><br>
-              <span>Saturday · 9a–2p</span><br>
-              <span style="opacity:.75">Closed Sun–Mon &amp; holidays · emergency calls billed at additional rate</span>
-            </div>
-          </div>
-        </section>
-        """)
-
-
 def footer():
     nav_links = "\n".join(f'      <li><a href="{href}">{label}</a></li>' for label, href in NAV)
     return dedent(f"""\
@@ -217,7 +189,16 @@ def footer():
               </div>
               <div>
                 <h4>Visit</h4>
-                <p>{BIZ['addr']}</p>
+                <p><a href="https://maps.google.com/?q={BIZ['addr'].replace(' ','+')}">{BIZ['addr']}</a></p>
+              </div>
+              <div>
+                <h4>Hours</h4>
+                <ul class="foot-hours">
+                  <li>Tue–Fri · 9a–4p</li>
+                  <li>Saturday · 9a–2p</li>
+                  <li class="muted">Closed Sun–Mon &amp; holidays</li>
+                  <li class="muted">Emergency calls billed at additional rate</li>
+                </ul>
               </div>
             </div>
             <div class="foot-bot">
@@ -822,7 +803,6 @@ def page_home():
           </div>
         </section>
         """)
-        + contact_strip()
         + footer()
     )
 
@@ -963,7 +943,6 @@ def page_carts():
           </div>
         </section>
         """)
-        + contact_strip()
         + footer()
     )
 
@@ -1129,7 +1108,6 @@ def page_services():
           </div>
         </section>
         """)
-        + contact_strip()
         + footer()
     )
 
@@ -1242,7 +1220,6 @@ def page_about():
           </div>
         </section>
         """)
-        + contact_strip()
         + footer()
     )
 
@@ -1327,7 +1304,6 @@ def page_contact():
           </div>
         </section>
         """)
-        + contact_strip()
         + footer()
     )
 
@@ -1363,7 +1339,6 @@ def page_privacy():
           </div>
         </section>
         """)
-        + contact_strip()
         + footer()
     )
 
@@ -1572,7 +1547,6 @@ def page_financing():
           </div>
         </section>
         """)
-        + contact_strip()
         + footer()
     )
 
@@ -1827,7 +1801,6 @@ def page_breezy_lineup():
           </div>
         </section>
         """)
-        + contact_strip()
         + footer()
     )
 
@@ -1895,7 +1868,6 @@ def page_breezy_compare():
           </div>
         </section>
         """)
-        + contact_strip()
         + footer()
     )
 
@@ -2038,7 +2010,6 @@ def page_breezy_model(slug):
           </div>
         </section>
         """)
-        + contact_strip()
         + footer()
     )
 
@@ -2234,7 +2205,6 @@ def page_breezy_financing():
           </div>
         </section>
         """)
-        + contact_strip()
         + footer()
     )
 
@@ -2386,7 +2356,6 @@ def page_breezy_street_legal():
           </div>
         </section>
         """)
-        + contact_strip()
         + footer()
     )
 
@@ -2513,7 +2482,6 @@ def page_breezy_lithium_vs_lead_acid():
           </div>
         </section>
         """)
-        + contact_strip()
         + footer()
     )
 
@@ -2903,7 +2871,6 @@ def page_guide(slug):
           </div>
         </section>
         """)
-        + contact_strip()
         + footer()
     )
 
@@ -2946,7 +2913,6 @@ def page_guides_index():
           </div>
         </section>
         """)
-        + contact_strip()
         + footer()
     )
 
@@ -3068,7 +3034,6 @@ def page_town(slug):
           </div>
         </section>
         """)
-        + contact_strip()
         + footer()
     )
 
@@ -3111,7 +3076,6 @@ def page_town_index():
           </div>
         </section>
         """)
-        + contact_strip()
         + footer()
     )
 
@@ -3193,7 +3157,6 @@ def page_reviews():
           </div>
         </section>
         """)
-        + contact_strip()
         + footer()
     )
 
@@ -3265,7 +3228,6 @@ def page_404():
           </div>
         </section>
         """)
-        + contact_strip()
         + footer()
     )
 

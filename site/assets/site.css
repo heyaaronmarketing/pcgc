@@ -371,11 +371,14 @@ ul.checks li::before {
 .site-footer { background: #14323a; color: rgba(255,255,255,.7); padding: 3rem 0 1.5rem; font-size: .92rem; }
 .site-footer h4 { color: #fff; font-family: inherit; font-size: 1rem; margin-bottom: .75rem; }
 .site-footer a { color: rgba(255,255,255,.85); }
-.foot-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 2rem; margin-bottom: 2rem; }
+/* 5 columns now: brand block (2fr) + Site / Reach us / Visit / Hours */
+.foot-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1.15fr; gap: 2rem; margin-bottom: 2rem; }
 .foot-grid ul { list-style: none; padding: 0; margin: 0; }
 .foot-grid li { margin-bottom: .35rem; }
+.foot-hours li.muted { opacity: .7; font-size: .88rem; }
 .foot-bot { border-top: 1px solid rgba(255,255,255,.1); padding-top: 1.25rem; display: flex; justify-content: space-between; flex-wrap: wrap; gap: .5rem; font-size: .82rem; }
-@media (max-width: 720px) { .foot-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 900px) { .foot-grid { grid-template-columns: 1fr 1fr 1fr; } }
+@media (max-width: 600px) { .foot-grid { grid-template-columns: 1fr 1fr; } }
 
 /* Utility */
 .center { text-align: center; }
