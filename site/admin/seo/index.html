@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>SEO Rank Tracker · PCGC Admin</title>
+  <link rel="stylesheet" href="/assets/site.css">
+  <style>
+    body { background:#fbf8f3; color:#222; font-family: system-ui,-apple-system,Segoe UI,sans-serif; }
+    .wrap { max-width: 1100px; margin: 0 auto; padding: 1.25rem 1rem 3rem; }
+    h1 { font: 700 1.9rem/1.15 Georgia, serif; color:#1f5a68; margin:.4rem 0 .1rem; }
+    .sub { color:#666; font-size:.9rem; margin-bottom:1.2rem; }
+    .kpis { display:grid; grid-template-columns: repeat(4,1fr); gap: .75rem; margin: .5rem 0 1.4rem; }
+    .kpi { background:#fff; border:1px solid #ecd9c7; border-radius:12px; padding: .9rem 1.05rem; }
+    .kpi b { display:block; font: 700 1.6rem/1.1 Georgia, serif; color:#1f5a68; }
+    .kpi span { color:#666; font-size:.8rem; text-transform:uppercase; letter-spacing:.05em; }
+    .cat { background:#fff; border:1px solid #ecd9c7; border-radius:12px; padding: 1rem 1.15rem; margin-bottom: 1rem; }
+    .cat h2 { font: 700 1.05rem/1.2 Georgia, serif; color:#1f5a68; margin:.15rem 0 .7rem; }
+    table.ranks { width:100%; border-collapse: collapse; font-size:.92rem; }
+    table.ranks th, table.ranks td { text-align:left; padding: .5rem .5rem; border-bottom:1px solid #f0e6d7; vertical-align: middle; }
+    table.ranks th { font-weight:600; color:#8a6d55; font-size:.78rem; text-transform:uppercase; letter-spacing:.04em; }
+    td.kw { font-weight:500; }
+    td.urlcell a { color:#1f5a68; text-decoration:none; word-break: break-all; }
+    td.urlcell a:hover { text-decoration:underline; }
+    .rank { display:inline-block; padding: .2rem .55rem; border-radius: 999px; font-weight:700; font-size:.85rem; background:#f4efe4; color:#555; }
+    .rank.top3 { background:#dff0e1; color:#1c6b2a; }
+    .rank.top10 { background:#e6f1f3; color:#1f5a68; }
+    .rank.near { background:#fff2d6; color:#8a4a00; }
+    .rank.far { background:#f4efe4; color:#555; }
+    .rank.off { background:#f8e3e1; color:#8a2a20; }
+    .delta { font-weight:600; font-size:.85rem; }
+    .delta.up { color:#1c6b2a; }
+    .delta.down { color:#8a2a20; }
+    .delta.muted { color:#888; font-weight:500; }
+    .muted { color:#888; }
+    .sparkbar { display:inline-flex; gap:2px; align-items:center; }
+    .spark { display:inline-block; width:10px; height:14px; border-radius:2px; background:#eee; }
+    .spark.top3 { background:#4c9a5b; }
+    .spark.top10 { background:#3f7f8d; }
+    .spark.near { background:#e0b25e; }
+    .spark.far { background:#cfc6b6; }
+    .spark.off { background:#e5b8b1; }
+    nav.crumbs a { color:#1f5a68; text-decoration:none; margin-right:.7rem; }
+    nav.crumbs { font-size:.85rem; color:#888; margin-bottom:.9rem; }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <nav class="crumbs">
+    <a href="/admin/dashboard/">← Dashboard</a>
+    <a href="/admin/rentals/">Bookings</a>
+    <a href="/admin/social-campaign/">Social campaign</a>
+    <span>SEO ranks</span>
+  </nav>
+  <h1>Google rank tracker · polkcountygolfcarts.com</h1>
+  <p class="sub">Weekly SERP position for 30 target keywords, run from a Livingston, TX viewpoint. Last updated <b>2026-08-19 08:47 UTC</b>.</p>
+
+  <div class="kpis">
+    <div class="kpi"><b>16/30</b><span>appearing on page 1–10</span></div>
+    <div class="kpi"><b>11</b><span>ranking in top 10</span></div>
+    <div class="kpi"><b>0</b><span>ranking in top 3</span></div>
+    <div class="kpi"><b>2</b><span>tracker runs recorded</span></div>
+  </div>
+
+  
+        <section class="cat">
+          <h2>Local · Livingston primary</h2>
+          <table class="ranks">
+            <thead>
+              <tr><th>Keyword</th><th>Rank</th><th>Δ vs prior</th><th>Trend</th><th>Ranking URL</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="kw">golf carts livingston tx</td>
+                <td class="rankcell"><span class="rank top10">#5</span></td>
+                <td class="deltacell"><span class="delta muted">no change</span></td>
+                <td class="sparkcell"><span class="sparkbar"><span class="spark top10" title="#5"></span><span class="spark top10" title="#5"></span></span></td>
+                <td class="urlcell"><a href="https://polkcountygolfcarts.com/" target="_blank" rel="noopener">https://polkcountygolfcarts.com/</a></td>
+              </tr>
+              <tr>
+                <td class="kw">golf cart dealer livingston tx</td>
+                <td class="rankcell"><span class="rank top10">#6</span></td>
+                <td class="deltacell"><span class="delta up">new @ #6</span></td>
+                <td class="sparkcell"><span class="sparkbar"><span class="spark off" title="off"></span><span class="spark top10" title="#6"></span></span></td>
+                <td class="urlcell"><a href="https://polkcountygolfcarts.com/" target="_blank" rel="noopener">https://polkcountygolfcarts.com/</a></td>
+              </tr>
+              <tr>
+                <td class="kw">golf cart sales livingston</td>
+                <td class="rankcell"><span class="rank off">not ranking</span></td>
+                <td class="deltacell"><span class="delta down">dropped off</span></td>
+                <td class="sparkcell"><span class="sparkbar"><span class="spark top10" title="#5"></span><span class="spark off" title="off"></span></span></td>
+                <td class="urlcell"><span class="muted">—</span></td>
+              </tr></tbody>
+          </table>
+        </section>
+        
+        <section class="cat">
+          <h2>Local · Services</h2>
+          <table class="ranks">
+            <thead>
+              <tr><th>Keyword</th><th>Rank</th><th>Δ vs prior</th><th>Trend</th><th>Ranking URL</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="kw">golf cart repair livingston</td>
+                <td class="rankcell"><span class="rank top10">#6</span></td>
+                <td class="deltacell"><span class="delta up">new @ #6</span></td>
+                <td class="sparkcell"><span class="sparkbar"><span class="spark off" title="off"></span><span class="spark top10" title="#6"></span></span></td>
+                <td class="urlcell"><a href="https://polkcountygolfcarts.com/" target="_blank" rel="noopener">https://polkcountygolfcarts.com/</a></td>
+              </tr>
+              <tr>
+                <td class="kw">golf cart custom build livingston</td>
+                <td class="rankcell"><span class="rank top10">#6</span></td>
+                <td class="deltacell"><span class="delta up">new @ #6</span></td>
+                <td class="sparkcell"><span class="sparkbar"><span class="spark off" title="off"></span><span class="spark top10" title="#6"></span></span></td>
+                <td class="urlcell"><a href="https://polkcountygolfcarts.com/about-us/" target="_blank" rel="noopener">https://polkcountygolfcarts.com/about-us/</a></td>
+              </tr>
+              <tr>
+                <td class="kw">golf cart service livingston tx</td>
+                <td class="rankcell"><span class="rank off">not ranking</span></td>
+                <td class="deltacell"><span class="delta muted">—</span></td>
+                <td class="sparkcell"><span class="sparkbar"><span class="spark off" title="off"></span><span class="spark off" title="off"></span></span></td>
+                <td class="urlcell"><span class="muted">—</span></td>
+              </tr></tbody>
+          </table>
+        </section>
+        
+        <section class="cat">
+          <h2>Neighboring towns</h2>
+          <table class="ranks">
+            <thead>
+              <tr><th>Keyword</th><th>Rank</th><th>Δ vs prior</th><th>Trend</th><th>Ranking URL</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="kw">golf carts coldspring tx</td>
+                <td class="rankcell"><span class="rank top10">#4</span></td>
+                <td class="deltacell"><span class="delta up">new @ #4</span></td>
+                <td class="sparkcell"><span class="sparkbar"><span class="spark off" title="off"></span><span class="spark top10" title="#4"></span></span></td>
+                <td class="urlcell"><a href="https://polkcountygolfcarts.com/golf-carts/coldspring-tx/" target="_blank" rel="noopener">https://polkcountygolfcarts.com/golf-carts/coldspring-tx/</a></td>
+              </tr>
+              <tr>
+                <td class="kw">golf carts woodville tx</td>
+                <td class="rankcell"><span class="rank top10">#4</span></td>
+                <td class="deltacell"><span class="delta up">new @ #4</span></td>
+                <td class="sparkcell"><span class="sparkbar"><span class="spark off" title="off"></span><span class="spark top10" title="#4"></span></span></td>
+                <td class="urlcell"><a href="https://polkcountygolfcarts.com/golf-carts/woodville-tx/" target="_blank" rel="noopener">https://polkcountygolfcarts.com/golf-carts/woodville-tx/</a></td>
+              </tr>
+              <tr>
+                <td class="kw">golf carts onalaska tx</td>
+                <td class="rankcell"><span class="rank top10">#6</span></td>
+                <td class="deltacell"><span class="delta muted">no change</span></td>
+                <td class="sparkcell"><span class="sparkbar"><span class="spark top10" title="#6"></span><span class="spark top10" title="#6"></span></span></td>
+                <td class="urlcell"><a href="https://polkcountygolfcarts.com/" target="_blank" rel="noopener">https://polkcountygolfcarts.com/</a></td>
+              </tr>
+              <tr>
+                <td class="kw">golf carts lufkin tx</td>
+                <td class="rankcell"><span class="rank near">#17</span></td>
+                <td class="deltacell"><span class="delta muted">no change</span></td>
+                <td class="sparkcell"><span class="sparkbar"><span class="spark near" title="#17"></span><span class="spark near" title="#17"></span></span></td>
+                <td class="urlcell"><a href="https://polkcountygolfcarts.com/golf-carts/lufkin-tx/" target="_blank" rel="noopener">https://polkcountygolfcarts.com/golf-carts/lufkin-tx/</a></td>
+              </tr>
+              <tr>
+                <td class="kw">golf carts huntsville tx</td>
+                <td class="rankcell"><span class="rank off">not ranking</span></td>
+                <td class="deltacell"><span class="delta muted">—</span></td>
+                <td class="sparkcell"><span class="sparkbar"><span class="spark off" title="off"></span><span class="spark off" title="off"></span></span></td>
+                <td class="urlcell"><span class="muted">—</span></td>
+              </tr></tbody>
+          </table>
+        </section>
+        
+        <section class="cat">
+          <h2>Rentals</h2>
+          <table class="ranks">
+            <thead>
+              <tr><th>Keyword</th><th>Rank</th><th>Δ vs prior</th><th>Trend</th><th>Ranking URL</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="kw">lake livingston golf cart rental</td>
+                <td class="rankcell"><span class="rank top10">#9</span></td>
+                <td class="deltacell"><span class="delta up">▲ 3</span></td>
+                <td class="sparkcell"><span class="sparkbar"><span class="spark near" title="#12"></span><span class="spark top10" title="#9"></span></span></td>
+                <td class="urlcell"><a href="https://polkcountygolfcarts.com/" target="_blank" rel="noopener">https://polkcountygolfcarts.com/</a></td>
+              </tr>
+              <tr>
+                <td class="kw">golf cart rental lake livingston</td>
+                <td class="rankcell"><span class="rank top10">#10</span></td>
+                <td class="deltacell"><span class="delta up">▲ 2</span></td>
+                <td class="sparkcell"><span class="sparkbar"><span class="spark near" title="#12"></span><span class="spark top10" title="#10"></span></span></td>
+                <td class="urlcell"><a href="https://polkcountygolfcarts.com/guides/lake-livingston-golf-cart-life/" target="_blank" rel="noopener">https://polkcountygolfcarts.com/guides/lake-livingston-golf-cart-life/</a></td>
+              </tr>
+              <tr>
+                <td class="kw">rent golf cart livingston tx</td>
+                <td class="rankcell"><span class="rank off">not ranking</span></td>
+                <td class="deltacell"><span class="delta muted">—</span></td>
+                <td class="sparkcell"><span class="sparkbar"><span class="spark off" title="off"></span><span class="spark off" title="off"></span></span></td>
+                <td class="urlcell"><span class="muted">—</span></td>
+              </tr>
+              <tr>
+                <td class="kw">east texas golf cart rental</td>
+                <td class="rankcell"><span class="rank off">not ranking</span></td>
+                <td class="deltacell"><span class="delta muted">—</span></td>
+                <td class="sparkcell"><span class="sparkbar"><span class="spark off" title="off"></span><span class="spark off" title="off"></span></span></td>
+                <td class="urlcell"><span class="muted">—</span></td>
+              </tr>
+              <tr>
+                <td class="kw">6 seater golf cart rental</td>
+                <td class="rankcell"><span class="rank off">not ranking</span></td>
+                <td class="deltacell"><span class="delta muted">—</span></td>
+                <td class="sparkcell"><span class="sparkbar"><span class="spark off" title="off"></span><span class="spark off" title="off"></span></span></td>
+                <td class="urlcell"><span class="muted">—</span></td>
+              </tr>
+              <tr>
+                <td class="kw">4 seater golf cart rental texas</td>
+                <td class="rankcell"><span class="rank off">not ranking</span></td>
+                <td class="deltacell"><span class="delta muted">—</span></td>
+                <td class="sparkcell"><span class="sparkbar"><span class="spark off" title="off"></span><span class="spark off" title="off"></span></span></td>
+                <td class="urlcell"><span class="muted">—</span></td>
+              </tr></tbody>
+          </table>
+        </section>
+        
+        <section class="cat">
+          <h2>Financing</h2>
+          <table class="ranks">
+            <thead>
+              <tr><th>Keyword</th><th>Rank</th><th>Δ vs prior</th><th>Trend</th><th>Ranking URL</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="kw">golf cart financing texas</td>
+                <td class="rankcell"><span class="rank off">not ranking</span></td>
+                <td class="deltacell"><span class="delta down">dropped off</span></td>
+                <td class="sparkcell"><span class="sparkbar"><span class="spark near" title="#29"></span><span class="spark off" title="off"></span></span></td>
+                <td class="urlcell"><span class="muted">—</span></td>
+              </tr>
+              <tr>
+                <td class="kw">finance a golf cart</td>
+                <td class="rankcell"><span class="rank off">not ranking</span></td>
+                <td class="deltacell"><span class="delta muted">—</span></td>
+                <td class="sparkcell"><span class="sparkbar"><span class="spark off" title="off"></span><span class="spark off" title="off"></span></span></td>
+                <td class="urlcell"><span class="muted">—</span></td>
+              </tr></tbody>
+          </table>
+        </section>
+        
+        <section class="cat">
+          <h2>Brand / product (Breezy EV)</h2>
+          <table class="ranks">
+            <thead>
+              <tr><th>Keyword</th><th>Rank</th><th>Δ vs prior</th><th>Trend</th><th>Ranking URL</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="kw">breezy ev dealer texas</td>
+                <td class="rankcell"><span class="rank top10">#6</span></td>
+                <td class="deltacell"><span class="delta up">▲ 5</span></td>
+                <td class="sparkcell"><span class="sparkbar"><span class="spark near" title="#11"></span><span class="spark top10" title="#6"></span></span></td>
+                <td class="urlcell"><a href="https://polkcountygolfcarts.com/golf-carts/livingston-tx/" target="_blank" rel="noopener">https://polkcountygolfcarts.com/golf-carts/livingston-tx/</a></td>
+              </tr>
+              <tr>
+                <td class="kw">breezy ev golf cart</td>
+                <td class="rankcell"><span class="rank near">#23</span></td>
+                <td class="deltacell"><span class="delta up">new @ #23</span></td>
+                <td class="sparkcell"><span class="sparkbar"><span class="spark off" title="off"></span><span class="spark near" title="#23"></span></span></td>
+                <td class="urlcell"><a href="https://polkcountygolfcarts.com/breezy-ev/terrain-6/" target="_blank" rel="noopener">https://polkcountygolfcarts.com/breezy-ev/terrain-6/</a></td>
+              </tr>
+              <tr>
+                <td class="kw">breeze 4 golf cart</td>
+                <td class="rankcell"><span class="rank off">not ranking</span></td>
+                <td class="deltacell"><span class="delta down">dropped off</span></td>
+                <td class="sparkcell"><span class="sparkbar"><span class="spark near" title="#21"></span><span class="spark off" title="off"></span></span></td>
+                <td class="urlcell"><span class="muted">—</span></td>
+              </tr>
+              <tr>
+                <td class="kw">breeze 6l golf cart</td>
+                <td class="rankcell"><span class="rank off">not ranking</span></td>
+                <td class="deltacell"><span class="delta muted">—</span></td>
+                <td class="sparkcell"><span class="sparkbar"><span class="spark off" title="off"></span><span class="spark off" title="off"></span></span></td>
+                <td class="urlcell"><span class="muted">—</span></td>
+              </tr>
+              <tr>
+                <td class="kw">terrain 6 golf cart</td>
+                <td class="rankcell"><span class="rank off">not ranking</span></td>
+                <td class="deltacell"><span class="delta down">dropped off</span></td>
+                <td class="sparkcell"><span class="sparkbar"><span class="spark far" title="#54"></span><span class="spark off" title="off"></span></span></td>
+                <td class="urlcell"><span class="muted">—</span></td>
+              </tr>
+              <tr>
+                <td class="kw">lithium golf cart texas</td>
+                <td class="rankcell"><span class="rank off">not ranking</span></td>
+                <td class="deltacell"><span class="delta muted">—</span></td>
+                <td class="sparkcell"><span class="sparkbar"><span class="spark off" title="off"></span><span class="spark off" title="off"></span></span></td>
+                <td class="urlcell"><span class="muted">—</span></td>
+              </tr>
+              <tr>
+                <td class="kw">street legal golf cart texas</td>
+                <td class="rankcell"><span class="rank off">not ranking</span></td>
+                <td class="deltacell"><span class="delta down">dropped off</span></td>
+                <td class="sparkcell"><span class="sparkbar"><span class="spark far" title="#64"></span><span class="spark off" title="off"></span></span></td>
+                <td class="urlcell"><span class="muted">—</span></td>
+              </tr></tbody>
+          </table>
+        </section>
+        
+        <section class="cat">
+          <h2>Buyer&#x27;s guides</h2>
+          <table class="ranks">
+            <thead>
+              <tr><th>Keyword</th><th>Rank</th><th>Δ vs prior</th><th>Trend</th><th>Ranking URL</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="kw">lake livingston golf cart</td>
+                <td class="rankcell"><span class="rank top10">#4</span></td>
+                <td class="deltacell"><span class="delta muted">no change</span></td>
+                <td class="sparkcell"><span class="sparkbar"><span class="spark top10" title="#4"></span><span class="spark top10" title="#4"></span></span></td>
+                <td class="urlcell"><a href="https://polkcountygolfcarts.com/" target="_blank" rel="noopener">https://polkcountygolfcarts.com/</a></td>
+              </tr>
+              <tr>
+                <td class="kw">4 seater vs 6 seater golf cart</td>
+                <td class="rankcell"><span class="rank near">#22</span></td>
+                <td class="deltacell"><span class="delta down">▼ 2</span></td>
+                <td class="sparkcell"><span class="sparkbar"><span class="spark near" title="#20"></span><span class="spark near" title="#22"></span></span></td>
+                <td class="urlcell"><a href="https://polkcountygolfcarts.com/guides/4-seater-vs-6-seater/" target="_blank" rel="noopener">https://polkcountygolfcarts.com/guides/4-seater-vs-6-seater/</a></td>
+              </tr>
+              <tr>
+                <td class="kw">cost of owning a golf cart</td>
+                <td class="rankcell"><span class="rank near">#30</span></td>
+                <td class="deltacell"><span class="delta up">new @ #30</span></td>
+                <td class="sparkcell"><span class="sparkbar"><span class="spark off" title="off"></span><span class="spark near" title="#30"></span></span></td>
+                <td class="urlcell"><a href="https://polkcountygolfcarts.com/guides/cost-of-owning-a-golf-cart/" target="_blank" rel="noopener">https://polkcountygolfcarts.com/guides/cost-of-owning-a-golf-cart/</a></td>
+              </tr>
+              <tr>
+                <td class="kw">buying a used golf cart</td>
+                <td class="rankcell"><span class="rank far">#50</span></td>
+                <td class="deltacell"><span class="delta down">▼ 6</span></td>
+                <td class="sparkcell"><span class="sparkbar"><span class="spark far" title="#44"></span><span class="spark far" title="#50"></span></span></td>
+                <td class="urlcell"><a href="https://polkcountygolfcarts.com/guides/buying-a-used-golf-cart/" target="_blank" rel="noopener">https://polkcountygolfcarts.com/guides/buying-a-used-golf-cart/</a></td>
+              </tr></tbody>
+          </table>
+        </section>
+        
+
+  <p class="sub" style="margin-top:1.5rem;">Legend: <span class="rank top3">#1–3</span> <span class="rank top10">#4–10</span> <span class="rank near">#11–30</span> <span class="rank far">#31–100</span> <span class="rank off">not in top 100</span>. Trend shows last 8 runs, newest right.</p>
+</div>
+</body>
+</html>
