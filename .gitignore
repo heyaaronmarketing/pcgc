@@ -4,3 +4,6 @@ __pycache__/
 crawl.log
 # Wrangler local dev state (miniflare KV/D1/R2 shadows)
 .wrangler/
+
+# Local SEO-tracker run logs
+seo/.track.log
