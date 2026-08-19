@@ -29,7 +29,7 @@
        an attachment through Resend. -->
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js" defer></script>
   <link rel="stylesheet" href="/assets/site.css">
-  <link rel="stylesheet" href="/assets/rentals.css?v=halfday01">
+  <link rel="stylesheet" href="/assets/rentals.css?v=taxexempt01">
   <meta property="og:title" content="Rent a Golf Cart · Polk County Golf Carts">
   <meta property="og:description" content="Book a golf cart rental in East Texas — up to 8 carts per booking, free delivery within 25 miles of Livingston, extended service up to 75 miles.">
   <meta property="og:image" content="https://polkcountygolfcarts.com/assets/og/rentals.png">
@@ -217,6 +217,29 @@
           <input type="text" id="contact-address" placeholder="Address, resort name, or landmark" autocomplete="off">
         </label>
       </div>
+
+      <fieldset class="rental-taxexempt" style="margin-top:1rem; border:1px solid var(--line); border-radius:10px; padding:.75rem 1rem;">
+        <legend style="padding:0 .4rem; font: 600 .9rem inherit; color: var(--ink);">Tax exempt?</legend>
+        <label style="display:flex; gap:.6rem; align-items:flex-start; margin-top:.35rem; cursor:pointer;">
+          <input type="checkbox" id="contact-tax-exempt" style="margin-top:.25rem;">
+          <span>I'm renting on behalf of a tax-exempt organization (church, non-profit, government, school).</span>
+        </label>
+        <div id="tax-exempt-details" hidden style="margin-top:.7rem; padding-top:.7rem; border-top:1px dashed var(--line);">
+          <label class="rental-field" style="margin-top:0;">
+            <span>Organization name <em>(as it appears on your exemption certificate)</em></span>
+            <input type="text" id="contact-tax-org" placeholder="First Baptist Church of Livingston" autocomplete="organization">
+          </label>
+          <label class="rental-field">
+            <span>Texas sales-tax exemption number <em>(if you have one)</em></span>
+            <input type="text" id="contact-tax-number" placeholder="1-XX-XXXXXXX-X" autocomplete="off">
+          </label>
+          <label class="rental-field">
+            <span>Upload exemption certificate <em>(Texas Form 01-339 or equivalent — PDF or photo)</em></span>
+            <input type="file" id="contact-tax-file" accept="image/*,application/pdf">
+          </label>
+          <p class="rental-meta" id="tax-exempt-status" style="margin:.35rem 0 0; font-size:.85rem; color: var(--ink-soft);">Attach your certificate and we'll waive the 8.25% sales tax on this rental.</p>
+        </div>
+      </fieldset>
 
       <label class="rental-field">
         <span>Anything we should know? <em>(optional)</em></span>
@@ -466,6 +489,6 @@
   Polk County Golf Carts · 1732 FM 3277, Livingston, TX · <a href="tel:9362231182">936-223-1182</a>
 </footer>
 
-<script src="/assets/rentals.js?v=halfday01"></script>
+<script src="/assets/rentals.js?v=taxexempt01"></script>
 </body>
 </html>

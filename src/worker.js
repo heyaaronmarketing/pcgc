@@ -137,6 +137,23 @@ async function submitBooking(request, env) {
     return json({ error: "signed agreement PDF too large" }, 413);
   }
 
+  // Tax-exempt booking: require an org name AND an exemption
+  // certificate file so we can defend a $0-tax rental at audit. The
+  // certificate data-URL is bounded like the driver's license upload.
+  const contact = payload.contact || {};
+  if (contact.taxExempt) {
+    if (!contact.taxExemptOrg || !String(contact.taxExemptOrg).trim()) {
+      return json({ error: "tax-exempt organization name is required" }, 400);
+    }
+    const fileDataUrl = contact.taxExemptFileDataUrl;
+    if (!fileDataUrl || typeof fileDataUrl !== "string" || !/^data:(image\/|application\/pdf)/i.test(fileDataUrl)) {
+      return json({ error: "tax-exempt certificate file is required (image or PDF)" }, 400);
+    }
+    if (fileDataUrl.length > 2_500_000) {
+      return json({ error: "tax-exempt certificate too large" }, 413);
+    }
+  }
+
   const ts = new Date().toISOString();
   const idSuffix = crypto.randomUUID().slice(0, 6).toUpperCase();
   const id = "PCGC-" + idSuffix;
@@ -283,7 +300,7 @@ async function sendBookingEmail(record, env, _agreementPath) {
   // subject already names the customer ("New rental booking · Melissa
   // D. Long · Aug 15 -> Aug 17") and Reply-To routes back to them, so
   // there's no reason to duplicate. Sender is now just the shop.
-  const fromWithName = `Polk County Golf Carts <${from}>`;
+  const fromWithName = `Online Cart Rentals <${from}>`;
   const replyTo = customer.email
     ? `${displayName(customer.name)} <${customer.email}>`
     : undefined;
@@ -376,7 +393,7 @@ async function sendCustomerConfirmationEmail(record, env, agreementPath) {
 
     <table style="width:100%; border-collapse:collapse; font-size:14px; border-top:1px solid #ddd;">
       ${itemRows}
-      <tr><td style="padding:4px 0; color:#888;">Tax</td><td style="padding:4px 0; text-align:right;">${fmtMoney(p.tax)}</td></tr>
+      ${customer.taxExempt ? `<tr><td style="padding:4px 0; color:#8a4a00;">Tax (exempt — ${escHtml(customer.taxExemptOrg || "")})</td><td style="padding:4px 0; text-align:right; color:#8a4a00;"><b>Waived</b></td></tr>` : `<tr><td style="padding:4px 0; color:#888;">Tax</td><td style="padding:4px 0; text-align:right;">${fmtMoney(p.tax)}</td></tr>`}
       <tr style="border-top:1px solid #ddd;"><td style="padding:8px 0;"><b>Total</b></td><td style="padding:8px 0; text-align:right;"><b>${fmtMoney(p.total)}</b></td></tr>
     </table>
 
@@ -420,7 +437,7 @@ async function sendCustomerConfirmationEmail(record, env, agreementPath) {
     dates.days ? `Length: ${dates.days} day${dates.days === 1 ? "" : "s"} charged` : null,
     ``,
     ...(record.items || []).map(it => `  ${it.name} x ${it.qty}  ${fmtMoney(it.lineTotal)}`),
-    `  Tax  ${fmtMoney(p.tax)}`,
+    customer.taxExempt ? `  Tax  WAIVED (exemption on file — ${customer.taxExemptOrg || ""})` : `  Tax  ${fmtMoney(p.tax)}`,
     `  Total  ${fmtMoney(p.total)}`,
     ``,
     `What happens next: We'll follow up by phone or text within a day to confirm your booking and take payment.`,
@@ -457,7 +474,7 @@ async function sendCustomerConfirmationEmail(record, env, agreementPath) {
   }
 
   const emailBody = {
-    from: `Polk County Golf Carts <${from}>`,
+    from: `Online Cart Rentals <${from}>`,
     to: [to],
     subject,
     html,
@@ -541,7 +558,7 @@ function renderBookingHtml(r) {
     <table style="width:100%; border-collapse:collapse; font-size:14px; margin-top:1rem; border-top:1px solid #ddd;">
       <tr><td style="padding:6px 0; color:#888;">Subtotal</td><td style="padding:6px 0; text-align:right;">${fmtMoney(p.subtotal)}</td></tr>
       ${r.delivery === "extended" ? `<tr><td style="padding:6px 0; color:#888;">Extended delivery</td><td style="padding:6px 0; text-align:right;">Quoted separately</td></tr>` : ""}
-      <tr><td style="padding:6px 0; color:#888;">Tax</td><td style="padding:6px 0; text-align:right;">${fmtMoney(p.tax)}</td></tr>
+      ${c.taxExempt ? `<tr><td style="padding:6px 0; color:#8a4a00;"><b>Tax exempt</b> · ${escHtml(c.taxExemptOrg || "")}</td><td style="padding:6px 0; text-align:right; color:#8a4a00;"><b>WAIVED</b></td></tr>` : `<tr><td style="padding:6px 0; color:#888;">Tax</td><td style="padding:6px 0; text-align:right;">${fmtMoney(p.tax)}</td></tr>`}
       <tr style="border-top:1px solid #ddd;"><td style="padding:6px 0;"><b>Total</b></td><td style="padding:6px 0; text-align:right;"><b>${fmtMoney(p.grand)}</b></td></tr>
     </table>
 
@@ -566,6 +583,7 @@ function renderBookingText(r) {
     (c.street || c.city || c.state || c.zip) ? `  Address:  ${[c.street, [c.city, c.state].filter(Boolean).join(", "), c.zip].filter(Boolean).join(" · ")}` : null,
     c.address ? `  Drop-off: ${c.address}` : null,
     c.notes ? `  Notes:    ${c.notes}` : null,
+    c.taxExempt ? `  TAX EXEMPT: ${c.taxExemptOrg || ""}${c.taxExemptNumber ? ` (cert # ${c.taxExemptNumber})` : ""} — certificate on file in /admin/rentals/` : null,
     ``,
     `Booking`,
     `  Pickup:   ${d.start} · ${d.pickupTime === "pm" ? "after noon (half day)" : "before noon (full day)"}`,
@@ -578,7 +596,7 @@ function renderBookingText(r) {
     ``,
     `Subtotal:  ${fmtMoney(p.subtotal)}`,
     r.delivery === "extended" ? `Extended:  Quoted separately` : null,
-    `Tax:       ${fmtMoney(p.tax)}`,
+    c.taxExempt ? `Tax:       WAIVED (exemption on file)` : `Tax:       ${fmtMoney(p.tax)}`,
     `Total:     ${fmtMoney(p.grand)}`,
     ``,
     `Reply to this email to message ${c.name} directly.`,
@@ -789,7 +807,7 @@ async function sendThankYouEmail(record, env) {
       "content-type": "application/json",
     },
     body: JSON.stringify({
-      from: `Polk County Golf Carts <${from}>`,
+      from: `Online Cart Rentals <${from}>`,
       to: [to],
       subject,
       html,
@@ -851,7 +869,7 @@ async function sendTestEmail(request, env) {
         "content-type": "application/json",
       },
       body: JSON.stringify({
-        from: `PCGC Booking Test <${from}>`,
+        from: `Online Cart Rentals (test) <${from}>`,
         to: [to],
         subject: "PCGC booking system — test email",
         html: `<!doctype html><html><body style="font-family:system-ui,Arial,sans-serif; max-width:520px; margin:0 auto; padding:1rem;">

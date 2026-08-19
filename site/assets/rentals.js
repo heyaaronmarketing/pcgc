@@ -171,9 +171,10 @@ function computePrice() {
   const subtotal = perDay * Math.max(0, days);
   const deliveryFee = state.delivery === "extended" ? DELIVERY_EXTENDED_FEE : 0;
   const afterDelivery = subtotal + deliveryFee;
-  const tax = afterDelivery * TAX_RATE;
+  const isExempt = !!(state.contact && state.contact.taxExempt);
+  const tax = isExempt ? 0 : afterDelivery * TAX_RATE;
   const grand = afterDelivery + tax;
-  return { days, perDay, subtotal, deliveryFee, tax, grand, total: totalCarts() };
+  return { days, perDay, subtotal, deliveryFee, tax, grand, total: totalCarts(), taxExempt: isExempt };
 }
 
 // ---------- Step navigation ----------
@@ -569,6 +570,64 @@ function initStep3() {
     if (state.delivery !== "pickup" && sameChk?.checked) applySameAsBilling();
   }));
 
+  // Tax-exempt block: checkbox toggles the org/number/file panel; the
+  // uploaded certificate is read into state.contact.taxExemptFileDataUrl
+  // and travels with the booking POST (same pattern as the driver's
+  // license upload). computePrice() zeroes tax when taxExempt=true.
+  const taxChk = $("#contact-tax-exempt");
+  const taxWrap = $("#tax-exempt-details");
+  const taxOrg = $("#contact-tax-org");
+  const taxNum = $("#contact-tax-number");
+  const taxFile = $("#contact-tax-file");
+  const taxStatus = $("#tax-exempt-status");
+  if (taxChk) {
+    taxChk.checked = !!state.contact.taxExempt;
+    taxWrap.hidden = !taxChk.checked;
+    if (state.contact.taxExemptOrg) taxOrg.value = state.contact.taxExemptOrg;
+    if (state.contact.taxExemptNumber) taxNum.value = state.contact.taxExemptNumber;
+    if (state.contact.taxExemptFileName) {
+      taxStatus.textContent = `On file: ${state.contact.taxExemptFileName}. Re-upload to replace.`;
+    }
+    taxChk.addEventListener("change", () => {
+      state.contact.taxExempt = taxChk.checked;
+      taxWrap.hidden = !taxChk.checked;
+      saveState();
+      // Re-render the payment total anywhere it appears on screen.
+      updateTotalBar();
+      if (typeof renderPaymentSummary === "function" && !$("#rental-summary")?.closest(".rental-step[hidden]")) renderPaymentSummary();
+    });
+    taxOrg.addEventListener("input", () => { state.contact.taxExemptOrg = taxOrg.value; saveState(); });
+    taxNum.addEventListener("input", () => { state.contact.taxExemptNumber = taxNum.value; saveState(); });
+    taxFile.addEventListener("change", async () => {
+      const f = taxFile.files && taxFile.files[0];
+      if (!f) return;
+      if (f.size > 1_500_000) {
+        taxStatus.textContent = "File is too big — please pick something under 1.5MB (a photo of the certificate is fine).";
+        taxStatus.style.color = "#8a2a20";
+        return;
+      }
+      taxStatus.textContent = "Reading…";
+      taxStatus.style.color = "";
+      try {
+        const dataUrl = await new Promise((res, rej) => {
+          const r = new FileReader();
+          r.onload = () => res(r.result);
+          r.onerror = () => rej(r.error);
+          r.readAsDataURL(f);
+        });
+        state.contact.taxExemptFileDataUrl = dataUrl;
+        state.contact.taxExemptFileName = f.name;
+        state.contact.taxExemptFileType = f.type;
+        saveState();
+        taxStatus.textContent = `Uploaded: ${f.name} (${Math.round(f.size / 1024)} KB). Tax will be waived at review.`;
+        taxStatus.style.color = "";
+      } catch (e) {
+        taxStatus.textContent = "Couldn't read that file. Try a different one.";
+        taxStatus.style.color = "#8a2a20";
+      }
+    });
+  }
+
   $("#to-step-4").addEventListener("click", () => {
     const err = $("#details-error");
     err.hidden = true;
@@ -603,6 +662,18 @@ function initStep3() {
       err.hidden = false;
       return;
     }
+    if (c.taxExempt) {
+      if (!c.taxExemptOrg || !c.taxExemptOrg.trim()) {
+        err.textContent = "Enter the tax-exempt organization name so we can match your certificate.";
+        err.hidden = false;
+        return;
+      }
+      if (!c.taxExemptFileDataUrl) {
+        err.textContent = "Upload your Texas sales-tax exemption certificate to waive tax on this rental.";
+        err.hidden = false;
+        return;
+      }
+    }
     goTo(4);
   });
 }
@@ -622,7 +693,11 @@ function renderPaymentSummary() {
   if (state.delivery === "extended") {
     lines.push(`<div class="row muted"><span>Extended delivery (25–100 mi)</span><span>Quoted separately</span></div>`);
   }
-  lines.push(`<div class="row"><span>Tax (${(TAX_RATE * 100).toFixed(2)}%)</span><span>${fmtMoney(p.tax)}</span></div>`);
+  if (p.taxExempt) {
+    lines.push(`<div class="row muted"><span>Tax (waived — exemption on file)</span><span>${fmtMoney(0)}</span></div>`);
+  } else {
+    lines.push(`<div class="row"><span>Tax (${(TAX_RATE * 100).toFixed(2)}%)</span><span>${fmtMoney(p.tax)}</span></div>`);
+  }
   lines.push(`<div class="row total"><span>Total</span><span>${fmtMoney(p.grand)}</span></div>`);
   out.innerHTML = lines.join("");
 
@@ -1131,6 +1206,7 @@ function buildBookingRecord() {
       subtotal: p.subtotal,
       deliveryFee: p.deliveryFee,
       tax: p.tax,
+      taxExempt: p.taxExempt,
       total: p.grand,
     },
   };

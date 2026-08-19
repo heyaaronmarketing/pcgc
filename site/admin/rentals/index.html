@@ -331,6 +331,35 @@
         }
         wrap.appendChild(agreeCard);
 
+        // Tax-exempt card — only rendered when the customer flagged
+        // exemption + uploaded a certificate. Owner needs one-click
+        // access to the file so it can be filed with the receipt.
+        if (c.taxExempt) {
+          const taxCard = document.createElement("div");
+          taxCard.className = "bk-checklist";
+          taxCard.style.background = "#fff4d6";
+          taxCard.style.borderColor = "#e8c669";
+          const isPdf = (c.taxExemptFileType || "").toLowerCase().includes("pdf");
+          const filename = (c.taxExemptFileName || "certificate").replace(/[^\w.\-]+/g, "_");
+          const parts = [
+            "<b>💰 TAX EXEMPT — no sales tax charged</b>",
+            "<div style='margin-top:.35rem;'>Organization: <b>" + (c.taxExemptOrg || "—") + "</b>" + (c.taxExemptNumber ? " · Cert # <code>" + c.taxExemptNumber + "</code>" : "") + "</div>",
+          ];
+          if (c.taxExemptFileDataUrl) {
+            parts.push("<div style='margin-top:.6rem; display:flex; gap:.5rem; flex-wrap:wrap;'>"
+              + "<a href='" + c.taxExemptFileDataUrl + "' target='_blank' rel='noopener' style='display:inline-block; background:#8a6d1e; color:#fff; padding:.4rem .8rem; border-radius:6px; text-decoration:none; font-size:.85rem; font-weight:600;'>View certificate</a>"
+              + "<a href='" + c.taxExemptFileDataUrl + "' download='" + filename + "' style='display:inline-block; background:#fff; color:#8a6d1e; border:1px solid #8a6d1e; padding:.4rem .8rem; border-radius:6px; text-decoration:none; font-size:.85rem; font-weight:600;'>Download</a>"
+              + "</div>");
+            if (!isPdf) {
+              parts.push("<img src='" + c.taxExemptFileDataUrl + "' alt='Tax-exempt certificate' style='max-width:320px; max-height:200px; margin-top:.6rem; border:1px solid var(--line); border-radius:6px; background:#fff;'>");
+            }
+          } else {
+            parts.push("<div style='margin-top:.35rem; color:#8a4a00;'>⚠ Customer did not upload a certificate. Follow up before pickup.</div>");
+          }
+          taxCard.innerHTML = parts.join("");
+          wrap.appendChild(taxCard);
+        }
+
         // Status control: dropdown lets the owner advance the booking
         // through New -> Picked Up / Delivered -> Returned. Setting it
         // to "returned" triggers the customer thank-you email from the
