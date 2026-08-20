@@ -24,16 +24,16 @@ const CARTS = [
     img: "/assets/photos/rentals/limo.jpg", desc: "6-seater Limo. Three rows of seating for the whole crew." },
   { id: "cart-3", cartNo: 3, name: "Cart #3", seats: 4, price: 75,
     make: "Yamaha", modelDetails: "Gas · Tan", serial: "J0B-001578",
-    img: "/assets/photos/rentals/4-seater-a.jpg", desc: "4-seater golf cart with rear flip seat." },
+    img: "/assets/photos/rentals/4-seater-b.jpg", desc: "4-seater golf cart with rear flip seat. Tan body." },
   { id: "cart-4", cartNo: 4, name: "Cart #4", seats: 4, price: 75,
     make: "Yamaha", modelDetails: "Gas · Tan", serial: "J0B-105687",
-    img: "/assets/photos/rentals/4-seater-b.jpg", desc: "4-seater golf cart with rear flip seat." },
+    img: "/assets/photos/rentals/4-seater-b.jpg", desc: "4-seater golf cart with rear flip seat. Tan body." },
   { id: "cart-5", cartNo: 5, name: "Cart #5", seats: 4, price: 75,
     make: "Yamaha", modelDetails: "Gas · Tan", serial: "J0B-105659",
-    img: "/assets/photos/rentals/4-seater-a.jpg", desc: "4-seater golf cart with rear flip seat." },
+    img: "/assets/photos/rentals/4-seater-b.jpg", desc: "4-seater golf cart with rear flip seat. Tan body." },
   { id: "cart-6", cartNo: 6, name: "Cart #6", seats: 4, price: 75,
     make: "Yamaha", modelDetails: "Gas · Grey", serial: "J0K-203736",
-    img: "/assets/photos/rentals/4-seater-b.jpg", desc: "4-seater golf cart with rear flip seat." },
+    img: "/assets/photos/rentals/4-seater-a.jpg", desc: "4-seater golf cart with rear flip seat. Charcoal-grey body — the only grey in the fleet." },
 ];
 
 // One copy of each cart exists in the fleet — a renter can pick up to
