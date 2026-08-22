@@ -69,7 +69,10 @@ NAV = [
 
 def head(title, desc, path="/", og_slug=None, noindex=False, structured_data=None):
     canonical = f"https://polkcountygolfcarts.com{path}"
-    og_image = f"/assets/og/{og_slug}.png" if og_slug else "/assets/og/home.png"
+    # Version-tag the OG image URL so Facebook/LinkedIn/X scrapers
+    # re-fetch when we update the artwork. Bump this string when the
+    # image bytes change.
+    og_image = (f"/assets/og/{og_slug}.png" if og_slug else "/assets/og/home.png") + "?v=v2sunset"
     robots = '<meta name="robots" content="noindex, nofollow">' if noindex else ''
     sd = ""
     if structured_data:
