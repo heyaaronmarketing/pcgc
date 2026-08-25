@@ -29,7 +29,7 @@
        an attachment through Resend. -->
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js" defer></script>
   <link rel="stylesheet" href="/assets/site.css">
-  <link rel="stylesheet" href="/assets/rentals.css?v=colorfix01">
+  <link rel="stylesheet" href="/assets/rentals.css?v=deliv01">
   <meta property="og:title" content="Rent a Golf Cart · Polk County Golf Carts">
   <meta property="og:description" content="Book a golf cart rental in East Texas — up to 8 carts per booking, free delivery within 25 miles of Livingston, extended service up to 75 miles.">
   <meta property="og:image" content="https://polkcountygolfcarts.com/assets/og/rentals.png">
@@ -71,16 +71,22 @@
       <span class="eyebrow">Step 1 of 4</span>
       <h1 id="s1-title">When do you need it?</h1>
       <p class="lede-text">Pick your dates first — we'll show you which carts are available for those days.</p>
+      <div class="rental-delivery-callout" style="display:flex; gap:.8rem; align-items:flex-start; background:#e6f1f3; border:1px solid #9fcfd7; border-radius:10px; padding:.8rem 1rem; margin:1rem 0 .5rem;">
+        <span aria-hidden="true" style="font-size:1.4rem; line-height:1;">🚛</span>
+        <div style="font-size:.95rem; line-height:1.4;">
+          <b style="color:#1f5a68;">We deliver.</b> Free pickup <em>and</em> delivery within 25 miles of Livingston · extended delivery 25–100 miles for a small fee. You'll pick pickup or delivery in the details step.
+        </div>
+      </div>
       <div class="rental-grid-2">
         <label class="rental-field">
-          <span>Pickup date</span>
+          <span>Rental date</span>
           <input type="date" id="date-start" required>
         </label>
         <label class="rental-field">
-          <span>Pickup time</span>
+          <span>Rental time</span>
           <select id="pickup-time" required>
-            <option value="am">Before noon (full-day pickup)</option>
-            <option value="pm">After noon (half-day pickup)</option>
+            <option value="am">Before noon (full-day rental)</option>
+            <option value="pm">After noon (half-day rental)</option>
           </select>
         </label>
         <label class="rental-field">
@@ -489,6 +495,6 @@
   Polk County Golf Carts · 1732 FM 3277, Livingston, TX · <a href="tel:9362231182">936-223-1182</a>
 </footer>
 
-<script src="/assets/rentals.js?v=colorfix01"></script>
+<script src="/assets/rentals.js?v=deliv01"></script>
 </body>
 </html>
