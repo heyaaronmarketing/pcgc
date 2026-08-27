@@ -41,6 +41,9 @@ export default {
     if (url.pathname === "/api/booking" && request.method === "GET") {
       return listBookings(request, env);
     }
+    if (url.pathname === "/api/attempts" && request.method === "GET") {
+      return listBookingAttempts(request, env);
+    }
     if (url.pathname.startsWith("/api/booking/") && request.method === "PATCH") {
       return updateBookingStatus(request, env, url);
     }
@@ -92,11 +95,97 @@ export default {
   },
 };
 
+// Public entry point — wraps the real impl so every failure and every
+// uncaught exception gets logged to KV under `attempt:<ts>:<id>` with a
+// 30-day TTL. The impl mutates `payload` via a callback so we can
+// include contact + dates + item count in the log even when validation
+// rejects the submission BEFORE those fields are persisted anywhere.
 async function submitBooking(request, env) {
+  let payload = null;
+  const setPayload = (p) => { payload = p; };
+  let response;
+  try {
+    response = await _submitBookingCore(request, env, setPayload);
+  } catch (e) {
+    console.error("booking uncaught:", e?.stack || e);
+    // Fire-and-forget log; never let a logging error mask the caller's failure.
+    logBookingAttempt(env, request, {
+      outcome: "throw",
+      code: 500,
+      error: String(e?.message || e).slice(0, 400),
+      payload,
+    }).catch((err) => console.error("attempt log (throw) failed:", err));
+    return json({ error: "internal error — please try again or call 936-223-1182" }, 500);
+  }
+  if (!response.ok) {
+    // Clone so we can peek at the body without consuming it for the caller.
+    let bodyErr = null;
+    try { bodyErr = (await response.clone().json())?.error || null; } catch {}
+    console.error(`booking failed [${response.status}] ${bodyErr || ""}`);
+    logBookingAttempt(env, request, {
+      outcome: "fail",
+      code: response.status,
+      error: bodyErr || `HTTP ${response.status}`,
+      payload,
+    }).catch((err) => console.error("attempt log (fail) failed:", err));
+  }
+  return response;
+}
+
+// Log ONE booking attempt (fail / throw) to KV. Successful bookings
+// already persist under `booking:*` so we don't double-log them.
+// Redacts payload down to just the diagnostic fields — never persists
+// the driver's-license image, signature, agreement PDF, or tax-exempt
+// certificate. TTL is 30 days.
+async function logBookingAttempt(env, request, entry) {
+  if (!env?.FEEDBACK_KV) return;
+  const ts = new Date().toISOString();
+  const idSuffix = crypto.randomUUID().slice(0, 6).toUpperCase();
+  const key = `attempt:${ts}:${idSuffix}`;
+  const p = entry.payload || {};
+  const c = p.contact || {};
+  const record = {
+    ts,
+    outcome: entry.outcome || "fail",
+    code: entry.code || null,
+    error: entry.error || null,
+    ip: request.headers.get("cf-connecting-ip") || "",
+    ua: (request.headers.get("user-agent") || "").slice(0, 500),
+    country: request.cf?.country || "",
+    // Diagnostic slice of the payload — enough to identify the customer
+    // and reproduce the shape, without persisting sensitive artifacts.
+    contact: {
+      name: c.name || null,
+      email: c.email || null,
+      phone: c.phone || null,
+      city: c.city || null,
+      state: c.state || null,
+    },
+    dates: p.dates || null,
+    delivery: p.delivery || null,
+    itemCount: Array.isArray(p.items) ? p.items.length : null,
+    itemIds: Array.isArray(p.items) ? p.items.map((i) => i?.id || null).slice(0, 10) : null,
+    subtotal: p.pricing?.subtotal ?? null,
+    grand: p.pricing?.grand ?? p.pricing?.total ?? null,
+    hasSignature: !!p.signedAgreement?.signatureDataUrl,
+    signatureBytes: p.signedAgreement?.signatureDataUrl?.length || 0,
+    hasDlImage: !!p.signedAgreement?.dlImageDataUrl,
+    hasAgreementPdf: !!p.signedAgreement?.pdfBase64,
+    agreementPdfBytes: p.signedAgreement?.pdfBase64?.length || 0,
+    taxExempt: !!p.contact?.taxExempt,
+    hasTaxCert: !!p.contact?.taxExemptFileDataUrl,
+  };
+  await env.FEEDBACK_KV.put(key, JSON.stringify(record), {
+    expirationTtl: 60 * 60 * 24 * 30,  // 30 days
+  });
+}
+
+async function _submitBookingCore(request, env, setPayload) {
   if (!env.FEEDBACK_KV) return json({ error: "storage not configured" }, 503);
   let payload;
   try {
     payload = await request.json();
+    setPayload(payload);
   } catch {
     return json({ error: "invalid JSON" }, 400);
   }
@@ -617,6 +706,28 @@ async function listBookings(request, env) {
     })
   );
   return json({ entries: entries.filter(Boolean) });
+}
+
+// Admin-only listing of failed / uncaught booking attempts. Keys live
+// under `attempt:<ts>:<id>` with a 30-day TTL. Newest first.
+async function listBookingAttempts(request, env) {
+  if (!env.FEEDBACK_KV) return json({ error: "kv not configured" }, 503);
+  const auth = await checkAdminAuth(request, env);
+  if (auth) return auth;
+  const result = await env.FEEDBACK_KV.list({ prefix: "attempt:", limit: KV_LIST_LIMIT });
+  const keys = result.keys.slice().reverse();
+  const entries = await Promise.all(
+    keys.map(async (k) => {
+      const raw = await env.FEEDBACK_KV.get(k.name);
+      if (!raw) return null;
+      try {
+        const rec = JSON.parse(raw);
+        rec._key = k.name;
+        return rec;
+      } catch { return null; }
+    })
+  );
+  return json({ attempts: entries.filter(Boolean) });
 }
 
 // Public — used by the /rentals/ wizard to show booked carts as

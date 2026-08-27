@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Booking Attempts · PCGC Admin</title>
+  <link rel="stylesheet" href="/assets/site.css">
+  <style>
+    body { background:#fbf8f3; color:#222; font-family: system-ui,-apple-system,Segoe UI,sans-serif; }
+    .wrap { max-width: 1100px; margin: 0 auto; padding: 1.25rem 1rem 3rem; }
+    h1 { font: 700 1.9rem/1.15 Georgia, serif; color:#1f5a68; margin:.4rem 0 .15rem; }
+    .sub { color:#666; font-size:.9rem; margin-bottom:1.2rem; }
+    nav.crumbs a { color:#1f5a68; text-decoration:none; margin-right:.7rem; }
+    nav.crumbs { font-size:.85rem; color:#888; margin-bottom:.9rem; }
+
+    .kpis { display:grid; grid-template-columns: repeat(4,1fr); gap: .75rem; margin: .5rem 0 1.4rem; }
+    .kpi { background:#fff; border:1px solid #ecd9c7; border-radius:12px; padding: .9rem 1.05rem; }
+    .kpi b { display:block; font: 700 1.5rem/1.1 Georgia, serif; color:#1f5a68; }
+    .kpi span { color:#666; font-size:.78rem; text-transform:uppercase; letter-spacing:.05em; }
+
+    .att { background:#fff; border:1px solid #ecd9c7; border-radius:12px; padding: .9rem 1.15rem; margin-bottom:.75rem; box-shadow: 0 1px 3px rgba(0,0,0,.04); }
+    .att h3 { font: 700 1rem/1.2 Georgia, serif; color:#1f5a68; margin:0 0 .3rem; }
+    .att .row { display:flex; gap:1rem; flex-wrap:wrap; align-items:baseline; font-size:.88rem; }
+    .att .pill { display:inline-block; padding:.15rem .55rem; border-radius:999px; font-weight:700; font-size:.75rem; letter-spacing:.03em; text-transform:uppercase; }
+    .att .pill.fail { background:#f8e3e1; color:#8a2a20; }
+    .att .pill.throw { background:#3a1418; color:#fce9e6; }
+    .att .code { font: 600 .8rem ui-monospace, monospace; color:#666; }
+    .att .err { color:#8a2a20; font-weight:600; }
+    .att details { margin-top:.5rem; }
+    .att details summary { cursor:pointer; color:#1f5a68; font-size:.85rem; }
+    .att pre { background:#fbf8f3; border:1px solid #ecd9c7; border-radius:8px; padding:.6rem .8rem; font-size:.75rem; overflow-x:auto; white-space:pre-wrap; word-break:break-all; }
+    .muted { color:#888; }
+
+    /* Login view (matches /admin/rentals/) */
+    .login-view { max-width:420px; margin:3rem auto; background:#fff; border:1px solid #ecd9c7; border-radius:12px; padding:1.5rem 1.75rem; }
+    .login-view h1 { margin:0 0 1rem; }
+    .login-view label { display:block; margin:.6rem 0 .25rem; font-weight:600; font-size:.9rem; }
+    .login-view input { width:100%; padding:.6rem .75rem; font-size:1rem; border:1px solid #ecd9c7; border-radius:8px; box-sizing:border-box; }
+    .login-view button { margin-top:1rem; background:#1f5a68; color:#fff; border:0; padding:.65rem 1.1rem; font-weight:600; border-radius:8px; cursor:pointer; }
+    .login-view .err { color:#8a2a20; font-size:.85rem; margin-top:.5rem; }
+    .empty { background:#fff; border:1px dashed #ecd9c7; border-radius:12px; padding:2rem 1rem; text-align:center; color:#666; }
+  </style>
+</head>
+<body>
+<div id="login-view" class="login-view" hidden>
+  <h1>Sign in</h1>
+  <p class="muted" style="font-size:.9rem;">Admin password required to view booking attempts.</p>
+  <form id="login-form">
+    <label for="login-password">Password</label>
+    <input id="login-password" type="password" required autofocus autocomplete="current-password">
+    <button id="login-submit" type="submit">Sign in</button>
+    <div id="login-error" class="err" hidden></div>
+  </form>
+</div>
+
+<div id="attempts-view" class="wrap" hidden>
+  <nav class="crumbs">
+    <a href="/admin/dashboard/">← Dashboard</a>
+    <a href="/admin/rentals/">Bookings</a>
+    <a href="/admin/social-campaign/">Social campaign</a>
+    <a href="/admin/seo/">SEO ranks</a>
+    <span>Booking attempts</span>
+  </nav>
+  <h1>Booking attempts (failures + errors)</h1>
+  <p class="sub">Every failed or errored /api/booking submission for the last 30 days. Successful bookings live in <a href="/admin/rentals/" style="color:#1f5a68;">Bookings</a>.</p>
+
+  <div class="kpis" id="kpis" hidden>
+    <div class="kpi"><b id="kpi-total">0</b><span>attempts logged</span></div>
+    <div class="kpi"><b id="kpi-24h">0</b><span>last 24 hours</span></div>
+    <div class="kpi"><b id="kpi-throw">0</b><span>uncaught throws</span></div>
+    <div class="kpi"><b id="kpi-402">0</b><span>payment declines</span></div>
+  </div>
+
+  <div id="attempts-list"></div>
+  <div id="empty" class="empty" hidden>
+    <b>No attempts logged.</b><br>
+    <span class="muted">Either everything's succeeded (nice) or the logger hasn't been deployed yet.</span>
+  </div>
+</div>
+
+<script>
+  const loginView = document.getElementById("login-view");
+  const attemptsView = document.getElementById("attempts-view");
+  const loginForm = document.getElementById("login-form");
+  const loginPassword = document.getElementById("login-password");
+  const loginError = document.getElementById("login-error");
+  const loginSubmit = document.getElementById("login-submit");
+  const list = document.getElementById("attempts-list");
+  const empty = document.getElementById("empty");
+  const kpis = document.getElementById("kpis");
+
+  function escHtml(s) {
+    return String(s ?? "").replace(/[&<>"']/g, (c) => (
+      { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]
+    ));
+  }
+
+  function fmtTs(iso) {
+    try { return new Date(iso).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" }); }
+    catch { return iso || "—"; }
+  }
+
+  function renderAttempts(attempts) {
+    kpis.hidden = false;
+    document.getElementById("kpi-total").textContent = attempts.length;
+    const now = Date.now();
+    const day = 24 * 60 * 60 * 1000;
+    document.getElementById("kpi-24h").textContent =
+      attempts.filter(a => now - Date.parse(a.ts) <= day).length;
+    document.getElementById("kpi-throw").textContent =
+      attempts.filter(a => a.outcome === "throw").length;
+    document.getElementById("kpi-402").textContent =
+      attempts.filter(a => a.code === 402).length;
+
+    if (!attempts.length) { empty.hidden = false; list.innerHTML = ""; return; }
+    empty.hidden = true;
+    list.innerHTML = attempts.map((a) => {
+      const c = a.contact || {};
+      const outcome = a.outcome || "fail";
+      const err = a.error || `HTTP ${a.code || "?"}`;
+      const dates = a.dates ? `${a.dates.start || "?"} → ${a.dates.end || "?"}` : "";
+      const contactLine = [c.name, c.email, c.phone].filter(Boolean).join(" · ") || "(no contact captured)";
+      const cityState = [c.city, c.state].filter(Boolean).join(", ");
+      const payloadSummary = {
+        itemCount: a.itemCount,
+        itemIds: a.itemIds,
+        delivery: a.delivery,
+        subtotal: a.subtotal,
+        grand: a.grand,
+        hasSignature: a.hasSignature,
+        signatureBytes: a.signatureBytes,
+        hasDlImage: a.hasDlImage,
+        hasAgreementPdf: a.hasAgreementPdf,
+        agreementPdfBytes: a.agreementPdfBytes,
+        taxExempt: a.taxExempt,
+        hasTaxCert: a.hasTaxCert,
+      };
+      return `<article class="att">
+        <div class="row">
+          <span class="pill ${outcome}">${outcome === "throw" ? "UNCAUGHT" : "FAIL " + (a.code || "?")}</span>
+          <span class="code">${escHtml(fmtTs(a.ts))}</span>
+          <span class="muted">${escHtml(a.ip || "?")}${a.country ? " · " + escHtml(a.country) : ""}</span>
+        </div>
+        <h3 class="err">${escHtml(err)}</h3>
+        <div class="row">
+          <span><b>Contact:</b> ${escHtml(contactLine)}</span>
+          ${dates ? `<span><b>Dates:</b> ${escHtml(dates)}</span>` : ""}
+          ${cityState ? `<span><b>Location:</b> ${escHtml(cityState)}</span>` : ""}
+        </div>
+        <details>
+          <summary>Payload diagnostics</summary>
+          <pre>${escHtml(JSON.stringify(payloadSummary, null, 2))}</pre>
+          <pre>User-agent: ${escHtml(a.ua || "(none)")}</pre>
+        </details>
+      </article>`;
+    }).join("");
+  }
+
+  async function loadAttempts() {
+    try {
+      const res = await fetch("/api/attempts", { credentials: "same-origin" });
+      if (res.status === 401) { showLogin(); return; }
+      if (!res.ok) { list.innerHTML = `<div class="empty err">Failed to load: HTTP ${res.status}</div>`; showAttempts(); return; }
+      const data = await res.json();
+      showAttempts();
+      renderAttempts(data.attempts || []);
+    } catch (e) {
+      list.innerHTML = `<div class="empty err">Network error: ${escHtml(e.message)}</div>`;
+      showAttempts();
+    }
+  }
+
+  function showLogin() { loginView.hidden = false; attemptsView.hidden = true; }
+  function showAttempts() { loginView.hidden = true; attemptsView.hidden = false; }
+
+  loginForm.addEventListener("submit", async (ev) => {
+    ev.preventDefault();
+    loginError.hidden = true;
+    loginSubmit.disabled = true;
+    const prev = loginSubmit.textContent;
+    loginSubmit.textContent = "Signing in…";
+    try {
+      const res = await fetch("/api/admin/login", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        credentials: "same-origin",
+        body: JSON.stringify({ password: loginPassword.value }),
+      });
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}));
+        loginError.textContent = d.error || `Sign-in failed (HTTP ${res.status})`;
+        loginError.hidden = false;
+        loginSubmit.disabled = false;
+        loginSubmit.textContent = prev;
+        return;
+      }
+      loginPassword.value = "";
+      loadAttempts();
+    } catch (e) {
+      loginError.textContent = "Network error: " + e.message;
+      loginError.hidden = false;
+      loginSubmit.disabled = false;
+      loginSubmit.textContent = prev;
+    }
+  });
+
+  loadAttempts();
+</script>
+</body>
+</html>
