@@ -776,21 +776,35 @@ async function checkAvailability(request, env, url) {
 // with typos in KV that don't match the UI dropdown.
 const BOOKING_STATUSES = ["new", "picked-up", "delivered", "returned"];
 
+// Generic PATCH on /api/booking/<PCGC-XXXXXX>. Accepts:
+//   - status: one of BOOKING_STATUSES  → runs the lifecycle update
+//     (writes statusUpdatedAt; fires the customer thank-you email on
+//     the first transition to "returned")
+//   - edit:   { items, dates, contact, delivery, pricing, notes }
+//             → merges the whitelisted fields onto the record so the
+//             owner can swap a cart, correct a date, fix a typo in
+//             contact info, etc., from /admin/rentals/. Fields not
+//             listed here are ignored so a stray payload key can't
+//             overwrite immutable data (id, ts, agreement, payment).
+// A single PATCH may include both — status update + field edit — and
+// they land in one KV write.
 async function updateBookingStatus(request, env, url) {
   const auth = await checkAdminAuth(request, env);
   if (auth) return auth;
   if (!env.FEEDBACK_KV) return json({ error: "kv not configured" }, 503);
 
-  // Path is /api/booking/<PCGC-XXXXXX>; the id segment uniquely
-  // identifies the booking but the KV key is booking:<ts>:<suffix>,
-  // so we have to scan to find the right record.
   const id = decodeURIComponent(url.pathname.replace(/^\/api\/booking\//, ""));
   if (!id) return json({ error: "id required" }, 400);
 
   let body;
   try { body = await request.json(); } catch { return json({ error: "invalid body" }, 400); }
-  const newStatus = body?.status;
-  if (!BOOKING_STATUSES.includes(newStatus)) {
+
+  const hasStatus = body && Object.prototype.hasOwnProperty.call(body, "status");
+  const hasEdit = body && body.edit && typeof body.edit === "object";
+  if (!hasStatus && !hasEdit) {
+    return json({ error: "body must include 'status' and/or 'edit'" }, 400);
+  }
+  if (hasStatus && !BOOKING_STATUSES.includes(body.status)) {
     return json({ error: "invalid status", allowed: BOOKING_STATUSES }, 400);
   }
 
@@ -813,19 +827,57 @@ async function updateBookingStatus(request, env, url) {
   } while (cursor);
   if (!match) return json({ error: "booking not found", id }, 404);
 
+  const now = new Date().toISOString();
+  let statusChange = null;
+  let editApplied = null;
+
+  // ---- Apply status change (if any) ----
   const prevStatus = match.rec.status || "new";
-  if (prevStatus === newStatus) {
-    return json({ ok: true, status: newStatus, unchanged: true });
+  if (hasStatus && body.status !== prevStatus) {
+    match.rec.status = body.status;
+    match.rec.statusUpdatedAt = now;
+    statusChange = { prev: prevStatus, next: body.status };
   }
-  match.rec.status = newStatus;
-  match.rec.statusUpdatedAt = new Date().toISOString();
+
+  // ---- Apply field edits (if any) ----
+  if (hasEdit) {
+    const EDITABLE = ["items", "dates", "contact", "delivery", "pricing", "notes"];
+    const changed = [];
+    for (const key of EDITABLE) {
+      if (Object.prototype.hasOwnProperty.call(body.edit, key)) {
+        const val = body.edit[key];
+        // Shallow validate a couple of shapes so a malformed payload
+        // doesn't corrupt the record.
+        if (key === "items" && !Array.isArray(val)) continue;
+        if (key === "dates" && (val === null || typeof val !== "object")) continue;
+        if (key === "contact" && (val === null || typeof val !== "object")) continue;
+        if (key === "pricing" && (val === null || typeof val !== "object")) continue;
+        match.rec[key] = val;
+        changed.push(key);
+      }
+    }
+    if (changed.length) {
+      match.rec.editedAt = now;
+      // Keep a small append-only audit trail so we can see who
+      // touched what over time. Cap length so it can't balloon.
+      const trail = Array.isArray(match.rec.edits) ? match.rec.edits : [];
+      trail.push({ at: now, fields: changed });
+      match.rec.edits = trail.slice(-20);
+      editApplied = { fields: changed };
+    }
+  }
+
+  if (!statusChange && !editApplied) {
+    return json({ ok: true, unchanged: true, id });
+  }
+
   await env.FEEDBACK_KV.put(match.key, JSON.stringify(match.rec));
 
   // Fire the thank-you email the first time a booking lands on
   // "returned". Skip if it was already returned (shouldn't happen via
   // the strict-equality check above, but cheap belt-and-suspenders).
   let emailResult = null;
-  if (newStatus === "returned" && prevStatus !== "returned") {
+  if (statusChange && statusChange.next === "returned" && statusChange.prev !== "returned") {
     if (env.RESEND_API_KEY) {
       try {
         await sendThankYouEmail(match.rec, env);
@@ -839,7 +891,15 @@ async function updateBookingStatus(request, env, url) {
     }
   }
 
-  return json({ ok: true, status: newStatus, prevStatus, email: emailResult });
+  return json({
+    ok: true,
+    id,
+    status: match.rec.status,
+    prevStatus,
+    statusChange,
+    editApplied,
+    email: emailResult,
+  });
 }
 
 async function deleteBooking(request, env, url) {

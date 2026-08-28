@@ -212,6 +212,31 @@
       const deliveryLabel = { pickup: "Pickup at shop", local: "Free delivery (≤25 mi)", extended: "Extended delivery (25–100 mi, fee quoted separately)" };
       const statusLabel = { "new": "New Order", "picked-up": "Picked Up", "delivered": "Delivered", "returned": "Returned" };
       const statusOptions = ["new", "picked-up", "delivered", "returned"];
+      // Fleet catalog — mirrors CARTS[] in /assets/rentals.js so the
+      // edit form knows what carts exist, their price, and their color
+      // when the owner swaps carts on a booking.
+      const CARTS = [
+        { id: "cart-2", name: "Cart #2 — The Limo",  price: 125, color: "White",  seats: 6 },
+        { id: "cart-3", name: "Cart #3 — 4-seater",  price:  75, color: "Tan",    seats: 4 },
+        { id: "cart-4", name: "Cart #4 — 4-seater",  price:  75, color: "Tan",    seats: 4 },
+        { id: "cart-5", name: "Cart #5 — 4-seater",  price:  75, color: "Tan",    seats: 4 },
+        { id: "cart-6", name: "Cart #6 — 4-seater",  price:  75, color: "Grey",   seats: 4 },
+      ];
+      const TAX_RATE = 0.0825;
+      // Fractional-day math must match rentals.js — see chargedDays()
+      // there. Standard rental math: pickup after noon = -0.5,
+      // dropoff before noon = -0.5, base = inclusive-day count.
+      function chargedDays(startIso, endIso, pt, dt) {
+        if (!startIso || !endIso) return 0;
+        const s = new Date(startIso + "T00:00:00").getTime();
+        const e = new Date(endIso + "T00:00:00").getTime();
+        const inclusive = Math.max(0, Math.round((e - s) / 86400000)) + 1;
+        let d = inclusive;
+        if (pt === "pm") d -= 0.5;
+        if (dt === "am") d -= 0.5;
+        return Math.max(0, d);
+      }
+      // fmtMoney is already defined above
       // 3-months-out threshold for the 50% deposit indicator. Uses the
       // pickup date, matches the customer-facing rule on Step 4 of the
       // /rentals/ flow.
@@ -373,9 +398,268 @@
             ${statusOptions.map(s => `<option value="${s}"${s === status ? " selected" : ""}>${statusLabel[s]}</option>`).join("")}
           </select>
           <span class="bk-status-msg"></span>
-          <button type="button" class="bk-delete-btn" data-id="${b.id}" style="margin-left:auto; background:#fff; color:#b3392e; border:1px solid #b3392e; border-radius:6px; padding:.35rem .7rem; font-size:.82rem; font-weight:600; cursor:pointer;">Delete</button>
+          <button type="button" class="bk-edit-btn" data-id="${b.id}" style="margin-left:auto; background:#fff; color:#1f5a68; border:1px solid #1f5a68; border-radius:6px; padding:.35rem .7rem; font-size:.82rem; font-weight:600; cursor:pointer;">Edit</button>
+          <button type="button" class="bk-delete-btn" data-id="${b.id}" style="background:#fff; color:#b3392e; border:1px solid #b3392e; border-radius:6px; padding:.35rem .7rem; font-size:.82rem; font-weight:600; cursor:pointer;">Delete</button>
         `;
         wrap.appendChild(statusRow);
+
+        // ---- Edit panel (hidden by default) ----
+        const editBtn = statusRow.querySelector(".bk-edit-btn");
+        const editPanel = document.createElement("div");
+        editPanel.className = "bk-edit-panel";
+        editPanel.hidden = true;
+        editPanel.style.cssText = "background:#f4f9fa; border:1px solid #9fcfd7; border-left:4px solid #1f5a68; border-radius:10px; padding:1rem 1.15rem; margin-top:.75rem;";
+        wrap.appendChild(editPanel);
+
+        function renderEditPanel() {
+          const editDates = b.dates || {};
+          const cur = new Set((b.items || []).map(it => it.id));
+          const pt = editDates.pickupTime || "am";
+          const dt = editDates.dropoffTime || "am";
+          const cartRows = CARTS.map(c => `
+            <label style="display:flex; gap:.55rem; align-items:center; padding:.35rem .55rem; border:1px solid ${cur.has(c.id) ? '#1f5a68' : '#dcd2c2'}; background:${cur.has(c.id) ? '#e6f1f3' : '#fff'}; border-radius:8px; cursor:pointer;">
+              <input type="checkbox" class="ed-cart" data-cart-id="${c.id}" data-cart-name="${c.name}" data-cart-price="${c.price}" ${cur.has(c.id) ? 'checked' : ''}>
+              <span style="flex:1;"><b>${c.name}</b> <small style="color:#666;">· ${c.color} · ${c.seats}-seater</small></span>
+              <span style="color:#1f5a68; font-weight:700;">$${c.price}<small style="color:#888; font-weight:500;">/day</small></span>
+            </label>`).join("");
+          editPanel.innerHTML = `
+            <h4 style="margin:.15rem 0 .75rem; color:#1f5a68; font: 700 1rem/1.2 Georgia, serif;">Edit booking ${b.id}</h4>
+
+            <div style="margin-bottom:1rem;">
+              <div style="font-weight:600; font-size:.82rem; color:#666; text-transform:uppercase; letter-spacing:.05em; margin-bottom:.4rem;">Carts</div>
+              <div style="display:flex; flex-direction:column; gap:.35rem;">${cartRows}</div>
+            </div>
+
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:.75rem; margin-bottom:1rem;">
+              <label style="display:flex; flex-direction:column; gap:.25rem;">
+                <span style="font-weight:600; font-size:.82rem; color:#666;">Rental date</span>
+                <input type="date" class="ed-input" id="ed-start-${b.id}" value="${editDates.start || ''}" style="padding:.5rem .65rem; border:1px solid #dcd2c2; border-radius:8px; font-size:.9rem;">
+              </label>
+              <label style="display:flex; flex-direction:column; gap:.25rem;">
+                <span style="font-weight:600; font-size:.82rem; color:#666;">Rental time</span>
+                <select class="ed-input" id="ed-pt-${b.id}" style="padding:.5rem .65rem; border:1px solid #dcd2c2; border-radius:8px; font-size:.9rem;">
+                  <option value="am"${pt === 'am' ? ' selected' : ''}>Before noon (full day)</option>
+                  <option value="pm"${pt === 'pm' ? ' selected' : ''}>After noon (half day)</option>
+                </select>
+              </label>
+              <label style="display:flex; flex-direction:column; gap:.25rem;">
+                <span style="font-weight:600; font-size:.82rem; color:#666;">Return date</span>
+                <input type="date" class="ed-input" id="ed-end-${b.id}" value="${editDates.end || ''}" style="padding:.5rem .65rem; border:1px solid #dcd2c2; border-radius:8px; font-size:.9rem;">
+              </label>
+              <label style="display:flex; flex-direction:column; gap:.25rem;">
+                <span style="font-weight:600; font-size:.82rem; color:#666;">Return time</span>
+                <select class="ed-input" id="ed-dt-${b.id}" style="padding:.5rem .65rem; border:1px solid #dcd2c2; border-radius:8px; font-size:.9rem;">
+                  <option value="am"${dt === 'am' ? ' selected' : ''}>Before noon (half day)</option>
+                  <option value="pm"${dt === 'pm' ? ' selected' : ''}>After noon (full day)</option>
+                </select>
+              </label>
+            </div>
+
+            <div style="margin-bottom:1rem;">
+              <div style="font-weight:600; font-size:.82rem; color:#666; text-transform:uppercase; letter-spacing:.05em; margin-bottom:.4rem;">Delivery</div>
+              <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+                ${["pickup", "local", "extended"].map(v => `
+                  <label style="display:flex; gap:.4rem; align-items:center; cursor:pointer;">
+                    <input type="radio" name="ed-delivery-${b.id}" value="${v}" ${b.delivery === v ? 'checked' : ''}>
+                    <span>${deliveryLabel[v]}</span>
+                  </label>`).join("")}
+              </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:.75rem; margin-bottom:1rem;">
+              <label style="display:flex; flex-direction:column; gap:.25rem;">
+                <span style="font-weight:600; font-size:.82rem; color:#666;">Name</span>
+                <input type="text" class="ed-input" id="ed-name-${b.id}" value="${(c.name || '').replace(/"/g, '&quot;')}" style="padding:.5rem .65rem; border:1px solid #dcd2c2; border-radius:8px; font-size:.9rem;">
+              </label>
+              <label style="display:flex; flex-direction:column; gap:.25rem;">
+                <span style="font-weight:600; font-size:.82rem; color:#666;">Phone</span>
+                <input type="tel" class="ed-input" id="ed-phone-${b.id}" value="${(c.phone || '').replace(/"/g, '&quot;')}" style="padding:.5rem .65rem; border:1px solid #dcd2c2; border-radius:8px; font-size:.9rem;">
+              </label>
+              <label style="display:flex; flex-direction:column; gap:.25rem; grid-column: span 2;">
+                <span style="font-weight:600; font-size:.82rem; color:#666;">Email</span>
+                <input type="email" class="ed-input" id="ed-email-${b.id}" value="${(c.email || '').replace(/"/g, '&quot;')}" style="padding:.5rem .65rem; border:1px solid #dcd2c2; border-radius:8px; font-size:.9rem;">
+              </label>
+              ${b.delivery !== "pickup" ? `
+              <label style="display:flex; flex-direction:column; gap:.25rem; grid-column: span 2;">
+                <span style="font-weight:600; font-size:.82rem; color:#666;">Drop-off location</span>
+                <input type="text" class="ed-input" id="ed-addr-${b.id}" value="${(c.address || '').replace(/"/g, '&quot;')}" style="padding:.5rem .65rem; border:1px solid #dcd2c2; border-radius:8px; font-size:.9rem;">
+              </label>` : ""}
+              <label style="display:flex; flex-direction:column; gap:.25rem; grid-column: span 2;">
+                <span style="font-weight:600; font-size:.82rem; color:#666;">Notes</span>
+                <textarea class="ed-input" id="ed-notes-${b.id}" rows="2" style="padding:.5rem .65rem; border:1px solid #dcd2c2; border-radius:8px; font-size:.9rem; font-family:inherit; resize:vertical;">${(c.notes || "").replace(/</g, '&lt;')}</textarea>
+              </label>
+            </div>
+
+            <div id="ed-total-${b.id}" style="background:#fff; border:1px solid #dcd2c2; border-radius:8px; padding:.6rem .85rem; font-size:.9rem; margin-bottom:1rem;">
+              <div style="display:flex; justify-content:space-between;"><span>Charged length:</span><span id="ed-days-${b.id}">—</span></div>
+              <div style="display:flex; justify-content:space-between;"><span>Subtotal:</span><span id="ed-sub-${b.id}">—</span></div>
+              <div style="display:flex; justify-content:space-between;"><span>Tax (8.25%):</span><span id="ed-tax-${b.id}">—</span></div>
+              <div style="display:flex; justify-content:space-between; font-weight:700; border-top:1px solid #ecd9c7; padding-top:.35rem; margin-top:.35rem;"><span>Total:</span><span id="ed-grand-${b.id}">—</span></div>
+            </div>
+
+            <div style="display:flex; gap:.6rem; align-items:center;">
+              <button type="button" class="ed-save" style="background:#1f5a68; color:#fff; border:0; border-radius:6px; padding:.55rem 1.1rem; font-weight:600; cursor:pointer;">Save changes</button>
+              <button type="button" class="ed-cancel" style="background:#fff; color:#666; border:1px solid #dcd2c2; border-radius:6px; padding:.55rem 1.1rem; font-weight:500; cursor:pointer;">Cancel</button>
+              <span class="ed-msg" style="font-size:.85rem; color:#666;"></span>
+            </div>
+          `;
+
+          function recompute() {
+            const start = editPanel.querySelector(`#ed-start-${b.id}`).value;
+            const end = editPanel.querySelector(`#ed-end-${b.id}`).value;
+            const pt = editPanel.querySelector(`#ed-pt-${b.id}`).value;
+            const dt = editPanel.querySelector(`#ed-dt-${b.id}`).value;
+            const days = chargedDays(start, end, pt, dt);
+            const perDay = [...editPanel.querySelectorAll(".ed-cart:checked")]
+              .reduce((s, el) => s + Number(el.dataset.cartPrice), 0);
+            const subtotal = perDay * days;
+            // Tax honors the customer's existing tax-exempt flag; edit
+            // form doesn't currently expose that toggle (rare + needs
+            // the certificate flow).
+            const isExempt = !!(c.taxExempt);
+            const tax = isExempt ? 0 : subtotal * TAX_RATE;
+            const grand = subtotal + tax;
+            editPanel.querySelector(`#ed-days-${b.id}`).textContent = days + " day" + (days === 1 ? "" : "s");
+            editPanel.querySelector(`#ed-sub-${b.id}`).textContent = fmtMoney(subtotal);
+            editPanel.querySelector(`#ed-tax-${b.id}`).textContent = isExempt ? "Waived (exempt)" : fmtMoney(tax);
+            editPanel.querySelector(`#ed-grand-${b.id}`).textContent = fmtMoney(grand);
+          }
+          editPanel.addEventListener("change", (ev) => {
+            if (ev.target.matches(".ed-cart, .ed-input")) recompute();
+            // Toggle checkbox tile styling as the owner selects
+            if (ev.target.matches(".ed-cart")) {
+              const wrapEl = ev.target.closest("label");
+              if (ev.target.checked) {
+                wrapEl.style.border = "1px solid #1f5a68";
+                wrapEl.style.background = "#e6f1f3";
+              } else {
+                wrapEl.style.border = "1px solid #dcd2c2";
+                wrapEl.style.background = "#fff";
+              }
+            }
+          });
+          recompute();
+
+          editPanel.querySelector(".ed-cancel").addEventListener("click", () => {
+            editPanel.hidden = true;
+            editBtn.textContent = "Edit";
+          });
+
+          editPanel.querySelector(".ed-save").addEventListener("click", async () => {
+            const saveBtn = editPanel.querySelector(".ed-save");
+            const edMsg = editPanel.querySelector(".ed-msg");
+            const selectedCarts = [...editPanel.querySelectorAll(".ed-cart:checked")].map(el => ({
+              id: el.dataset.cartId,
+              name: el.dataset.cartName,
+              qty: 1,
+              pricePerDay: Number(el.dataset.cartPrice),
+            }));
+            if (!selectedCarts.length) {
+              edMsg.textContent = "Pick at least one cart.";
+              edMsg.style.color = "#b3392e";
+              return;
+            }
+            const start = editPanel.querySelector(`#ed-start-${b.id}`).value;
+            const end = editPanel.querySelector(`#ed-end-${b.id}`).value;
+            const pt = editPanel.querySelector(`#ed-pt-${b.id}`).value;
+            const dt = editPanel.querySelector(`#ed-dt-${b.id}`).value;
+            if (!start || !end) {
+              edMsg.textContent = "Both rental and return dates are required.";
+              edMsg.style.color = "#b3392e";
+              return;
+            }
+            const days = chargedDays(start, end, pt, dt);
+            if (days < 0.5) {
+              edMsg.textContent = "Rental must be at least a half day.";
+              edMsg.style.color = "#b3392e";
+              return;
+            }
+            const perDay = selectedCarts.reduce((s, c2) => s + c2.pricePerDay, 0);
+            const subtotal = perDay * days;
+            const isExempt = !!(c.taxExempt);
+            const tax = isExempt ? 0 : subtotal * TAX_RATE;
+            const grand = subtotal + tax;
+            const items = selectedCarts.map(c2 => ({
+              ...c2,
+              lineTotal: c2.pricePerDay * c2.qty * days,
+            }));
+            const delivery = editPanel.querySelector(`input[name="ed-delivery-${b.id}"]:checked`).value;
+            const addrInput = editPanel.querySelector(`#ed-addr-${b.id}`);
+            const editPayload = {
+              items,
+              dates: { ...(b.dates || {}), start, end, pickupTime: pt, dropoffTime: dt, days },
+              delivery,
+              contact: {
+                ...(b.contact || {}),
+                name: editPanel.querySelector(`#ed-name-${b.id}`).value.trim(),
+                email: editPanel.querySelector(`#ed-email-${b.id}`).value.trim(),
+                phone: editPanel.querySelector(`#ed-phone-${b.id}`).value.trim(),
+                notes: editPanel.querySelector(`#ed-notes-${b.id}`).value,
+                ...(addrInput ? { address: addrInput.value.trim() } : {}),
+              },
+              pricing: {
+                ...(b.pricing || {}),
+                subtotal,
+                tax,
+                taxExempt: isExempt,
+                total: grand,
+                grand,
+                days,
+              },
+            };
+            saveBtn.disabled = true;
+            saveBtn.textContent = "Saving…";
+            edMsg.textContent = "";
+            try {
+              const res = await fetch(`/api/booking/${encodeURIComponent(b.id)}`, {
+                method: "PATCH",
+                headers: { "content-type": "application/json" },
+                credentials: "same-origin",
+                body: JSON.stringify({ edit: editPayload }),
+              });
+              const data = await res.json().catch(() => ({}));
+              if (!res.ok) {
+                edMsg.textContent = "Save failed: " + (data.error || res.status);
+                edMsg.style.color = "#b3392e";
+                saveBtn.disabled = false;
+                saveBtn.textContent = "Save changes";
+                return;
+              }
+              // Merge local state so a subsequent Edit reopens with new values
+              Object.assign(b, editPayload);
+              b.items = editPayload.items;
+              b.dates = editPayload.dates;
+              b.contact = editPayload.contact;
+              b.pricing = editPayload.pricing;
+              b.delivery = editPayload.delivery;
+              edMsg.textContent = "Saved. Reloading…";
+              edMsg.style.color = "#2f6b3b";
+              // Simplest reliable UI refresh: reload the page so the
+              // card re-renders top to bottom with the new values.
+              setTimeout(() => location.reload(), 600);
+            } catch (e) {
+              edMsg.textContent = "Network error: " + e.message;
+              edMsg.style.color = "#b3392e";
+              saveBtn.disabled = false;
+              saveBtn.textContent = "Save changes";
+            }
+          });
+        }
+
+        editBtn.addEventListener("click", () => {
+          if (editPanel.hidden) {
+            renderEditPanel();
+            editPanel.hidden = false;
+            editBtn.textContent = "Close editor";
+            editBtn.style.background = "#1f5a68";
+            editBtn.style.color = "#fff";
+          } else {
+            editPanel.hidden = true;
+            editBtn.textContent = "Edit";
+            editBtn.style.background = "#fff";
+            editBtn.style.color = "#1f5a68";
+          }
+        });
 
         const delBtn = statusRow.querySelector(".bk-delete-btn");
         let confirmArmed = false;
