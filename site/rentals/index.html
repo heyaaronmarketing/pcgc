@@ -29,7 +29,7 @@
        an attachment through Resend. -->
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js" defer></script>
   <link rel="stylesheet" href="/assets/site.css">
-  <link rel="stylesheet" href="/assets/rentals.css?v=deliv01">
+  <link rel="stylesheet" href="/assets/rentals.css?v=delivsplit">
   <meta property="og:title" content="Rent a Golf Cart · Polk County Golf Carts">
   <meta property="og:description" content="Book a golf cart rental in East Texas — up to 8 carts per booking, free delivery within 25 miles of Livingston, extended service up to 75 miles.">
   <meta property="og:image" content="https://polkcountygolfcarts.com/assets/og/rentals.png">
@@ -74,7 +74,7 @@
       <div class="rental-delivery-callout" style="display:flex; gap:.8rem; align-items:flex-start; background:#e6f1f3; border:1px solid #9fcfd7; border-radius:10px; padding:.8rem 1rem; margin:1rem 0 .5rem;">
         <span aria-hidden="true" style="font-size:1.4rem; line-height:1;">🚛</span>
         <div style="font-size:.95rem; line-height:1.4;">
-          <b style="color:#1f5a68;">We deliver.</b> Free pickup <em>and</em> delivery within 25 miles of Livingston · extended delivery 25–100 miles for a small fee. You'll pick pickup or delivery in the details step.
+          <b style="color:#1f5a68;">We deliver.</b> Free pickup <em>and</em> delivery within 25 miles of Livingston · $50 flat 25–50 miles · $75 flat 50–100 miles. You'll pick pickup or delivery in the details step.
         </div>
       </div>
       <div class="rental-grid-2">
@@ -160,12 +160,20 @@
           <b class="rental-choice-price">Free</b>
         </label>
         <label class="rental-choice">
+          <input type="radio" name="delivery" value="mid">
+          <span class="rental-choice-body">
+            <b>Delivery — 25 to 50 miles</b>
+            <small>Flat delivery fee, added to your total</small>
+          </span>
+          <b class="rental-choice-price">$50</b>
+        </label>
+        <label class="rental-choice">
           <input type="radio" name="delivery" value="extended">
           <span class="rental-choice-body">
-            <b>Extended delivery — 25 to 100 miles</b>
-            <small>We'll quote the delivery fee and bill it separately</small>
+            <b>Delivery — 50 to 100 miles</b>
+            <small>Flat delivery fee, added to your total</small>
           </span>
-          <b class="rental-choice-price">Extra charge</b>
+          <b class="rental-choice-price">$75</b>
         </label>
       </fieldset>
 
@@ -495,6 +503,6 @@
   Polk County Golf Carts · 1732 FM 3277, Livingston, TX · <a href="tel:9362231182">936-223-1182</a>
 </footer>
 
-<script src="/assets/rentals.js?v=deliv01"></script>
+<script src="/assets/rentals.js?v=delivsplit"></script>
 </body>
 </html>

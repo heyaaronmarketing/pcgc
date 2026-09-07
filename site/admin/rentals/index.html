@@ -209,7 +209,7 @@
       out.textContent = "";
       const fmtMoney = n => "$" + (Number(n) || 0).toFixed(2);
       const fmtDate = iso => iso ? new Date(iso + "T00:00:00").toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" }) : "—";
-      const deliveryLabel = { pickup: "Pickup at shop", local: "Free delivery (≤25 mi)", extended: "Extended delivery (25–100 mi, fee quoted separately)" };
+      const deliveryLabel = { pickup: "Pickup at shop", local: "Free delivery (≤25 mi)", mid: "Delivery 25–50 mi ($50)", extended: "Delivery 50–100 mi ($75)" };
       const statusLabel = { "new": "New Order", "picked-up": "Picked Up", "delivered": "Delivered", "returned": "Returned" };
       const statusOptions = ["new", "picked-up", "delivered", "returned"];
       // Fleet catalog — mirrors CARTS[] in /assets/rentals.js so the
@@ -324,7 +324,7 @@
         for (const it of (b.items || [])) {
           rows.push('<div class="row"><span>' + it.name + ' × ' + it.qty + '</span><span>' + fmtMoney(it.lineTotal) + '</span></div>');
         }
-        if (b.delivery === "extended") rows.push('<div class="row"><span>Extended delivery</span><span>Quoted separately</span></div>');
+        if (p.deliveryFee) rows.push('<div class="row"><span>' + (deliveryLabel[b.delivery] || 'Delivery') + '</span><span>' + fmtMoney(p.deliveryFee) + '</span></div>');
         if (p.tax)           rows.push('<div class="row"><span>Tax</span><span>' + fmtMoney(p.tax) + '</span></div>');
         rows.push('<div class="row total"><span>Paid</span><span>' + fmtMoney(p.total) + '</span></div>');
         items.innerHTML = rows.join("");
@@ -458,7 +458,7 @@
             <div style="margin-bottom:1rem;">
               <div style="font-weight:600; font-size:.82rem; color:#666; text-transform:uppercase; letter-spacing:.05em; margin-bottom:.4rem;">Delivery</div>
               <div style="display:flex; gap:1rem; flex-wrap:wrap;">
-                ${["pickup", "local", "extended"].map(v => `
+                ${["pickup", "local", "mid", "extended"].map(v => `
                   <label style="display:flex; gap:.4rem; align-items:center; cursor:pointer;">
                     <input type="radio" name="ed-delivery-${b.id}" value="${v}" ${b.delivery === v ? 'checked' : ''}>
                     <span>${deliveryLabel[v]}</span>
@@ -493,6 +493,7 @@
             <div id="ed-total-${b.id}" style="background:#fff; border:1px solid #dcd2c2; border-radius:8px; padding:.6rem .85rem; font-size:.9rem; margin-bottom:1rem;">
               <div style="display:flex; justify-content:space-between;"><span>Charged length:</span><span id="ed-days-${b.id}">—</span></div>
               <div style="display:flex; justify-content:space-between;"><span>Subtotal:</span><span id="ed-sub-${b.id}">—</span></div>
+              <div style="display:flex; justify-content:space-between;"><span>Delivery fee:</span><span id="ed-delivery-fee-${b.id}">—</span></div>
               <div style="display:flex; justify-content:space-between;"><span>Tax (8.25%):</span><span id="ed-tax-${b.id}">—</span></div>
               <div style="display:flex; justify-content:space-between; font-weight:700; border-top:1px solid #ecd9c7; padding-top:.35rem; margin-top:.35rem;"><span>Total:</span><span id="ed-grand-${b.id}">—</span></div>
             </div>
@@ -513,16 +514,23 @@
             const perDay = [...editPanel.querySelectorAll(".ed-cart:checked")]
               .reduce((s, el) => s + Number(el.dataset.cartPrice), 0);
             const subtotal = perDay * days;
+            const currentDelivery = editPanel.querySelector(`input[name="ed-delivery-${b.id}"]:checked`)?.value;
+            const deliveryFee = currentDelivery === "mid" ? 50
+                              : currentDelivery === "extended" ? 75
+                              : 0;
+            const afterDelivery = subtotal + deliveryFee;
             // Tax honors the customer's existing tax-exempt flag; edit
             // form doesn't currently expose that toggle (rare + needs
             // the certificate flow).
             const isExempt = !!(c.taxExempt);
-            const tax = isExempt ? 0 : subtotal * TAX_RATE;
-            const grand = subtotal + tax;
+            const tax = isExempt ? 0 : afterDelivery * TAX_RATE;
+            const grand = afterDelivery + tax;
             editPanel.querySelector(`#ed-days-${b.id}`).textContent = days + " day" + (days === 1 ? "" : "s");
             editPanel.querySelector(`#ed-sub-${b.id}`).textContent = fmtMoney(subtotal);
             editPanel.querySelector(`#ed-tax-${b.id}`).textContent = isExempt ? "Waived (exempt)" : fmtMoney(tax);
             editPanel.querySelector(`#ed-grand-${b.id}`).textContent = fmtMoney(grand);
+            const deliveryRow = editPanel.querySelector(`#ed-delivery-fee-${b.id}`);
+            if (deliveryRow) deliveryRow.textContent = deliveryFee ? fmtMoney(deliveryFee) : "Free";
           }
           editPanel.addEventListener("change", (ev) => {
             if (ev.target.matches(".ed-cart, .ed-input")) recompute();
@@ -576,14 +584,16 @@
             }
             const perDay = selectedCarts.reduce((s, c2) => s + c2.pricePerDay, 0);
             const subtotal = perDay * days;
+            const delivery = editPanel.querySelector(`input[name="ed-delivery-${b.id}"]:checked`).value;
+            const deliveryFee = delivery === "mid" ? 50 : delivery === "extended" ? 75 : 0;
+            const afterDelivery = subtotal + deliveryFee;
             const isExempt = !!(c.taxExempt);
-            const tax = isExempt ? 0 : subtotal * TAX_RATE;
-            const grand = subtotal + tax;
+            const tax = isExempt ? 0 : afterDelivery * TAX_RATE;
+            const grand = afterDelivery + tax;
             const items = selectedCarts.map(c2 => ({
               ...c2,
               lineTotal: c2.pricePerDay * c2.qty * days,
             }));
-            const delivery = editPanel.querySelector(`input[name="ed-delivery-${b.id}"]:checked`).value;
             const addrInput = editPanel.querySelector(`#ed-addr-${b.id}`);
             const editPayload = {
               items,
@@ -600,6 +610,7 @@
               pricing: {
                 ...(b.pricing || {}),
                 subtotal,
+                deliveryFee,
                 tax,
                 taxExempt: isExempt,
                 total: grand,

@@ -608,7 +608,8 @@ function renderBookingHtml(r) {
   const deliveryLabel = {
     pickup: "Pickup at shop (1732 FM 3277, Livingston)",
     local: "Free delivery (within 25 mi)",
-    extended: "Extended delivery (25–100 mi, fee quoted separately)",
+    mid: "Delivery 25–50 mi ($50 flat)",
+    extended: "Delivery 50–100 mi ($75 flat)",
   }[r.delivery] || r.delivery || "(not specified)";
 
   const itemRows = (r.items || []).map(it => `
@@ -646,7 +647,7 @@ function renderBookingHtml(r) {
 
     <table style="width:100%; border-collapse:collapse; font-size:14px; margin-top:1rem; border-top:1px solid #ddd;">
       <tr><td style="padding:6px 0; color:#888;">Subtotal</td><td style="padding:6px 0; text-align:right;">${fmtMoney(p.subtotal)}</td></tr>
-      ${r.delivery === "extended" ? `<tr><td style="padding:6px 0; color:#888;">Extended delivery</td><td style="padding:6px 0; text-align:right;">Quoted separately</td></tr>` : ""}
+      ${p.deliveryFee ? `<tr><td style="padding:6px 0; color:#888;">${escHtml(deliveryLabel)}</td><td style="padding:6px 0; text-align:right;">${fmtMoney(p.deliveryFee)}</td></tr>` : ""}
       ${c.taxExempt ? `<tr><td style="padding:6px 0; color:#8a4a00;"><b>Tax exempt</b> · ${escHtml(c.taxExemptOrg || "")}</td><td style="padding:6px 0; text-align:right; color:#8a4a00;"><b>WAIVED</b></td></tr>` : `<tr><td style="padding:6px 0; color:#888;">Tax</td><td style="padding:6px 0; text-align:right;">${fmtMoney(p.tax)}</td></tr>`}
       <tr style="border-top:1px solid #ddd;"><td style="padding:6px 0;"><b>Total</b></td><td style="padding:6px 0; text-align:right;"><b>${fmtMoney(p.grand)}</b></td></tr>
     </table>
@@ -660,7 +661,7 @@ function renderBookingText(r) {
   const c = r.contact || {};
   const d = r.dates || {};
   const p = r.pricing || {};
-  const deliveryLabel = { pickup: "Pickup at shop", local: "Free delivery (within 25 mi)", extended: "Extended delivery (25-100 mi, fee quoted separately)" }[r.delivery] || r.delivery || "";
+  const deliveryLabel = { pickup: "Pickup at shop", local: "Free delivery (within 25 mi)", mid: "Delivery 25-50 mi ($50 flat)", extended: "Delivery 50-100 mi ($75 flat)" }[r.delivery] || r.delivery || "";
   const items = (r.items || []).map(it => `  - ${it.name} x ${it.qty}  ${fmtMoney(it.lineTotal)}`).join("\n");
   return [
     `New rental booking — ${r.id}`,
@@ -684,7 +685,7 @@ function renderBookingText(r) {
     items,
     ``,
     `Subtotal:  ${fmtMoney(p.subtotal)}`,
-    r.delivery === "extended" ? `Extended:  Quoted separately` : null,
+    p.deliveryFee ? `Delivery:  ${fmtMoney(p.deliveryFee)}` : null,
     c.taxExempt ? `Tax:       WAIVED (exemption on file)` : `Tax:       ${fmtMoney(p.tax)}`,
     `Total:     ${fmtMoney(p.grand)}`,
     ``,
