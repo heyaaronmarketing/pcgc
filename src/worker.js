@@ -47,6 +47,12 @@ export default {
     if (url.pathname === "/api/client-error" && request.method === "POST") {
       return receiveClientError(request, env);
     }
+    if (url.pathname === "/api/session-checkpoint" && request.method === "POST") {
+      return receiveSessionCheckpoint(request, env);
+    }
+    if (url.pathname === "/api/sessions" && request.method === "GET") {
+      return listSessions(request, env);
+    }
     if (url.pathname.startsWith("/api/booking/") && request.method === "PATCH") {
       return updateBookingStatus(request, env, url);
     }
@@ -772,6 +778,102 @@ async function receiveClientError(request, env) {
   });
   console.error(`client error [${record.context}] ${record.error}`);
   return json({ ok: true, id: idSuffix });
+}
+
+// Public — receives per-step "I'm now on step N" beacons from the
+// booking wizard. One rolling record per sessionId; each beacon upserts
+// the record so /admin/sessions/ shows the latest known state per
+// attempt. Also appends a lightweight steps[] audit trail (last 20
+// entries) so you can see how someone hopped through the flow.
+const SESSION_MAX_BODY = 6_000;
+const SESSION_ID_RE = /^sess-[a-z0-9]{4,32}$/i;
+async function receiveSessionCheckpoint(request, env) {
+  if (!env?.FEEDBACK_KV) return json({ ok: true }, 204);
+  let body;
+  try {
+    const text = await request.text();
+    if (text.length > SESSION_MAX_BODY) {
+      return json({ error: "payload too large" }, 413);
+    }
+    body = JSON.parse(text);
+  } catch {
+    return json({ error: "invalid JSON" }, 400);
+  }
+  const sessionId = String(body?.sessionId || "");
+  if (!SESSION_ID_RE.test(sessionId)) {
+    return json({ error: "invalid sessionId" }, 400);
+  }
+  const step = Number.isFinite(+body?.step) ? Math.max(1, Math.min(9, +body.step)) : null;
+  const ip = request.headers.get("cf-connecting-ip") || "";
+  // Per-IP rate limit — 120/hour is enough for a browsy customer
+  // (each step advance + every 400ms of email typing = ~30 beacons/session).
+  if (ip) {
+    const key = `sess-rate:${ip}`;
+    const cur = parseInt((await env.FEEDBACK_KV.get(key)) || "0", 10) || 0;
+    if (cur >= 120) return json({ ok: true, throttled: true }, 200);
+    await env.FEEDBACK_KV.put(key, String(cur + 1), { expirationTtl: 3600 });
+  }
+
+  const key = `session:${sessionId}`;
+  const raw = await env.FEEDBACK_KV.get(key);
+  let prior = null;
+  if (raw) { try { prior = JSON.parse(raw); } catch {} }
+
+  const now = new Date().toISOString();
+  const st = body?.state || {};
+  const record = {
+    sessionId,
+    firstSeen: prior?.firstSeen || now,
+    lastSeen: now,
+    step: step ?? prior?.step ?? null,
+    maxStep: Math.max(step || 0, prior?.maxStep || 0),
+    // Rolling audit of the last 20 step advances — only push when the
+    // step actually changed (avoids padding on every email keystroke).
+    steps: (() => {
+      const trail = Array.isArray(prior?.steps) ? [...prior.steps] : [];
+      const last = trail[trail.length - 1];
+      if (step && (!last || last.step !== step)) trail.push({ step, at: now });
+      return trail.slice(-20);
+    })(),
+    contact: {
+      name: st?.contact?.name || prior?.contact?.name || null,
+      email: st?.contact?.email || prior?.contact?.email || null,
+      phone: st?.contact?.phone || prior?.contact?.phone || null,
+    },
+    dates: st?.dates || prior?.dates || null,
+    delivery: st?.delivery || prior?.delivery || null,
+    selection: st?.selection || prior?.selection || null,
+    ip,
+    ua: (request.headers.get("user-agent") || "").slice(0, 500),
+    country: request.cf?.country || "",
+    // Once a session results in a real booking we don't need to keep
+    // tracking it here. The client wipes state.sessionId after Step 5
+    // so no more checkpoints arrive; the record just ages out via TTL.
+  };
+  await env.FEEDBACK_KV.put(key, JSON.stringify(record), {
+    expirationTtl: 60 * 60 * 24 * 30,  // 30 days
+  });
+  return json({ ok: true });
+}
+
+// Admin listing of all session breadcrumbs. Sorted by lastSeen desc so
+// the most recent activity is on top.
+async function listSessions(request, env) {
+  if (!env.FEEDBACK_KV) return json({ error: "kv not configured" }, 503);
+  const auth = await checkAdminAuth(request, env);
+  if (auth) return auth;
+  const result = await env.FEEDBACK_KV.list({ prefix: "session:", limit: KV_LIST_LIMIT });
+  const entries = await Promise.all(
+    result.keys.map(async (k) => {
+      const raw = await env.FEEDBACK_KV.get(k.name);
+      if (!raw) return null;
+      try { return JSON.parse(raw); } catch { return null; }
+    })
+  );
+  const sessions = entries
+    .filter(Boolean)
+    .sort((a, b) => (b.lastSeen || "").localeCompare(a.lastSeen || ""));
+  return json({ sessions });
 }
 
 async function listBookingAttempts(request, env) {

@@ -90,6 +90,40 @@ function reportClientError(context, err) {
 window.addEventListener("error", (ev) => reportClientError("window.error", ev.error || ev.message));
 window.addEventListener("unhandledrejection", (ev) => reportClientError("unhandled-rejection", ev.reason));
 
+// ---------- Session checkpoint reporter ----------
+// Every time the customer advances to a new step we ping the server
+// with { sessionId, step, contact, dates, cart selection } so the owner
+// can see who was in the middle of a booking flow when they either
+// vanished OR hit an error. Combined with the Step-1 email collection,
+// even an abandoned rental leaves enough contact info to follow up.
+// Server upserts one record per sessionId under `session:<id>` with a
+// 30-day TTL; /admin/sessions/ lists them sorted by last activity.
+function reportSessionCheckpoint(step) {
+  try {
+    if (typeof state === "undefined" || !state.sessionId) return;
+    const body = {
+      sessionId: state.sessionId,
+      step,
+      state: {
+        dates: state.dates,
+        contact: state.contact ? {
+          name: state.contact.name,
+          email: state.contact.email,
+          phone: state.contact.phone,
+        } : null,
+        delivery: state.delivery,
+        selection: state.selection,
+      },
+    };
+    fetch("/api/session-checkpoint", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(body),
+      keepalive: true,
+    }).catch(() => {});
+  } catch (_) {}
+}
+
 // ---------- State ----------
 // Bumped to v5 for the address-split schema change (street/city/state/
 // zip are now separate fields; the old `address` slot is repurposed as
@@ -109,6 +143,12 @@ const state = loadState() || {
     notes: "",
   },
 };
+// Stable per-browser session id so /admin/sessions/ can group step
+// advances into one row per attempted booking. Persisted through
+// saveState so a page reload doesn't split the trail into two.
+if (!state.sessionId) {
+  state.sessionId = "sess-" + (crypto.randomUUID?.().slice(0, 12) || Math.random().toString(36).slice(2, 14));
+}
 
 function saveState() {
   try { sessionStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (_) {}
@@ -228,6 +268,9 @@ function computePrice() {
 function goTo(step) {
   state.step = step;
   saveState();
+  // Fire-and-forget breadcrumb so /admin/sessions/ can see how far
+  // each attempted booking got, even if the customer never submits.
+  reportSessionCheckpoint(step);
   $$(".rental-step").forEach(el => {
     el.hidden = (Number(el.dataset.step) !== step);
   });
@@ -481,6 +524,22 @@ function initStep1() {
   if (pickupSel) pickupSel.addEventListener("change", updateDurationLine);
   if (dropoffSel) dropoffSel.addEventListener("change", updateDurationLine);
 
+  // Step-1 email field — save into state.contact.email as soon as it's
+  // typed so an abandoned session still has the address for follow-up.
+  // Every keystroke also refires the session-checkpoint beacon so
+  // /admin/sessions/ picks up the email the moment it's entered.
+  const earlyEmail = $("#early-email");
+  if (earlyEmail) {
+    if (state.contact.email) earlyEmail.value = state.contact.email;
+    let checkpointTimer = null;
+    earlyEmail.addEventListener("input", () => {
+      state.contact.email = earlyEmail.value.trim();
+      saveState();
+      clearTimeout(checkpointTimer);
+      checkpointTimer = setTimeout(() => reportSessionCheckpoint(state.step || 1), 400);
+    });
+  }
+
   function formatIso(d) {
     const y = d.getFullYear();
     const m = String(d.getMonth() + 1).padStart(2, "0");
@@ -509,6 +568,16 @@ function initStep1() {
     if (rangeHitsWeekendOrHoliday(state.dates.start, state.dates.end) && days < 2) {
       errEl.textContent = "Weekend and holiday rentals require a 2-day minimum.";
       errEl.hidden = false;
+      return;
+    }
+    // Email is now required at Step 1 so we can reach the customer even
+    // if they never make it to Step 3. Basic shape check; the details
+    // step will re-collect if they change it there.
+    const email = (state.contact.email || "").trim();
+    if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
+      errEl.textContent = "Please enter a valid email so we can reach you if we need to.";
+      errEl.hidden = false;
+      $("#early-email")?.focus();
       return;
     }
     // Block the button while we check availability so a double-click
@@ -1223,6 +1292,10 @@ async function submitBooking() {
 
   state.bookingId = booking.id;
   state.bookingRecord = booking;
+  // Booking succeeded; wipe the checkpoint session id so we don't keep
+  // pinging /api/session-checkpoint from this browser after the fact.
+  // The KV record for this session ages out on its own via TTL.
+  state.sessionId = null;
   // Stash the PDF blob on a module-scoped map, keyed by booking id.
   // Not persisted to sessionStorage (would blow past its 5MB limit).
   // A user who bookmarks Step 5 and comes back can regen the PDF from

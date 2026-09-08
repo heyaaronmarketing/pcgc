@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Booking Sessions · PCGC Admin</title>
+  <link rel="stylesheet" href="/assets/site.css">
+  <style>
+    body { background:#fbf8f3; color:#222; font-family: system-ui,-apple-system,Segoe UI,sans-serif; }
+    .wrap { max-width: 1200px; margin: 0 auto; padding: 1.25rem 1rem 3rem; }
+    h1 { font: 700 1.9rem/1.15 Georgia, serif; color:#1f5a68; margin:.4rem 0 .15rem; }
+    .sub { color:#666; font-size:.9rem; margin-bottom:1.2rem; }
+    nav.crumbs a { color:#1f5a68; text-decoration:none; margin-right:.7rem; }
+    nav.crumbs { font-size:.85rem; color:#888; margin-bottom:.9rem; }
+
+    .kpis { display:grid; grid-template-columns: repeat(5,1fr); gap:.5rem; margin:.5rem 0 1.4rem; }
+    @media (max-width: 700px) { .kpis { grid-template-columns: repeat(2,1fr); } }
+    .kpi { background:#fff; border:1px solid #ecd9c7; border-radius:12px; padding:.9rem 1.05rem; }
+    .kpi b { display:block; font: 700 1.5rem/1.1 Georgia, serif; color:#1f5a68; }
+    .kpi span { color:#666; font-size:.78rem; text-transform:uppercase; letter-spacing:.05em; }
+
+    .filter { background:#fff; border:1px solid #ecd9c7; border-radius:12px; padding:.7rem 1rem; margin-bottom:.9rem; display:flex; gap:.75rem; align-items:center; flex-wrap:wrap; }
+    .filter label { color:#666; font-size:.85rem; font-weight:600; margin-right:.35rem; }
+    .filter select { padding:.35rem .6rem; font-size:.9rem; border:1px solid #dcd2c2; border-radius:6px; }
+
+    .session { background:#fff; border:1px solid #ecd9c7; border-radius:12px; padding:.9rem 1.15rem; margin-bottom:.75rem; box-shadow: 0 1px 3px rgba(0,0,0,.04); }
+    .session .top { display:flex; gap:1rem; justify-content:space-between; align-items:baseline; flex-wrap:wrap; font-size:.88rem; }
+    .session h3 { margin:.2rem 0 .4rem; font: 700 1rem/1.2 Georgia, serif; color:#1f5a68; }
+    .session .contact { color:#222; }
+    .session .contact a { color:#1f5a68; text-decoration:none; }
+    .session .contact a:hover { text-decoration:underline; }
+    .session .meta { color:#666; font-size:.85rem; }
+    .session .steps-bar { display:flex; gap:.35rem; margin:.5rem 0 .4rem; }
+    .step-dot { display:inline-flex; align-items:center; justify-content:center; width:2rem; height:2rem; border-radius:50%; font-weight:700; font-size:.85rem; border:2px solid #ecd9c7; color:#666; background:#fff; }
+    .step-dot.reached { background:#e6f1f3; color:#1f5a68; border-color:#1f5a68; }
+    .step-dot.current { background:#1f5a68; color:#fff; border-color:#1f5a68; }
+    .step-label { color:#666; font-size:.75rem; margin-left:.5rem; align-self:center; }
+    .session details { margin-top:.5rem; }
+    .session details summary { cursor:pointer; color:#1f5a68; font-size:.85rem; }
+    .session pre { background:#fbf8f3; border:1px solid #ecd9c7; border-radius:8px; padding:.6rem .8rem; font-size:.75rem; overflow-x:auto; white-space:pre-wrap; word-break:break-all; }
+    .abandoned { border-left:4px solid #b3392e; }
+    .active { border-left:4px solid #e0b25e; }
+
+    .login-view { max-width:420px; margin:3rem auto; background:#fff; border:1px solid #ecd9c7; border-radius:12px; padding:1.5rem 1.75rem; }
+    .login-view h1 { margin:0 0 1rem; }
+    .login-view label { display:block; margin:.6rem 0 .25rem; font-weight:600; font-size:.9rem; }
+    .login-view input { width:100%; padding:.6rem .75rem; font-size:1rem; border:1px solid #ecd9c7; border-radius:8px; box-sizing:border-box; }
+    .login-view button { margin-top:1rem; background:#1f5a68; color:#fff; border:0; padding:.65rem 1.1rem; font-weight:600; border-radius:8px; cursor:pointer; }
+    .login-view .err { color:#8a2a20; font-size:.85rem; margin-top:.5rem; }
+    .empty { background:#fff; border:1px dashed #ecd9c7; border-radius:12px; padding:2rem 1rem; text-align:center; color:#666; }
+    .muted { color:#888; }
+  </style>
+</head>
+<body>
+<div id="login-view" class="login-view" hidden>
+  <h1>Sign in</h1>
+  <p class="muted" style="font-size:.9rem;">Admin password required to view booking sessions.</p>
+  <form id="login-form">
+    <label for="login-password">Password</label>
+    <input id="login-password" type="password" required autofocus autocomplete="current-password">
+    <button id="login-submit" type="submit">Sign in</button>
+    <div id="login-error" class="err" hidden></div>
+  </form>
+</div>
+
+<div id="sessions-view" class="wrap" hidden>
+  <nav class="crumbs">
+    <a href="/admin/dashboard/">← Dashboard</a>
+    <a href="/admin/rentals/">Bookings</a>
+    <a href="/admin/attempts/">Attempts</a>
+    <a href="/admin/social-campaign/">Social campaign</a>
+    <a href="/admin/seo/">SEO ranks</a>
+    <span>Sessions</span>
+  </nav>
+  <h1>Booking sessions (in-flight + abandoned)</h1>
+  <p class="sub">Every browser that starts filling out /rentals/ leaves a breadcrumb here — who they are, how far they got, what they picked. If they never submit, this is your follow-up list. Successful bookings live in <a href="/admin/rentals/" style="color:#1f5a68;">Bookings</a>.</p>
+
+  <div class="kpis" id="kpis" hidden>
+    <div class="kpi"><b id="kpi-total">0</b><span>sessions logged</span></div>
+    <div class="kpi"><b id="kpi-24h">0</b><span>last 24 hours</span></div>
+    <div class="kpi"><b id="kpi-abandoned">0</b><span>abandoned (no submit, quiet 30m+)</span></div>
+    <div class="kpi"><b id="kpi-step3">0</b><span>reached step 3+</span></div>
+    <div class="kpi"><b id="kpi-with-email">0</b><span>captured an email</span></div>
+  </div>
+
+  <div class="filter" id="filter-bar" hidden>
+    <label for="fil-outcome">Show:</label>
+    <select id="fil-outcome">
+      <option value="all">All sessions</option>
+      <option value="abandoned">Abandoned only</option>
+      <option value="active">Still active (last 30m)</option>
+      <option value="reached-3">Reached step 3+</option>
+      <option value="with-email">With email captured</option>
+    </select>
+  </div>
+
+  <div id="sessions-list"></div>
+  <div id="empty" class="empty" hidden>
+    <b>No sessions logged yet.</b><br>
+    <span class="muted">Every time a customer opens /rentals/ and advances a step, a row appears here.</span>
+  </div>
+</div>
+
+<script>
+(() => {
+  const loginView = document.getElementById("login-view");
+  const sessionsView = document.getElementById("sessions-view");
+  const loginForm = document.getElementById("login-form");
+  const loginPassword = document.getElementById("login-password");
+  const loginError = document.getElementById("login-error");
+  const loginSubmit = document.getElementById("login-submit");
+  const list = document.getElementById("sessions-list");
+  const empty = document.getElementById("empty");
+  const kpis = document.getElementById("kpis");
+  const filterBar = document.getElementById("filter-bar");
+  const filOutcome = document.getElementById("fil-outcome");
+
+  let ALL_SESSIONS = [];
+
+  function escHtml(s) {
+    return String(s ?? "").replace(/[&<>"']/g, (c) => (
+      { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]
+    ));
+  }
+  function fmtTs(iso) {
+    try { return new Date(iso).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" }); }
+    catch { return iso || "—"; }
+  }
+  function relTime(iso) {
+    try {
+      const diff = Date.now() - Date.parse(iso);
+      const mins = Math.round(diff / 60000);
+      if (mins < 1) return "just now";
+      if (mins < 60) return `${mins}m ago`;
+      const hrs = Math.round(mins / 60);
+      if (hrs < 24) return `${hrs}h ago`;
+      const days = Math.round(hrs / 24);
+      return `${days}d ago`;
+    } catch { return ""; }
+  }
+  function isAbandoned(s) {
+    const now = Date.now();
+    const diff = now - Date.parse(s.lastSeen || 0);
+    // 30 minutes of inactivity + never reached step 5 = abandoned
+    return diff > 30 * 60 * 1000 && (s.maxStep || 0) < 5;
+  }
+  function isActive(s) {
+    return (Date.now() - Date.parse(s.lastSeen || 0)) <= 30 * 60 * 1000;
+  }
+
+  function stepDots(current, maxStep) {
+    const labels = ["Dates", "Carts", "Details", "Pay", "Done"];
+    let html = '<div class="steps-bar">';
+    for (let i = 1; i <= 5; i++) {
+      let cls = "";
+      if (i === current) cls = "current";
+      else if (i <= (maxStep || 0)) cls = "reached";
+      html += `<span class="step-dot ${cls}" title="Step ${i}: ${labels[i-1]}">${i}</span>`;
+    }
+    const currentLabel = current ? labels[current - 1] : "—";
+    html += `<span class="step-label">Currently on <b>${escHtml(currentLabel)}</b> · reached step ${maxStep || 1}</span>`;
+    html += "</div>";
+    return html;
+  }
+
+  function renderSessions(sessions) {
+    kpis.hidden = false;
+    filterBar.hidden = false;
+    document.getElementById("kpi-total").textContent = sessions.length;
+    const day = 24 * 60 * 60 * 1000;
+    document.getElementById("kpi-24h").textContent =
+      sessions.filter(s => Date.now() - Date.parse(s.lastSeen || 0) <= day).length;
+    document.getElementById("kpi-abandoned").textContent =
+      sessions.filter(isAbandoned).length;
+    document.getElementById("kpi-step3").textContent =
+      sessions.filter(s => (s.maxStep || 0) >= 3).length;
+    document.getElementById("kpi-with-email").textContent =
+      sessions.filter(s => s.contact?.email).length;
+
+    // Apply the active filter
+    const mode = filOutcome.value;
+    const filtered = sessions.filter(s => {
+      if (mode === "abandoned") return isAbandoned(s);
+      if (mode === "active") return isActive(s);
+      if (mode === "reached-3") return (s.maxStep || 0) >= 3;
+      if (mode === "with-email") return !!s.contact?.email;
+      return true;
+    });
+
+    if (!filtered.length) { empty.hidden = false; list.innerHTML = ""; return; }
+    empty.hidden = true;
+    list.innerHTML = filtered.map(s => {
+      const c = s.contact || {};
+      const contactLine = [
+        c.name && `<b>${escHtml(c.name)}</b>`,
+        c.email && `<a href="mailto:${escHtml(c.email)}">${escHtml(c.email)}</a>`,
+        c.phone && `<a href="tel:${escHtml(c.phone)}">${escHtml(c.phone)}</a>`,
+      ].filter(Boolean).join(" &middot; ") || '<span class="muted">(no contact yet)</span>';
+
+      const dates = s.dates ? `${s.dates.start || "?"} → ${s.dates.end || "?"}` : "";
+      const cartIds = s.selection ? Object.entries(s.selection).filter(([id, n]) => (n | 0) > 0).map(([id]) => id.replace("cart-", "#")).join(", ") : "";
+      const abandoned = isAbandoned(s);
+      const active = isActive(s);
+      const cls = abandoned ? "abandoned" : active ? "active" : "";
+      const flag = abandoned ? '<span style="color:#b3392e; font-weight:700;">ABANDONED</span> · ' : active ? '<span style="color:#8a6d1e; font-weight:700;">STILL ACTIVE</span> · ' : "";
+
+      return `<article class="session ${cls}">
+        <div class="top">
+          <div class="contact">${contactLine}</div>
+          <div class="meta">${flag}Last seen ${escHtml(relTime(s.lastSeen))} · Started ${escHtml(relTime(s.firstSeen))}</div>
+        </div>
+        ${stepDots(s.step, s.maxStep)}
+        <div class="meta">
+          ${dates ? `<span><b>Dates:</b> ${escHtml(dates)}</span>` : ""}
+          ${cartIds ? ` · <span><b>Carts:</b> ${escHtml(cartIds)}</span>` : ""}
+          ${s.delivery ? ` · <span><b>Delivery:</b> ${escHtml(s.delivery)}</span>` : ""}
+          &nbsp; &nbsp; <span class="muted">${escHtml(s.ip || "?")}${s.country ? " · " + escHtml(s.country) : ""}</span>
+        </div>
+        <details>
+          <summary>Step history (${(s.steps || []).length}) + full state</summary>
+          <pre>${escHtml((s.steps || []).map(x => `${x.at}  →  step ${x.step}`).join("\n") || "(no step transitions recorded)")}</pre>
+          <pre>Full state:
+${escHtml(JSON.stringify({
+  sessionId: s.sessionId,
+  firstSeen: s.firstSeen,
+  lastSeen: s.lastSeen,
+  currentStep: s.step,
+  maxStep: s.maxStep,
+  dates: s.dates,
+  delivery: s.delivery,
+  selection: s.selection,
+  contact: s.contact,
+}, null, 2))}</pre>
+          <pre>User-agent: ${escHtml(s.ua || "(none)")}</pre>
+        </details>
+      </article>`;
+    }).join("");
+  }
+
+  async function loadSessions() {
+    try {
+      const res = await fetch("/api/sessions", { credentials: "same-origin" });
+      if (res.status === 401) { showLogin(); return; }
+      if (!res.ok) { list.innerHTML = `<div class="empty">Failed to load: HTTP ${res.status}</div>`; showSessions(); return; }
+      const data = await res.json();
+      ALL_SESSIONS = data.sessions || [];
+      showSessions();
+      renderSessions(ALL_SESSIONS);
+    } catch (e) {
+      list.innerHTML = `<div class="empty">Network error: ${escHtml(e.message)}</div>`;
+      showSessions();
+    }
+  }
+
+  function showLogin() { loginView.hidden = false; sessionsView.hidden = true; }
+  function showSessions() { loginView.hidden = true; sessionsView.hidden = false; }
+
+  filOutcome.addEventListener("change", () => renderSessions(ALL_SESSIONS));
+
+  loginForm.addEventListener("submit", async (ev) => {
+    ev.preventDefault();
+    loginError.hidden = true;
+    loginSubmit.disabled = true;
+    const prev = loginSubmit.textContent;
+    loginSubmit.textContent = "Signing in…";
+    try {
+      const res = await fetch("/api/admin/login", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        credentials: "same-origin",
+        body: JSON.stringify({ password: loginPassword.value }),
+      });
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}));
+        loginError.textContent = d.error || `Sign-in failed (HTTP ${res.status})`;
+        loginError.hidden = false;
+        loginSubmit.disabled = false;
+        loginSubmit.textContent = prev;
+        return;
+      }
+      loginPassword.value = "";
+      loadSessions();
+    } catch (e) {
+      loginError.textContent = "Network error: " + e.message;
+      loginError.hidden = false;
+      loginSubmit.disabled = false;
+      loginSubmit.textContent = prev;
+    }
+  });
+
+  loadSessions();
+})();
+</script>
+</body>
+</html>
