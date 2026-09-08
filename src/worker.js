@@ -44,6 +44,9 @@ export default {
     if (url.pathname === "/api/attempts" && request.method === "GET") {
       return listBookingAttempts(request, env);
     }
+    if (url.pathname === "/api/client-error" && request.method === "POST") {
+      return receiveClientError(request, env);
+    }
     if (url.pathname.startsWith("/api/booking/") && request.method === "PATCH") {
       return updateBookingStatus(request, env, url);
     }
@@ -711,6 +714,66 @@ async function listBookings(request, env) {
 
 // Admin-only listing of failed / uncaught booking attempts. Keys live
 // under `attempt:<ts>:<id>` with a 30-day TTL. Newest first.
+// Public — receives client-side JS errors from the /rentals/ wizard so
+// a customer whose browser threw an uncaught exception (or whose
+// booking submit never even fired a fetch) still leaves a trace in
+// /admin/attempts/. Stored under the same `attempt:*` prefix as the
+// server-side booking failures, tagged with outcome:"client".
+// Kept public (no auth) so the browser can report errors without a
+// session; body is size-capped and rate-limited by IP to keep it from
+// being abused as a log pipe.
+const CLIENT_ERROR_MAX_BODY = 8_000;
+async function receiveClientError(request, env) {
+  if (!env?.FEEDBACK_KV) return json({ ok: true }, 204);
+  let body;
+  try {
+    const text = await request.text();
+    if (text.length > CLIENT_ERROR_MAX_BODY) {
+      return json({ error: "payload too large" }, 413);
+    }
+    body = JSON.parse(text);
+  } catch {
+    return json({ error: "invalid JSON" }, 400);
+  }
+  const ip = request.headers.get("cf-connecting-ip") || "";
+  // Cheap per-IP rate limit — max 20 client-error reports per hour.
+  // Prevents a busted page from a single browser flooding KV.
+  if (ip) {
+    const key = `client-err-rate:${ip}`;
+    const cur = parseInt((await env.FEEDBACK_KV.get(key)) || "0", 10) || 0;
+    if (cur >= 20) {
+      return json({ ok: true, throttled: true }, 200);
+    }
+    await env.FEEDBACK_KV.put(key, String(cur + 1), { expirationTtl: 3600 });
+  }
+  const ts = new Date().toISOString();
+  const idSuffix = crypto.randomUUID().slice(0, 6).toUpperCase();
+  const record = {
+    ts,
+    outcome: "client",
+    code: null,
+    error: String(body?.msg || "client-side error").slice(0, 500),
+    context: String(body?.context || "").slice(0, 100),
+    stack: String(body?.stack || "").slice(0, 2000),
+    pageUrl: String(body?.url || "").slice(0, 500),
+    ip,
+    ua: (request.headers.get("user-agent") || "").slice(0, 500),
+    country: request.cf?.country || "",
+    // Best-effort snapshot of the customer's rental state at error time
+    contact: body?.state?.contact || null,
+    dates: body?.state?.dates || null,
+    delivery: body?.state?.delivery || null,
+    itemCount: body?.state?.itemCount ?? null,
+    step: body?.state?.step ?? null,
+  };
+  const key = `attempt:${ts}:${idSuffix}`;
+  await env.FEEDBACK_KV.put(key, JSON.stringify(record), {
+    expirationTtl: 60 * 60 * 24 * 30,
+  });
+  console.error(`client error [${record.context}] ${record.error}`);
+  return json({ ok: true, id: idSuffix });
+}
+
 async function listBookingAttempts(request, env) {
   if (!env.FEEDBACK_KV) return json({ error: "kv not configured" }, 503);
   const auth = await checkAdminAuth(request, env);

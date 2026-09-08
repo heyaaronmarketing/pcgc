@@ -14,7 +14,8 @@
     nav.crumbs a { color:#1f5a68; text-decoration:none; margin-right:.7rem; }
     nav.crumbs { font-size:.85rem; color:#888; margin-bottom:.9rem; }
 
-    .kpis { display:grid; grid-template-columns: repeat(4,1fr); gap: .75rem; margin: .5rem 0 1.4rem; }
+    .kpis { display:grid; grid-template-columns: repeat(5,1fr); gap: .5rem; margin: .5rem 0 1.4rem; }
+    @media (max-width: 700px) { .kpis { grid-template-columns: repeat(2,1fr); } }
     .kpi { background:#fff; border:1px solid #ecd9c7; border-radius:12px; padding: .9rem 1.05rem; }
     .kpi b { display:block; font: 700 1.5rem/1.1 Georgia, serif; color:#1f5a68; }
     .kpi span { color:#666; font-size:.78rem; text-transform:uppercase; letter-spacing:.05em; }
@@ -25,6 +26,7 @@
     .att .pill { display:inline-block; padding:.15rem .55rem; border-radius:999px; font-weight:700; font-size:.75rem; letter-spacing:.03em; text-transform:uppercase; }
     .att .pill.fail { background:#f8e3e1; color:#8a2a20; }
     .att .pill.throw { background:#3a1418; color:#fce9e6; }
+    .att .pill.client { background:#f4e4c1; color:#8a4a00; }
     .att .code { font: 600 .8rem ui-monospace, monospace; color:#666; }
     .att .err { color:#8a2a20; font-weight:600; }
     .att details { margin-top:.5rem; }
@@ -70,6 +72,7 @@
     <div class="kpi"><b id="kpi-24h">0</b><span>last 24 hours</span></div>
     <div class="kpi"><b id="kpi-throw">0</b><span>uncaught throws</span></div>
     <div class="kpi"><b id="kpi-402">0</b><span>payment declines</span></div>
+    <div class="kpi"><b id="kpi-client">0</b><span>browser errors</span></div>
   </div>
 
   <div id="attempts-list"></div>
@@ -112,6 +115,8 @@
       attempts.filter(a => a.outcome === "throw").length;
     document.getElementById("kpi-402").textContent =
       attempts.filter(a => a.code === 402).length;
+    document.getElementById("kpi-client").textContent =
+      attempts.filter(a => a.outcome === "client").length;
 
     if (!attempts.length) { empty.hidden = false; list.innerHTML = ""; return; }
     empty.hidden = true;
@@ -122,7 +127,13 @@
       const dates = a.dates ? `${a.dates.start || "?"} → ${a.dates.end || "?"}` : "";
       const contactLine = [c.name, c.email, c.phone].filter(Boolean).join(" · ") || "(no contact captured)";
       const cityState = [c.city, c.state].filter(Boolean).join(", ");
-      const payloadSummary = {
+      const payloadSummary = outcome === "client" ? {
+        context: a.context,
+        pageUrl: a.pageUrl,
+        step: a.step,
+        delivery: a.delivery,
+        itemCount: a.itemCount,
+      } : {
         itemCount: a.itemCount,
         itemIds: a.itemIds,
         delivery: a.delivery,
@@ -136,9 +147,10 @@
         taxExempt: a.taxExempt,
         hasTaxCert: a.hasTaxCert,
       };
+      const stackBlock = a.stack ? `<pre>Stack:\n${escHtml(a.stack)}</pre>` : "";
       return `<article class="att">
         <div class="row">
-          <span class="pill ${outcome}">${outcome === "throw" ? "UNCAUGHT" : "FAIL " + (a.code || "?")}</span>
+          <span class="pill ${outcome}">${outcome === "throw" ? "UNCAUGHT" : outcome === "client" ? "BROWSER ERROR" : "FAIL " + (a.code || "?")}</span>
           <span class="code">${escHtml(fmtTs(a.ts))}</span>
           <span class="muted">${escHtml(a.ip || "?")}${a.country ? " · " + escHtml(a.country) : ""}</span>
         </div>
@@ -151,6 +163,7 @@
         <details>
           <summary>Payload diagnostics</summary>
           <pre>${escHtml(JSON.stringify(payloadSummary, null, 2))}</pre>
+          ${stackBlock}
           <pre>User-agent: ${escHtml(a.ua || "(none)")}</pre>
         </details>
       </article>`;

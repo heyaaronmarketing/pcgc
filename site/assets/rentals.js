@@ -51,6 +51,45 @@ const DELIVERY_MID_FEE = 50;
 const DELIVERY_EXTENDED_FEE = 75;
 const TAX_RATE = 0.0825;
 
+// ---------- Client-error reporter ----------
+// A customer whose browser threw an uncaught exception (or whose
+// submit button never fired a fetch) used to leave zero trace — the
+// server-side /admin/attempts/ log only catches requests that actually
+// reach the Worker. This beacons unhandled JS errors + promise
+// rejections to /api/client-error so /admin/attempts/ becomes the
+// single source of "what went wrong during a booking attempt".
+// Rate-limited server-side (20/hour/IP) so a busted page can't flood.
+function reportClientError(context, err) {
+  try {
+    const body = {
+      context: String(context || "").slice(0, 100),
+      msg: String(err?.message || err || "").slice(0, 500),
+      stack: String(err?.stack || "").slice(0, 2000),
+      url: location.href,
+      state: (typeof state !== "undefined") ? {
+        step: state.step,
+        dates: state.dates,
+        delivery: state.delivery,
+        itemCount: state.selection ? Object.values(state.selection).reduce((s,n)=>s+(n|0),0) : 0,
+        contact: state.contact ? {
+          name: state.contact.name,
+          email: state.contact.email,
+          phone: state.contact.phone,
+        } : null,
+      } : null,
+    };
+    // fetch({ keepalive: true }) so an error at unload still transmits.
+    fetch("/api/client-error", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(body),
+      keepalive: true,
+    }).catch(() => {});
+  } catch (_) {}
+}
+window.addEventListener("error", (ev) => reportClientError("window.error", ev.error || ev.message));
+window.addEventListener("unhandledrejection", (ev) => reportClientError("unhandled-rejection", ev.reason));
+
 // ---------- State ----------
 // Bumped to v5 for the address-split schema change (street/city/state/
 // zip are now separate fields; the old `address` slot is repurposed as
@@ -1170,7 +1209,11 @@ async function submitBooking() {
       btn.textContent = prevLabel;
       return;
     }
-  } catch (_) {
+  } catch (netErr) {
+    // Beacon this to /admin/attempts/ so we can see WHICH browser /
+    // network combo the customer was on — a "call the shop" moment
+    // used to leave zero trace.
+    reportClientError("booking-submit-network", netErr);
     err.textContent = "Network error. Please try again or call 936-223-1182.";
     err.hidden = false;
     btn.disabled = false;
@@ -1657,11 +1700,18 @@ async function generateAgreementPdf(booking) {
     ["DL delivery", ({ upload: "Photo uploaded on the agreement page", text: "Customer will text photo to 936-223-1182 at payment", "in-person": "Customer will bring physical copy at pickup" }[ag.dlMethod]) || "—"],
   ];
   doc.setFontSize(10); doc.setFont("helvetica", "normal"); ink();
+  // Value column starts at M + 110; wrap it against the remaining
+  // width (W - 110) so long addresses or DL numbers don't bleed off
+  // the right margin. Row height grows with the wrapped line count.
+  const VAL_X = M + 110;
+  const VAL_W = W - 110;
   for (const [k, v] of rows) {
-    ensureSpace(14);
+    const valueLines = doc.splitTextToSize(String(v), VAL_W);
+    const rowH = Math.max(14, valueLines.length * 12);
+    ensureSpace(rowH);
     muted(); doc.text(k, M, y);
-    ink();  doc.text(String(v), M + 110, y);
-    y += 14;
+    ink();  doc.text(valueLines, VAL_X, y);
+    y += rowH;
   }
   y += 8;
 
@@ -1670,12 +1720,21 @@ async function generateAgreementPdf(booking) {
   const rentedIds = new Set((booking.items || []).map(it => it.id));
   const rentedCarts = CARTS.filter(x => rentedIds.has(x.id));
   for (const cart of rentedCarts) {
-    ensureSpace(14);
+    // Cart name at the left, details indented at M+180, both wrapped
+    // to their own column width so a long serial or model string
+    // doesn't spill past the right margin.
+    const DET_X = M + 180;
+    const DET_W = W - 180;
+    const nameLines = doc.splitTextToSize(cart.name, 170);
+    const detText = `${cart.make} · ${cart.modelDetails || ""} · Serial ${cart.serial}`;
+    const detLines = doc.splitTextToSize(detText, DET_W);
+    const rowH = Math.max(nameLines.length, detLines.length) * 12 + 2;
+    ensureSpace(rowH);
     ink(); doc.setFontSize(10); doc.setFont("helvetica", "bold");
-    doc.text(cart.name, M, y);
+    doc.text(nameLines, M, y);
     doc.setFont("helvetica", "normal"); muted();
-    doc.text(`${cart.make} · ${cart.modelDetails || ""} · Serial ${cart.serial}`, M + 200, y);
-    y += 14;
+    doc.text(detLines, DET_X, y);
+    y += rowH;
   }
   y += 6;
 
