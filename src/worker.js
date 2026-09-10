@@ -940,7 +940,18 @@ async function checkAvailability(request, env, url) {
 // Lifecycle states the owner can assign from the admin UI. The set is
 // closed — any other value gets rejected as a 400 — so we never end up
 // with typos in KV that don't match the UI dropdown.
-const BOOKING_STATUSES = ["new", "picked-up", "delivered", "returned"];
+// Owner-facing lifecycle states, in order of progression.
+//   new        — freshly submitted, no payment collected yet
+//   paid-part  — deposit taken (e.g. 50% for a booking 3+ months out)
+//   paid-full  — balance settled
+//   complete   — cart returned, rental closed out (fires the customer
+//                thank-you email on first transition into this state).
+// Legacy records may still carry the older "picked-up", "delivered",
+// or "returned" values from before 2026-09-10; those still render in
+// the pill via the label map, but re-picking a status from the admin
+// dropdown moves them onto the new set.
+const BOOKING_STATUSES = ["new", "paid-part", "paid-full", "complete"];
+const LEGACY_STATUSES = ["picked-up", "delivered", "returned"];
 
 // Generic PATCH on /api/booking/<PCGC-XXXXXX>. Accepts:
 //   - status: one of BOOKING_STATUSES  → runs the lifecycle update
@@ -1043,7 +1054,7 @@ async function updateBookingStatus(request, env, url) {
   // "returned". Skip if it was already returned (shouldn't happen via
   // the strict-equality check above, but cheap belt-and-suspenders).
   let emailResult = null;
-  if (statusChange && statusChange.next === "returned" && statusChange.prev !== "returned") {
+  if (statusChange && statusChange.next === "complete" && statusChange.prev !== "complete") {
     if (env.RESEND_API_KEY) {
       try {
         await sendThankYouEmail(match.rec, env);

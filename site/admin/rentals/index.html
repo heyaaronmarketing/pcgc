@@ -56,6 +56,10 @@
       border: 1px solid currentColor;
     }
     .bk-pill[data-status="new"]         { color: #c2261a; background: #fde9e6; border-color: #f3c3bc; }
+    .bk-pill[data-status="paid-part"]   { color: #8a4a00; background: #fff2d6; border-color: #e8c669; }
+    .bk-pill[data-status="paid-full"]   { color: #1f5a68; background: #d6ecf0; border-color: #9fcfd7; }
+    .bk-pill[data-status="complete"]    { color: #2f6b3b; background: #dff0e1; border-color: #a7d4ad; }
+    /* Legacy status pills (pre-2026-09-10) — kept muted so old records stay readable. */
     .bk-pill[data-status="picked-up"]   { color: #1f5a68; background: #d6ecf0; border-color: #9fcfd7; }
     .bk-pill[data-status="delivered"]   { color: #1f5a68; background: #d6ecf0; border-color: #9fcfd7; }
     .bk-pill[data-status="returned"]    { color: #2f6b3b; background: #dff0e1; border-color: #a7d4ad; }
@@ -211,8 +215,21 @@
       const fmtMoney = n => "$" + (Number(n) || 0).toFixed(2);
       const fmtDate = iso => iso ? new Date(iso + "T00:00:00").toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" }) : "—";
       const deliveryLabel = { pickup: "Pickup at shop", local: "Free delivery (≤25 mi)", mid: "Delivery 25–50 mi ($50)", extended: "Delivery 50–100 mi ($75)" };
-      const statusLabel = { "new": "New Order", "picked-up": "Picked Up", "delivered": "Delivered", "returned": "Returned" };
-      const statusOptions = ["new", "picked-up", "delivered", "returned"];
+      // Active lifecycle statuses (in progression order). Legacy keys
+      // (picked-up / delivered / returned) still get a display label so
+      // pre-2026-09-10 bookings still render, but the dropdown only
+      // shows the new set so re-editing moves them to the new lifecycle.
+      const statusLabel = {
+        "new": "New Order",
+        "paid-part": "Paid — Partial",
+        "paid-full": "Paid — Full",
+        "complete": "Complete",
+        // Legacy fallbacks
+        "picked-up": "Picked Up (legacy)",
+        "delivered": "Delivered (legacy)",
+        "returned": "Returned (legacy)",
+      };
+      const statusOptions = ["new", "paid-part", "paid-full", "complete"];
       // Fleet catalog — mirrors CARTS[] in /assets/rentals.js so the
       // edit form knows what carts exist, their price, and their color
       // when the owner swaps carts on a booking.
@@ -745,9 +762,9 @@
             // Update the pill in place.
             pill.dataset.status = newStatus;
             pill.textContent = statusLabel[newStatus];
-            // Special-case the returned transition so the owner sees
-            // whether the thank-you email actually went out.
-            if (newStatus === "returned") {
+            // Special-case the Complete transition (customer thank-you
+            // email fires on the first move to "complete").
+            if (newStatus === "complete") {
               if (data.email === "sent") {
                 msg.textContent = "Saved · thank-you email sent";
               } else if (data.email && data.email.startsWith("failed")) {
