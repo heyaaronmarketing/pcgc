@@ -3094,7 +3094,7 @@ def page_reviews():
     # Owner-supplied Google share link — resolves directly to the PCGC
     # review form. Shorter + more reliable than the placeid query-string
     # form (which sometimes shows an extra "find this business" step).
-    google_review_url = "https://share.google/RjxLOjukDYZrEakMq"
+    google_review_url = "https://share.google/J5oRVdEykCo6Mbjrq"
     return (
         head(
             "Leave a Review · Polk County Golf Carts",

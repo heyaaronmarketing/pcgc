@@ -1051,9 +1051,13 @@ async function updateBookingStatus(request, env, url) {
   await env.FEEDBACK_KV.put(match.key, JSON.stringify(match.rec));
 
   // Fire the thank-you email the first time a booking lands on
-  // "returned". Skip if it was already returned (shouldn't happen via
-  // the strict-equality check above, but cheap belt-and-suspenders).
+  // "complete". Cheap belt-and-suspenders equality check even though
+  // the parent block already guarded `hasStatus && body.status !== prevStatus`.
+  // At the same time, schedule the 5-day follow-up review email via
+  // Resend's scheduled_at — the ONE-time transition guard prevents
+  // a status toggle-and-toggle-back from queueing a second follow-up.
   let emailResult = null;
+  let followupResult = null;
   if (statusChange && statusChange.next === "complete" && statusChange.prev !== "complete") {
     if (env.RESEND_API_KEY) {
       try {
@@ -1063,8 +1067,28 @@ async function updateBookingStatus(request, env, url) {
         emailResult = "failed: " + (e?.message || String(e));
         console.error("thank-you email failed:", emailResult);
       }
+      if (!match.rec.reviewFollowupScheduled) {
+        try {
+          const meta = await sendReviewFollowupEmail(match.rec, env);
+          match.rec.reviewFollowupScheduled = true;
+          match.rec.reviewFollowupAt = meta?.scheduledAt || null;
+          match.rec.reviewFollowupResendId = meta?.resendId || null;
+          followupResult = meta?.scheduledAt
+            ? "scheduled for " + meta.scheduledAt
+            : "sent immediately (end date already past)";
+          // Persist the flag alongside the record so a toggle-back
+          // + toggle-forward doesn't queue a duplicate followup.
+          await env.FEEDBACK_KV.put(match.key, JSON.stringify(match.rec));
+        } catch (e) {
+          followupResult = "failed: " + (e?.message || String(e));
+          console.error("review follow-up failed:", followupResult);
+        }
+      } else {
+        followupResult = "skipped (already scheduled previously)";
+      }
     } else {
       emailResult = "skipped (no RESEND_API_KEY)";
+      followupResult = "skipped (no RESEND_API_KEY)";
     }
   }
 
@@ -1076,6 +1100,7 @@ async function updateBookingStatus(request, env, url) {
     statusChange,
     editApplied,
     email: emailResult,
+    followup: followupResult,
   });
 }
 
@@ -1107,11 +1132,15 @@ async function deleteBooking(request, env, url) {
   return json({ ok: true, deleted: id });
 }
 
+// The single source of truth for the "leave us a Google review"
+// call-to-action URL. Owner-supplied share.google link jumps directly
+// to the review form (one fewer click than the /leave-a-review/ page).
+const REVIEW_URL = "https://share.google/J5oRVdEykCo6Mbjrq";
+
 // Customer-facing thank-you email sent when status transitions to
-// "returned". Asks for a Google review with a button that links
-// directly to the PCGC review form (the owner-supplied share.google
-// link bypasses the in-between /leave-a-review/ landing — one less
-// click, higher conversion).
+// "complete". Asks for a Google review with a button linking directly
+// to the PCGC review form. A softer follow-up (below) is queued to
+// send 5 days after the rental end date in case they don't act now.
 async function sendThankYouEmail(record, env) {
   const customer = record.contact || {};
   const to = customer.email;
@@ -1119,7 +1148,6 @@ async function sendThankYouEmail(record, env) {
   const from = env.BOOKING_FROM_EMAIL || "bookings@polkcountygolfcarts.com";
 
   const subject = `Thanks for renting with Polk County Golf Carts!`;
-  const reviewUrl = "https://share.google/RjxLOjukDYZrEakMq";
   const firstName = (customer.name || "").split(/\s+/)[0] || "there";
 
   const html = `<!doctype html><html><body style="font-family:system-ui,Arial,sans-serif; max-width:560px; margin:0 auto; padding:1rem; color:#222;">
@@ -1127,7 +1155,7 @@ async function sendThankYouEmail(record, env) {
     <p>The cart's back safely — hope you had a great time out there.</p>
     <p>If you've got a minute, the best thing you can do for a small family-owned shop like ours is leave a quick review on Google. It honestly makes a huge difference.</p>
     <p style="margin:1.5rem 0;">
-      <a href="${reviewUrl}" style="display:inline-block; background:#e85a4f; color:#fff; padding:.85rem 1.4rem; border-radius:8px; text-decoration:none; font-weight:600;">Leave a quick review &rarr;</a>
+      <a href="${REVIEW_URL}" style="display:inline-block; background:#e85a4f; color:#fff; padding:.85rem 1.4rem; border-radius:8px; text-decoration:none; font-weight:600;">Leave a quick review &rarr;</a>
     </p>
     <p>Booking <b>${escHtml(record.id)}</b> &middot; need anything else, just hit reply or call <a href="tel:9362231182">936-223-1182</a>.</p>
     <p style="margin-top:1.5rem;">— John &amp; the PCGC crew<br>Polk County Golf Carts &middot; Livingston, TX</p>
@@ -1140,7 +1168,7 @@ async function sendThankYouEmail(record, env) {
     ``,
     `If you've got a minute, the best thing you can do for a small family-owned shop like ours is leave a quick review on Google. It honestly makes a huge difference:`,
     ``,
-    reviewUrl,
+    REVIEW_URL,
     ``,
     `Booking ${record.id} · need anything else, just hit reply or call 936-223-1182.`,
     ``,
@@ -1167,6 +1195,84 @@ async function sendThankYouEmail(record, env) {
     const t = await res.text();
     throw new Error(`resend ${res.status}: ${t}`);
   }
+}
+
+// Softer second ask — scheduled via Resend to land 5 days AFTER the
+// rental end date (or immediately, if that time is already in the past
+// when the booking is marked Complete). Same review CTA, slightly
+// different framing so it doesn't feel like a copy of the first email.
+async function sendReviewFollowupEmail(record, env) {
+  const customer = record.contact || {};
+  const to = customer.email;
+  if (!to) throw new Error("no customer email on booking");
+  const from = env.BOOKING_FROM_EMAIL || "bookings@polkcountygolfcarts.com";
+
+  const subject = `One more ask — a quick Google review?`;
+  const firstName = (customer.name || "").split(/\s+/)[0] || "there";
+
+  // Trigger time: 5 days after dates.end at 16:00 UTC (~10-11am CT).
+  // If that's already in the past, drop scheduled_at so Resend sends
+  // now — happens when the owner marks Complete late.
+  let scheduledAt = null;
+  const endIso = record.dates?.end;
+  if (endIso) {
+    const target = new Date(endIso + "T16:00:00Z");
+    target.setUTCDate(target.getUTCDate() + 5);
+    if (target.getTime() > Date.now() + 60_000) {
+      scheduledAt = target.toISOString();
+    }
+  }
+
+  const html = `<!doctype html><html><body style="font-family:system-ui,Arial,sans-serif; max-width:560px; margin:0 auto; padding:1rem; color:#222;">
+    <h2 style="color:#1f5a68; margin:0 0 .75rem;">Hey ${escHtml(firstName)},</h2>
+    <p>Bumping this once — I know how fast a week goes.</p>
+    <p>If your rental with us went well, a quick Google review is the single most helpful thing you can do for a small family shop like ours. Takes about 30 seconds.</p>
+    <p style="margin:1.5rem 0;">
+      <a href="${REVIEW_URL}" style="display:inline-block; background:#e85a4f; color:#fff; padding:.85rem 1.4rem; border-radius:8px; text-decoration:none; font-weight:600;">Leave a review &rarr;</a>
+    </p>
+    <p>Either way — thanks for renting with us. Hope we see you again next season.</p>
+    <p style="margin-top:1.5rem;">— John<br>Polk County Golf Carts &middot; <a href="tel:9362231182">936-223-1182</a></p>
+  </body></html>`;
+
+  const text = [
+    `Hey ${firstName},`,
+    ``,
+    `Bumping this once — I know how fast a week goes.`,
+    ``,
+    `If your rental with us went well, a quick Google review is the single most helpful thing you can do for a small family shop like ours. Takes about 30 seconds:`,
+    ``,
+    REVIEW_URL,
+    ``,
+    `Either way — thanks for renting with us. Hope we see you again next season.`,
+    ``,
+    `— John`,
+    `Polk County Golf Carts · 936-223-1182`,
+  ].join("\n");
+
+  const body = {
+    from: `Online Cart Rentals <${from}>`,
+    to: [to],
+    subject,
+    html,
+    text,
+    reply_to: env.BOOKING_TO_EMAIL || "polkcountygolfcarts@yahoo.com",
+  };
+  if (scheduledAt) body.scheduled_at = scheduledAt;
+
+  const res = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      "authorization": `Bearer ${env.RESEND_API_KEY}`,
+      "content-type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) {
+    const t = await res.text();
+    throw new Error(`resend ${res.status}: ${t}`);
+  }
+  const data = await res.json().catch(() => ({}));
+  return { scheduledAt, resendId: data?.id || null };
 }
 
 // Admin diagnostic: send a real Resend request and report exactly what

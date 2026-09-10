@@ -765,16 +765,24 @@
             // Special-case the Complete transition (customer thank-you
             // email fires on the first move to "complete").
             if (newStatus === "complete") {
-              if (data.email === "sent") {
-                msg.textContent = "Saved · thank-you email sent";
-              } else if (data.email && data.email.startsWith("failed")) {
-                msg.textContent = "Saved · email failed (" + data.email.slice(8) + ")";
-                msg.className = "bk-status-msg error";
-              } else if (data.email && data.email.startsWith("skipped")) {
-                msg.textContent = "Saved · email skipped (no Resend key configured)";
-              } else {
-                msg.textContent = "Saved";
+              // Build a status line covering both the thank-you email
+              // and the 5-day follow-up schedule.
+              const bits = ["Saved"];
+              if (data.email === "sent") bits.push("thank-you email sent");
+              else if (data.email && data.email.startsWith("failed")) { bits.push("thank-you failed (" + data.email.slice(8) + ")"); msg.className = "bk-status-msg error"; }
+              else if (data.email && data.email.startsWith("skipped")) bits.push("thank-you skipped (no Resend key)");
+              if (data.followup) {
+                if (data.followup.startsWith("scheduled for ")) {
+                  const iso = data.followup.slice("scheduled for ".length);
+                  try {
+                    const when = new Date(iso).toLocaleDateString(undefined, { month: "short", day: "numeric" });
+                    bits.push(`5-day follow-up scheduled ${when}`);
+                  } catch { bits.push("5-day follow-up scheduled"); }
+                } else if (data.followup.startsWith("sent immediately")) bits.push("5-day follow-up sent now (rental already past)");
+                else if (data.followup.startsWith("failed")) { bits.push("follow-up failed (" + data.followup.slice(8) + ")"); msg.className = "bk-status-msg error"; }
+                else if (data.followup.startsWith("skipped")) bits.push("follow-up " + data.followup);
               }
+              msg.textContent = bits.join(" · ");
             } else {
               msg.textContent = "Saved";
               msg.className = "bk-status-msg success";
