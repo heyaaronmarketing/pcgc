@@ -703,6 +703,7 @@ def page_home():
               <p class="lede">{BIZ['tagline']}. {BIZ['inventory_line']} Plus full service and custom builds from a fresh paint job to a full lift kit, with free pickup &amp; delivery within {BIZ['delivery_radius']} miles of Livingston — extended service up to {BIZ['extended_radius']} miles for an additional charge.</p>
               <div class="hero-ctas">
                 <a class="btn btn-coral" href="/carts/">See the new Breezy EV →</a>
+                <a class="btn btn-outline" href="/services/request/">Request service</a>
                 <a class="btn btn-outline" href="tel:{BIZ['phone_primary'].replace('-','')}">📞 {BIZ['phone_primary']}</a>
               </div>
               <div class="hero-meta">
@@ -964,6 +965,11 @@ def page_services():
           <div class="container">
             <h1>Service. Custom. Anything cart.</h1>
             <p class="lede">Tune-ups, batteries, motors, paint, lift kits — gas or electric, any brand. We service what we sell, plus everyone else's too.</p>
+            <div class="cta-row" style="margin-top:1.25rem; display:flex; gap:.75rem; flex-wrap:wrap;">
+              <a class="btn btn-coral" href="/services/request/">Request service →</a>
+              <a class="btn btn-ghost" href="tel:9362231182">📞 Call 936-223-1182</a>
+            </div>
+            <p class="rental-meta" style="margin-top:.65rem; font-size:.88rem; color:var(--ink-soft);">We reply within 24–48 hours by email or phone.</p>
           </div>
         </section>
 
@@ -3300,7 +3306,7 @@ def main():
         )
     # Public URLs for the sitemap. Phase 1-3 pages (Breezy EV product
     # tree, town service-area pages, pillar guides) added below.
-    urls = ["/", "/carts/", "/services/", "/rentals/", "/financing/", "/about-us/", "/contact/", "/privacy/", "/leave-a-review/"]
+    urls = ["/", "/carts/", "/services/", "/services/request/", "/rentals/", "/financing/", "/about-us/", "/contact/", "/privacy/", "/leave-a-review/"]
     urls += [
         "/breezy-ev/",
         "/breezy-ev/compare/",

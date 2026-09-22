@@ -53,6 +53,15 @@ export default {
     if (url.pathname === "/api/sessions" && request.method === "GET") {
       return listSessions(request, env);
     }
+    if (url.pathname === "/api/service-request" && request.method === "POST") {
+      return submitServiceRequest(request, env);
+    }
+    if (url.pathname === "/api/service-requests" && request.method === "GET") {
+      return listServiceRequests(request, env);
+    }
+    if (url.pathname.startsWith("/api/service-requests/") && request.method === "DELETE") {
+      return deleteServiceRequest(request, env, url);
+    }
     if (url.pathname.startsWith("/api/booking/") && request.method === "PATCH") {
       return updateBookingStatus(request, env, url);
     }
@@ -1128,6 +1137,183 @@ async function deleteBooking(request, env, url) {
   } while (cursor);
   if (!match) return json({ error: "booking not found", id }, 404);
 
+  await env.FEEDBACK_KV.delete(match.key);
+  return json({ ok: true, deleted: id });
+}
+
+// -------------------- Service requests --------------------
+// Public POST endpoint that captures a "please service my cart" lead
+// from /services/request/. Sends the owner a notification email so it
+// hits their inbox in real time, and persists the record under
+// `service-request:<ts>:<id>` for the /admin/service-requests/ viewer.
+// Field-size caps prevent someone from stuffing a novel into the notes.
+const SR_MAX_LEN = { name: 200, phone: 40, email: 200, address: 400, cartType: 60, cartModel: 200, reason: 4000 };
+async function submitServiceRequest(request, env) {
+  if (!env.FEEDBACK_KV) return json({ error: "storage not configured" }, 503);
+  let payload;
+  try { payload = await request.json(); }
+  catch { return json({ error: "invalid JSON" }, 400); }
+
+  const clean = (v, cap) => String(v ?? "").slice(0, cap).trim();
+  const rec = {
+    name: clean(payload.name, SR_MAX_LEN.name),
+    phone: clean(payload.phone, SR_MAX_LEN.phone),
+    email: clean(payload.email, SR_MAX_LEN.email),
+    address: clean(payload.address, SR_MAX_LEN.address),
+    cartType: clean(payload.cartType, SR_MAX_LEN.cartType),
+    cartModel: clean(payload.cartModel, SR_MAX_LEN.cartModel),
+    reason: clean(payload.reason, SR_MAX_LEN.reason),
+  };
+  const missing = [];
+  if (!rec.name) missing.push("name");
+  if (!rec.phone) missing.push("phone");
+  if (!rec.email) missing.push("email");
+  if (!rec.address) missing.push("address");
+  if (!rec.cartType) missing.push("cart type");
+  if (!rec.reason) missing.push("reason");
+  if (missing.length) return json({ error: `Missing: ${missing.join(", ")}` }, 400);
+  if (!/^\S+@\S+\.\S+$/.test(rec.email)) return json({ error: "invalid email" }, 400);
+
+  const ts = new Date().toISOString();
+  const idSuffix = crypto.randomUUID().slice(0, 6).toUpperCase();
+  const id = "PCGC-SR-" + idSuffix;
+
+  const record = {
+    ...rec,
+    id, ts,
+    status: "new",
+    ua: (request.headers.get("user-agent") || "").slice(0, 500),
+    ip: request.headers.get("cf-connecting-ip") || "",
+    country: request.cf?.country || "",
+  };
+  await env.FEEDBACK_KV.put(`service-request:${ts}:${idSuffix}`, JSON.stringify(record));
+
+  // Notify the shop (owner + notification email). Failure here must
+  // never fail the whole submit — the record's already saved in KV.
+  let ownerEmailResult = null;
+  if (env.RESEND_API_KEY) {
+    try {
+      await sendServiceRequestEmail(record, env);
+      ownerEmailResult = "sent";
+    } catch (e) {
+      ownerEmailResult = "failed: " + (e?.message || String(e));
+      console.error("service-request email failed:", ownerEmailResult);
+    }
+  } else {
+    ownerEmailResult = "skipped (no RESEND_API_KEY)";
+  }
+
+  return json({ ok: true, id, ownerEmail: ownerEmailResult });
+}
+
+async function sendServiceRequestEmail(record, env) {
+  const from = env.BOOKING_FROM_EMAIL || "bookings@polkcountygolfcarts.com";
+  const to = env.BOOKING_TO_EMAIL || "polkcountygolfcarts@yahoo.com";
+  const subject = `New service request · ${record.name} · ${record.cartType}`;
+  const html = `<!doctype html><html><body style="font-family:system-ui,Arial,sans-serif; max-width:560px; margin:0 auto; padding:1rem; color:#222;">
+    <h2 style="color:#1f5a68; margin:0 0 .5rem;">New service request</h2>
+    <p style="margin:0 0 1rem; color:#666;">Reference: <b>${escHtml(record.id)}</b></p>
+
+    <table style="width:100%; border-collapse:collapse; font-size:14px;">
+      <tr><td style="width:130px; color:#888; padding:6px 0;">Name</td><td style="padding:6px 0;"><b>${escHtml(record.name)}</b></td></tr>
+      <tr><td style="color:#888; padding:6px 0;">Phone</td><td style="padding:6px 0;"><a href="tel:${escHtml(record.phone)}">${escHtml(record.phone)}</a></td></tr>
+      <tr><td style="color:#888; padding:6px 0;">Email</td><td style="padding:6px 0;"><a href="mailto:${escHtml(record.email)}">${escHtml(record.email)}</a></td></tr>
+      <tr><td style="color:#888; padding:6px 0; vertical-align:top;">Address</td><td style="padding:6px 0;">${escHtml(record.address)}</td></tr>
+      <tr><td style="color:#888; padding:6px 0;">Cart type</td><td style="padding:6px 0;"><b>${escHtml(record.cartType)}</b></td></tr>
+      ${record.cartModel ? `<tr><td style="color:#888; padding:6px 0;">Model / year</td><td style="padding:6px 0;">${escHtml(record.cartModel)}</td></tr>` : ""}
+    </table>
+
+    <h3 style="margin:1.2rem 0 .35rem; color:#1f5a68; font-size:15px;">What they need</h3>
+    <div style="background:#fbf8f3; border:1px solid #ecd9c7; border-radius:8px; padding:.85rem 1rem; white-space:pre-wrap; font-size:14px;">${escHtml(record.reason)}</div>
+
+    <p style="margin:1.5rem 0 .25rem; font-size:13px; color:#888;">Reply to this email to message ${escHtml(record.name)} directly · or call <a href="tel:${escHtml(record.phone)}">${escHtml(record.phone)}</a>.</p>
+    <p style="margin:.25rem 0; font-size:12px; color:#aaa;">Received ${escHtml(record.ts)} · ${escHtml(record.ip || "?")} (${escHtml(record.country || "?")}) · <a href="https://polkcountygolfcarts.com/admin/service-requests/" style="color:#1f5a68;">/admin/service-requests/</a></p>
+  </body></html>`;
+
+  const text = [
+    `New service request — ${record.id}`,
+    ``,
+    `Name:      ${record.name}`,
+    `Phone:     ${record.phone}`,
+    `Email:     ${record.email}`,
+    `Address:   ${record.address}`,
+    `Cart type: ${record.cartType}`,
+    record.cartModel ? `Model:     ${record.cartModel}` : null,
+    ``,
+    `What they need:`,
+    record.reason,
+    ``,
+    `Received ${record.ts}`,
+    `Reply to this email to message ${record.name} directly.`,
+  ].filter(Boolean).join("\n");
+
+  const replyTo = record.email
+    ? `${record.name} <${record.email}>`
+    : undefined;
+
+  const body = {
+    from: `Online Cart Rentals <${from}>`,
+    to: [to],
+    subject,
+    html,
+    text,
+  };
+  if (replyTo) body.reply_to = replyTo;
+
+  const res = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: { "authorization": `Bearer ${env.RESEND_API_KEY}`, "content-type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) {
+    const t = await res.text();
+    throw new Error(`resend ${res.status}: ${t}`);
+  }
+}
+
+// Admin listing of service requests, newest first.
+async function listServiceRequests(request, env) {
+  if (!env.FEEDBACK_KV) return json({ error: "kv not configured" }, 503);
+  const auth = await checkAdminAuth(request, env);
+  if (auth) return auth;
+  const result = await env.FEEDBACK_KV.list({ prefix: "service-request:", limit: KV_LIST_LIMIT });
+  const keys = result.keys.slice().reverse();
+  const entries = await Promise.all(
+    keys.map(async (k) => {
+      const raw = await env.FEEDBACK_KV.get(k.name);
+      if (!raw) return null;
+      try {
+        const rec = JSON.parse(raw);
+        rec._key = k.name;
+        return rec;
+      } catch { return null; }
+    })
+  );
+  return json({ entries: entries.filter(Boolean) });
+}
+
+// Admin delete of a service request by its PCGC-SR-XXXXXX id.
+async function deleteServiceRequest(request, env, url) {
+  const auth = await checkAdminAuth(request, env);
+  if (auth) return auth;
+  if (!env.FEEDBACK_KV) return json({ error: "kv not configured" }, 503);
+  const id = decodeURIComponent(url.pathname.replace(/^\/api\/service-requests\//, ""));
+  if (!id) return json({ error: "id required" }, 400);
+  let match = null;
+  let cursor;
+  do {
+    const page = await env.FEEDBACK_KV.list({ prefix: "service-request:", cursor });
+    for (const k of page.keys) {
+      const raw = await env.FEEDBACK_KV.get(k.name);
+      if (!raw) continue;
+      let rec;
+      try { rec = JSON.parse(raw); } catch { continue; }
+      if (rec.id === id) { match = { key: k.name }; break; }
+    }
+    if (match) break;
+    cursor = page.list_complete ? undefined : page.cursor;
+  } while (cursor);
+  if (!match) return json({ error: "service request not found", id }, 404);
   await env.FEEDBACK_KV.delete(match.key);
   return json({ ok: true, deleted: id });
 }

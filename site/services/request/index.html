@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Request Service · Polk County Golf Carts</title>
+  <meta name="description" content="Request golf cart service — tune-up, repair, battery, custom build, anything. We reply within 24-48 hours by phone or email. Free pickup within 25 miles of Livingston, TX.">
+  <link rel="canonical" href="https://polkcountygolfcarts.com/services/request/">
+  <meta name="theme-color" content="#e85a4f">
+  <link rel="icon" type="image/png" href="/assets/logos/favicon.png">
+
+  <meta property="og:title" content="Request Service · Polk County Golf Carts">
+  <meta property="og:description" content="Tell us what your cart needs. We reply within 24-48 hours.">
+  <meta property="og:image" content="https://polkcountygolfcarts.com/assets/og/services.png?v=v2sunset">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://polkcountygolfcarts.com/services/request/">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Request Service · Polk County Golf Carts">
+  <meta name="twitter:description" content="Tell us what your cart needs. We reply within 24-48 hours.">
+  <meta name="twitter:image" content="https://polkcountygolfcarts.com/assets/og/services.png?v=v2sunset">
+
+  <link rel="stylesheet" href="/assets/site.css?v=svcform01">
+  <style>
+    .svc-req { max-width: 720px; margin: 0 auto; padding: 2rem 1.25rem 5rem; }
+    .svc-req h1 { color: var(--teal-dk); font: 700 clamp(1.8rem, 4vw, 2.4rem)/1.15 Georgia, serif; margin: 0 0 .5rem; }
+    .svc-req .lede { color: var(--ink-soft); font-size: 1.05rem; margin: 0 0 1.5rem; }
+    .svc-eyebrow { display:inline-block; font: 700 .82rem/1 system-ui, sans-serif; letter-spacing:.08em; text-transform:uppercase; color: var(--coral); background: #fde9e6; padding: .35rem .7rem; border-radius: 999px; margin-bottom: 1rem; }
+    .svc-card { background:#fff; border:1px solid var(--line); border-radius:14px; padding: 1.75rem 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,.04); }
+    @media (max-width: 520px) { .svc-card { padding: 1.35rem 1.15rem; } }
+
+    .svc-field { display:flex; flex-direction:column; gap:.3rem; margin-top: 1rem; }
+    .svc-field > span { font: 600 .92rem inherit; color: var(--ink); }
+    .svc-field em { font-style:normal; color: var(--ink-soft); font-weight:400; }
+    .svc-field input, .svc-field select, .svc-field textarea {
+      font: 16px/1.4 inherit; color: var(--ink);
+      border: 1px solid var(--line); border-radius: 10px;
+      padding: .75rem .85rem; background: var(--bg); width: 100%;
+      box-sizing: border-box;
+    }
+    .svc-field select { appearance: none; -webkit-appearance: none;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path fill='%231f5a68' d='M0 0h12L6 8z'/></svg>");
+      background-repeat: no-repeat; background-position: right .95rem center; background-size: 10px 7px; padding-right: 2.2rem; }
+    .svc-field textarea { min-height: 110px; resize: vertical; font-family: inherit; }
+    .svc-field input:focus, .svc-field select:focus, .svc-field textarea:focus {
+      outline: none; border-color: var(--coral); background: #fff;
+    }
+    .svc-grid-2 { display: grid; gap: 1rem; grid-template-columns: 1fr 1fr; }
+    @media (max-width: 520px) { .svc-grid-2 { grid-template-columns: 1fr; } }
+
+    .svc-disclaimer { display:flex; gap:.7rem; background:#e6f1f3; border:1px solid #9fcfd7; border-radius:10px; padding:.8rem 1rem; margin: 1.5rem 0 .5rem; align-items:flex-start; }
+    .svc-disclaimer .icon { font-size: 1.4rem; line-height: 1; }
+    .svc-disclaimer p { margin: 0; font-size: .92rem; color: var(--ink); }
+    .svc-disclaimer b { color: var(--teal-dk); }
+
+    .svc-cta { display:flex; align-items:center; gap:1rem; flex-wrap:wrap; margin-top: 1.25rem; }
+    .svc-cta button { background: var(--coral); color:#fff; border:0; border-radius:10px; padding: .9rem 1.6rem; font-size:1rem; font-weight:700; cursor:pointer; }
+    .svc-cta button:hover { background: var(--coral-dk); }
+    .svc-cta button:disabled { opacity:.6; cursor:not-allowed; }
+    .svc-cta .call-alt { color: var(--ink-soft); font-size: .92rem; }
+    .svc-cta .call-alt a { color: var(--teal-dk); font-weight:600; text-decoration:none; }
+    .svc-cta .call-alt a:hover { text-decoration: underline; }
+
+    .svc-msg { margin-top: 1rem; padding: .75rem 1rem; border-radius: 10px; font-size:.95rem; }
+    .svc-msg.error { background:#fde9e6; border:1px solid #f3c3bc; color:#8a2a20; }
+    .svc-msg.success { background:#dff0e1; border:1px solid #a7d4ad; color:#2f6b3b; }
+
+    .svc-success-view { background:#fff; border:1px solid #a7d4ad; border-left:5px solid #2f6b3b; border-radius:14px; padding: 2rem 1.75rem; text-align:left; }
+    .svc-success-view h2 { color:#2f6b3b; font: 700 1.4rem/1.2 Georgia, serif; margin:0 0 .75rem; }
+    .svc-success-view p { margin:.5rem 0; }
+    .svc-success-view .callback { color: var(--ink-soft); }
+    .svc-success-view code { background:#f4efe4; padding: .1rem .4rem; border-radius: 4px; font: 700 .95rem ui-monospace, monospace; color: var(--teal-dk); }
+  </style>
+</head>
+<body>
+  <!-- Header (same shape as other pages, but simpler — this is a task page) -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="/">
+        <img src="/assets/logos/logo-color.png" alt="Polk County Golf Carts" width="60" height="60">
+        <span class="brand-word">
+          Polk County Golf Carts
+          <small>Request service</small>
+        </span>
+      </a>
+      <a class="btn btn-coral" href="tel:9362231182">📞 936-223-1182</a>
+    </div>
+  </header>
+
+  <main class="svc-req">
+    <div id="form-view">
+      <span class="svc-eyebrow">Service request</span>
+      <h1>Tell us what your cart needs.</h1>
+      <p class="lede">Send the shop a request. We reply within 24–48 hours by phone or email, whichever is quicker. Free pickup within 25 miles of Livingston; extended up to 75.</p>
+
+      <div class="svc-card">
+        <form id="svc-form" novalidate>
+          <div class="svc-grid-2">
+            <label class="svc-field">
+              <span>Your name</span>
+              <input type="text" name="name" required autocomplete="name" placeholder="First Last">
+            </label>
+            <label class="svc-field">
+              <span>Phone</span>
+              <input type="tel" name="phone" required autocomplete="tel" placeholder="(936) 555-1234">
+            </label>
+          </div>
+
+          <label class="svc-field">
+            <span>Email</span>
+            <input type="email" name="email" required autocomplete="email" placeholder="you@example.com" inputmode="email">
+          </label>
+
+          <label class="svc-field">
+            <span>Address <em>(where the cart is / for pickup)</em></span>
+            <input type="text" name="address" required autocomplete="street-address" placeholder="123 Main St, Livingston, TX">
+          </label>
+
+          <div class="svc-grid-2">
+            <label class="svc-field">
+              <span>Type of cart</span>
+              <select name="cartType" required>
+                <option value="">— Select —</option>
+                <option>Breezy EV</option>
+                <option>Yamaha</option>
+                <option>Club Car</option>
+                <option>E-Z-GO</option>
+                <option>ICON</option>
+                <option>Star EV</option>
+                <option>Evolution</option>
+                <option>Other / not sure</option>
+              </select>
+            </label>
+            <label class="svc-field">
+              <span>Cart model / year <em>(if you know it)</em></span>
+              <input type="text" name="cartModel" autocomplete="off" placeholder="e.g. 2019 Drive2, 6-seater">
+            </label>
+          </div>
+
+          <label class="svc-field">
+            <span>What can we help with?</span>
+            <textarea name="reason" required placeholder="Tune-up, batteries, brakes, motor, custom build, lift kit, sound system, quick question — anything. Tell us what's going on and we'll follow up."></textarea>
+          </label>
+
+          <div class="svc-disclaimer">
+            <span class="icon" aria-hidden="true">⏱</span>
+            <p><b>We reply within 24–48 hours</b> by email or phone. If it's an emergency or you'd rather talk right now, call <a href="tel:9362231182" style="color:var(--teal-dk); font-weight:600;">936-223-1182</a>.</p>
+          </div>
+
+          <div class="svc-cta">
+            <button type="submit" id="svc-submit">Send service request</button>
+            <span class="call-alt">or call <a href="tel:9362231182">936-223-1182</a></span>
+          </div>
+
+          <div id="svc-msg" class="svc-msg" hidden></div>
+        </form>
+      </div>
+    </div>
+
+    <div id="success-view" class="svc-success-view" hidden>
+      <h2>Got it — thanks!</h2>
+      <p>Your service request just landed in the shop.</p>
+      <p class="callback"><b>You'll hear back within 24–48 hours</b> by email or phone. If it's urgent, give us a ring at <a href="tel:9362231182" style="color:var(--teal-dk); font-weight:700;">936-223-1182</a>.</p>
+      <p>Reference: <code id="ref-code">PCGC-SR-—</code></p>
+      <p style="margin-top:1.25rem;"><a class="btn btn-coral" href="/">← Back to home</a></p>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p style="text-align:center; color:var(--ink-soft); font-size:.85rem;">
+        Polk County Golf Carts · 1732 FM 3277, Livingston, TX 77351 · <a href="tel:9362231182" style="color:var(--teal-dk);">936-223-1182</a>
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    const form = document.getElementById("svc-form");
+    const submitBtn = document.getElementById("svc-submit");
+    const msg = document.getElementById("svc-msg");
+    const formView = document.getElementById("form-view");
+    const successView = document.getElementById("success-view");
+    const refCode = document.getElementById("ref-code");
+
+    form.addEventListener("submit", async (ev) => {
+      ev.preventDefault();
+      msg.hidden = true;
+      msg.className = "svc-msg";
+
+      const data = Object.fromEntries(new FormData(form).entries());
+      // Trim strings
+      for (const k of Object.keys(data)) data[k] = String(data[k] || "").trim();
+
+      // Basic client-side validation
+      const missing = [];
+      if (!data.name) missing.push("name");
+      if (!data.phone) missing.push("phone");
+      if (!data.email) missing.push("email");
+      if (!data.address) missing.push("address");
+      if (!data.cartType) missing.push("cart type");
+      if (!data.reason) missing.push("reason");
+      if (missing.length) {
+        msg.textContent = "Please fill in: " + missing.join(", ") + ".";
+        msg.classList.add("error");
+        msg.hidden = false;
+        return;
+      }
+      if (!/^\S+@\S+\.\S+$/.test(data.email)) {
+        msg.textContent = "That email doesn't look right — double-check it.";
+        msg.classList.add("error");
+        msg.hidden = false;
+        return;
+      }
+
+      submitBtn.disabled = true;
+      const prevLabel = submitBtn.textContent;
+      submitBtn.textContent = "Sending…";
+      try {
+        const res = await fetch("/api/service-request", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify(data),
+        });
+        const body = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          msg.textContent = body.error || `Sorry, something went wrong (HTTP ${res.status}). Please try again or call 936-223-1182.`;
+          msg.classList.add("error");
+          msg.hidden = false;
+          submitBtn.disabled = false;
+          submitBtn.textContent = prevLabel;
+          return;
+        }
+        refCode.textContent = body.id || "PCGC-SR-—";
+        formView.hidden = true;
+        successView.hidden = false;
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } catch (e) {
+        msg.textContent = "Network hiccup — please try again in a moment, or call 936-223-1182.";
+        msg.classList.add("error");
+        msg.hidden = false;
+        submitBtn.disabled = false;
+        submitBtn.textContent = prevLabel;
+      }
+    });
+  </script>
+</body>
+</html>
