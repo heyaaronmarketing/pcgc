@@ -47,17 +47,205 @@
         </nav>
       </div>
     </header>
-<section class="hero" style="padding-bottom:3rem">
+<style>
+  /* --- /services/ hero form (inline, only used here) --- */
+  .svc-hero { padding: 2.5rem 0 3rem; background: linear-gradient(180deg, #fbf8f3 0%, #f4efe4 100%); }
+  .svc-hero-grid { display: grid; grid-template-columns: 1.05fr 1fr; gap: 3rem; align-items: start; }
+  @media (max-width: 900px) { .svc-hero-grid { grid-template-columns: 1fr; gap: 2rem; } }
+  .svc-pitch h1 { margin: .5rem 0 1rem; color: var(--teal-dk); font: 700 clamp(2rem, 4.5vw, 2.8rem)/1.1 Georgia, serif; }
+  .svc-pitch .eyebrow { display:inline-block; font: 700 .82rem/1 system-ui, sans-serif; letter-spacing:.08em; text-transform:uppercase; color: var(--coral); background: #fde9e6; padding: .35rem .7rem; border-radius: 999px; }
+  .svc-pitch .lede { color: var(--ink); font-size: 1.1rem; margin: 0 0 1.25rem; }
+  .svc-pitch ul.checks { list-style:none; padding:0; margin: 1rem 0 0; color: var(--ink); }
+  .svc-pitch ul.checks li { padding: .3rem 0 .3rem 1.6rem; position: relative; font-size:.98rem; }
+  .svc-pitch ul.checks li::before { content: "✓"; position: absolute; left:0; color: var(--coral); font-weight: 900; }
+  .svc-pitch .trust { display:flex; gap:1.25rem; flex-wrap:wrap; margin-top:1.25rem; padding-top:1.25rem; border-top:1px solid var(--line); color: var(--ink-soft); font-size:.9rem; }
+  .svc-pitch .trust b { color: var(--teal-dk); }
+
+  .svc-card { background:#fff; border:1px solid var(--line); border-radius:16px; padding: 1.5rem 1.4rem; box-shadow: 0 8px 30px rgba(31,90,104,.08); }
+  @media (max-width: 520px) { .svc-card { padding: 1.25rem 1.1rem; } }
+  .svc-card h2 { margin: 0 0 .3rem; color: var(--teal-dk); font: 700 1.35rem/1.2 Georgia, serif; }
+  .svc-card .kicker { font-size:.85rem; color: var(--ink-soft); margin: 0 0 1rem; }
+
+  .svc-field { display:flex; flex-direction:column; gap:.3rem; margin-top: .85rem; }
+  .svc-field > span { font: 600 .88rem inherit; color: var(--ink); }
+  .svc-field em { font-style:normal; color: var(--ink-soft); font-weight:400; }
+  .svc-field input, .svc-field select, .svc-field textarea {
+    font: 16px/1.4 inherit; color: var(--ink);
+    border: 1px solid var(--line); border-radius: 10px;
+    padding: .7rem .8rem; background: var(--bg); width: 100%;
+    box-sizing: border-box;
+  }
+  .svc-field select { appearance: none; -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path fill='%231f5a68' d='M0 0h12L6 8z'/></svg>");
+    background-repeat: no-repeat; background-position: right .9rem center; background-size: 10px 7px; padding-right: 2.2rem; }
+  .svc-field textarea { min-height: 90px; resize: vertical; font-family: inherit; }
+  .svc-field input:focus, .svc-field select:focus, .svc-field textarea:focus {
+    outline: none; border-color: var(--coral); background: #fff;
+  }
+  .svc-grid-2 { display: grid; gap: .85rem; grid-template-columns: 1fr 1fr; }
+  @media (max-width: 460px) { .svc-grid-2 { grid-template-columns: 1fr; } }
+
+  .svc-disclaimer { display:flex; gap:.55rem; background:#e6f1f3; border:1px solid #9fcfd7; border-radius:10px; padding:.7rem .85rem; margin: 1rem 0 .5rem; align-items:flex-start; }
+  .svc-disclaimer .icon { font-size: 1.2rem; line-height: 1; }
+  .svc-disclaimer p { margin: 0; font-size: .88rem; color: var(--ink); line-height:1.45; }
+  .svc-disclaimer b { color: var(--teal-dk); }
+  .svc-disclaimer a { color: var(--teal-dk); font-weight:600; }
+
+  .svc-submit { background: var(--coral); color:#fff; border:0; border-radius:10px; padding: .85rem 1.5rem; font-size:1rem; font-weight:700; cursor:pointer; margin-top: .75rem; width: 100%; }
+  .svc-submit:hover { background: var(--coral-dk); }
+  .svc-submit:disabled { opacity:.6; cursor:not-allowed; }
+
+  .svc-msg { margin-top: .85rem; padding: .65rem .85rem; border-radius: 10px; font-size:.9rem; }
+  .svc-msg.error { background:#fde9e6; border:1px solid #f3c3bc; color:#8a2a20; }
+
+  .svc-success { background:#fff; border:1px solid #a7d4ad; border-left:5px solid #2f6b3b; border-radius:14px; padding: 2rem 1.6rem; }
+  .svc-success h2 { color:#2f6b3b; font: 700 1.35rem/1.2 Georgia, serif; margin:0 0 .6rem; }
+  .svc-success p { margin:.4rem 0; }
+  .svc-success code { background:#f4efe4; padding: .1rem .4rem; border-radius: 4px; font: 700 .95rem ui-monospace, monospace; color: var(--teal-dk); }
+</style>
+
+<section class="svc-hero" id="request">
   <div class="container">
-    <h1>Service. Custom. Anything cart.</h1>
-    <p class="lede">Tune-ups, batteries, motors, paint, lift kits — gas or electric, any brand. We service what we sell, plus everyone else's too.</p>
-    <div class="cta-row" style="margin-top:1.25rem; display:flex; gap:.75rem; flex-wrap:wrap;">
-      <a class="btn btn-coral" href="/services/request/">Request service →</a>
-      <a class="btn btn-ghost" href="tel:9362231182">📞 Call 936-223-1182</a>
+    <div class="svc-hero-grid">
+      <div class="svc-pitch">
+        <span class="eyebrow">Service · Custom · Repair</span>
+        <h1>Service. Custom. Anything cart.</h1>
+        <p class="lede">Tune-ups, batteries, motors, paint, lift kits — gas or electric, any brand. We service what we sell, plus everyone else's too.</p>
+        <ul class="checks">
+          <li>Free pickup within 25 mi of Livingston</li>
+          <li>Extended service up to 75 mi</li>
+          <li>20-point service package from $165</li>
+          <li>10% off parts &amp; labor for a full year after service</li>
+        </ul>
+        <div class="trust">
+          <span><b>★★★★★</b> 5.0 · BBB Accredited</span>
+          <span>Family-owned since 2020</span>
+        </div>
+      </div>
+
+      <div>
+        <div id="svc-form-wrap" class="svc-card">
+          <h2>Request service</h2>
+          <p class="kicker">Tell us what your cart needs — we'll reach out within 24–48 hours.</p>
+          <form id="svc-form" novalidate>
+            <div class="svc-grid-2">
+              <label class="svc-field">
+                <span>Your name</span>
+                <input type="text" name="name" required autocomplete="name">
+              </label>
+              <label class="svc-field">
+                <span>Phone</span>
+                <input type="tel" name="phone" required autocomplete="tel" placeholder="(936) 555-1234">
+              </label>
+            </div>
+            <label class="svc-field">
+              <span>Email</span>
+              <input type="email" name="email" required autocomplete="email" inputmode="email">
+            </label>
+            <label class="svc-field">
+              <span>Address <em>(where the cart is)</em></span>
+              <input type="text" name="address" required autocomplete="street-address">
+            </label>
+            <div class="svc-grid-2">
+              <label class="svc-field">
+                <span>Type of cart</span>
+                <select name="cartType" required>
+                  <option value="">— Select —</option>
+                  <option>Breezy EV</option>
+                  <option>Yamaha</option>
+                  <option>Club Car</option>
+                  <option>E-Z-GO</option>
+                  <option>ICON</option>
+                  <option>Star EV</option>
+                  <option>Evolution</option>
+                  <option>Other / not sure</option>
+                </select>
+              </label>
+              <label class="svc-field">
+                <span>Model / year <em>(optional)</em></span>
+                <input type="text" name="cartModel" autocomplete="off" placeholder="e.g. 2019 Drive2">
+              </label>
+            </div>
+            <label class="svc-field">
+              <span>What can we help with?</span>
+              <textarea name="reason" required placeholder="Tune-up, batteries, custom build, quick question — anything."></textarea>
+            </label>
+
+            <div class="svc-disclaimer">
+              <span class="icon" aria-hidden="true">⏱</span>
+              <p><b>We reply within 24–48 hours</b> by email or phone. Emergency? Call <a href="tel:9362231182">936-223-1182</a>.</p>
+            </div>
+
+            <button type="submit" class="svc-submit" id="svc-submit">Send service request</button>
+            <div id="svc-msg" class="svc-msg" hidden></div>
+          </form>
+        </div>
+        <div id="svc-success" class="svc-success" hidden>
+          <h2>Got it — thanks!</h2>
+          <p>Your request just landed in the shop.</p>
+          <p><b>You'll hear back within 24–48 hours</b> by email or phone. Emergency? Call <a href="tel:9362231182" style="color:var(--teal-dk); font-weight:700;">936-223-1182</a>.</p>
+          <p>Reference: <code id="svc-ref">PCGC-SR-—</code></p>
+        </div>
+      </div>
     </div>
-    <p class="rental-meta" style="margin-top:.65rem; font-size:.88rem; color:var(--ink-soft);">We reply within 24–48 hours by email or phone.</p>
   </div>
 </section>
+
+<script>
+(() => {
+  const form = document.getElementById("svc-form");
+  const submit = document.getElementById("svc-submit");
+  const msg = document.getElementById("svc-msg");
+  const wrap = document.getElementById("svc-form-wrap");
+  const success = document.getElementById("svc-success");
+  const refEl = document.getElementById("svc-ref");
+  form.addEventListener("submit", async (ev) => {
+    ev.preventDefault();
+    msg.hidden = true;
+    msg.className = "svc-msg";
+    const data = Object.fromEntries(new FormData(form).entries());
+    for (const k of Object.keys(data)) data[k] = String(data[k] || "").trim();
+    const missing = [];
+    if (!data.name) missing.push("name");
+    if (!data.phone) missing.push("phone");
+    if (!data.email) missing.push("email");
+    if (!data.address) missing.push("address");
+    if (!data.cartType) missing.push("cart type");
+    if (!data.reason) missing.push("reason");
+    if (missing.length) {
+      msg.textContent = "Please fill in: " + missing.join(", ") + ".";
+      msg.classList.add("error"); msg.hidden = false; return;
+    }
+    if (!/^\S+@\S+\.\S+$/.test(data.email)) {
+      msg.textContent = "That email doesn't look right — double-check it.";
+      msg.classList.add("error"); msg.hidden = false; return;
+    }
+    submit.disabled = true;
+    const prev = submit.textContent;
+    submit.textContent = "Sending…";
+    try {
+      const res = await fetch("/api/service-request", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        msg.textContent = body.error || `Something went wrong (HTTP ${res.status}). Please try again or call 936-223-1182.`;
+        msg.classList.add("error"); msg.hidden = false;
+        submit.disabled = false; submit.textContent = prev; return;
+      }
+      refEl.textContent = body.id || "PCGC-SR-—";
+      wrap.hidden = true; success.hidden = false;
+      success.scrollIntoView({ behavior: "smooth", block: "start" });
+    } catch (e) {
+      msg.textContent = "Network hiccup — please try again in a moment, or call 936-223-1182.";
+      msg.classList.add("error"); msg.hidden = false;
+      submit.disabled = false; submit.textContent = prev;
+    }
+  });
+})();
+</script>
 
 <section>
   <div class="container split">
