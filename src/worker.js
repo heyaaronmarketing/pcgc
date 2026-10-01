@@ -62,6 +62,32 @@ export default {
     if (url.pathname.startsWith("/api/service-requests/") && request.method === "DELETE") {
       return deleteServiceRequest(request, env, url);
     }
+    // ---------- Inventory listings (new + used golf carts) ----------
+    if (url.pathname === "/api/listings" && request.method === "GET") {
+      return listListings(request, env, url);
+    }
+    if (url.pathname === "/api/listings" && request.method === "POST") {
+      return createListing(request, env);
+    }
+    const listingSlugMatch = url.pathname.match(/^\/api\/listings\/([a-z0-9-]{2,80})(?:\/(.+))?$/);
+    if (listingSlugMatch) {
+      const slug = listingSlugMatch[1];
+      const sub = listingSlugMatch[2] || "";
+      if (!sub && request.method === "GET")    return getListing(request, env, slug);
+      if (!sub && request.method === "PATCH")  return updateListing(request, env, slug);
+      if (!sub && request.method === "DELETE") return deleteListing(request, env, slug);
+      if (sub === "images" && request.method === "POST") return addListingImage(request, env, slug);
+      const imgMatch = sub.match(/^image\/([A-Za-z0-9_-]{2,40})$/);
+      if (imgMatch && request.method === "GET") return getListingImage(request, env, slug, imgMatch[1]);
+      const imgDel = sub.match(/^images\/([A-Za-z0-9_-]{2,40})$/);
+      if (imgDel && request.method === "DELETE") return deleteListingImage(request, env, slug, imgDel[1]);
+    }
+    // Server-render the detail page so Google + ChatGPT see real HTML
+    // with full meta tags + JSON-LD, not an empty SPA shell.
+    const carts2DetailMatch = url.pathname.match(/^\/carts2\/([a-z0-9-]{2,80})\/?$/);
+    if (carts2DetailMatch) {
+      return renderListingDetailPage(request, env, carts2DetailMatch[1]);
+    }
     if (url.pathname.startsWith("/api/booking/") && request.method === "PATCH") {
       return updateBookingStatus(request, env, url);
     }
@@ -1316,6 +1342,623 @@ async function deleteServiceRequest(request, env, url) {
   if (!match) return json({ error: "service request not found", id }, 404);
   await env.FEEDBACK_KV.delete(match.key);
   return json({ ok: true, deleted: id });
+}
+
+// -------------------- Cart listings (/carts2/) --------------------
+// A listing is a single golf cart for sale. Records live under
+// `listing:<slug>` as JSON (small — just text fields + image id
+// references). Each uploaded image lives under its own key
+// `listing-img:<slug>:<imgId>` holding a single data URL so a listing
+// with lots of photos doesn't bloat the main record and images lazy-
+// load as separate HTTP responses with cache headers.
+//
+// Fields on a listing record:
+//   slug           URL-safe id (lowercase, 2-80 chars, user-set)
+//   condition      "new" | "used"
+//   status         "draft" | "active" | "sold"
+//   make, model, year, color
+//   seats, drivetrain ("electric" | "gas")
+//   price_cents, msrp_cents (optional)
+//   mileage_hours, condition_notes (used only)
+//   top_speed_mph, range_mi, battery, motor, drive_type
+//   street_legal (boolean)
+//   headline, summary, description
+//   features (array of strings)
+//   images: [{ id, alt, order }]
+//   seo_title, seo_description (optional overrides)
+//   created_at, updated_at
+
+const LISTING_SLUG_RE = /^[a-z0-9](?:[a-z0-9-]{0,78}[a-z0-9])?$/;
+const LISTING_IMG_MAX = 20;
+const LISTING_IMG_MAX_BYTES = 2_500_000;       // ~1.8 MB source → base64 ≈ 2.5 MB
+const LISTING_RECORD_MAX_BYTES = 60_000;       // text record cap
+
+async function listListings(request, env, url) {
+  if (!env.FEEDBACK_KV) return json({ listings: [] });
+  const condition = url.searchParams.get("condition");  // "new" | "used" | null
+  const includeDraft = url.searchParams.get("includeDraft") === "1";
+  // Draft inclusion requires admin auth so public /carts2/ listing
+  // only ever sees published records.
+  if (includeDraft) {
+    const auth = await checkAdminAuth(request, env);
+    if (auth) return auth;
+  }
+
+  const list = await env.FEEDBACK_KV.list({ prefix: "listing:", limit: 200 });
+  const entries = await Promise.all(list.keys.map(async (k) => {
+    const raw = await env.FEEDBACK_KV.get(k.name);
+    if (!raw) return null;
+    try { return JSON.parse(raw); } catch { return null; }
+  }));
+  let listings = entries.filter(Boolean);
+  if (!includeDraft) listings = listings.filter(l => l.status === "active");
+  if (condition === "new" || condition === "used") {
+    listings = listings.filter(l => l.condition === condition);
+  }
+  // Newest first by created_at
+  listings.sort((a, b) => (b.created_at || "").localeCompare(a.created_at || ""));
+  // Strip to the fields the landing-page tiles actually render; keep
+  // things lean so the list request is a small payload.
+  const trim = listings.map(l => ({
+    slug: l.slug,
+    condition: l.condition,
+    status: l.status,
+    year: l.year,
+    make: l.make,
+    model: l.model,
+    color: l.color,
+    seats: l.seats,
+    drivetrain: l.drivetrain,
+    price_cents: l.price_cents,
+    msrp_cents: l.msrp_cents,
+    mileage_hours: l.mileage_hours,
+    headline: l.headline,
+    hero_image_id: Array.isArray(l.images) && l.images[0] ? l.images[0].id : null,
+    created_at: l.created_at,
+  }));
+  return json({ listings: trim });
+}
+
+async function getListing(request, env, slug) {
+  if (!env.FEEDBACK_KV) return json({ error: "kv not configured" }, 503);
+  const raw = await env.FEEDBACK_KV.get(`listing:${slug}`);
+  if (!raw) return json({ error: "listing not found" }, 404);
+  let rec;
+  try { rec = JSON.parse(raw); } catch { return json({ error: "listing malformed" }, 500); }
+  if (rec.status !== "active") {
+    const auth = await checkAdminAuth(request, env);
+    if (auth) return auth;
+  }
+  return json(rec);
+}
+
+function sanitizeListingPayload(body, existing) {
+  // Whitelist + coerce. existing provided on PATCH so we can preserve
+  // any field the client didn't send.
+  const out = existing ? { ...existing } : {};
+  const copy = (key, type = "string", opts = {}) => {
+    if (!Object.prototype.hasOwnProperty.call(body, key)) return;
+    const raw = body[key];
+    if (raw === null) { out[key] = null; return; }
+    if (type === "string") out[key] = String(raw).slice(0, opts.max || 2000);
+    else if (type === "number") { const n = Number(raw); if (Number.isFinite(n)) out[key] = n; }
+    else if (type === "int") { const n = parseInt(raw, 10); if (Number.isFinite(n)) out[key] = n; }
+    else if (type === "bool") out[key] = !!raw;
+    else if (type === "array") out[key] = Array.isArray(raw) ? raw.slice(0, 50).map(x => String(x).slice(0, 300)) : [];
+    else if (type === "enum" && Array.isArray(opts.values) && opts.values.includes(raw)) out[key] = raw;
+  };
+  copy("condition", "enum", { values: ["new", "used"] });
+  copy("status", "enum", { values: ["draft", "active", "sold"] });
+  copy("make", "string", { max: 80 });
+  copy("model", "string", { max: 120 });
+  copy("year", "int");
+  copy("color", "string", { max: 60 });
+  copy("seats", "int");
+  copy("drivetrain", "enum", { values: ["electric", "gas"] });
+  copy("price_cents", "int");
+  copy("msrp_cents", "int");
+  copy("mileage_hours", "number");
+  copy("condition_notes", "string", { max: 2000 });
+  copy("top_speed_mph", "number");
+  copy("range_mi", "string", { max: 60 });
+  copy("battery", "string", { max: 200 });
+  copy("motor", "string", { max: 200 });
+  copy("drive_type", "string", { max: 60 });
+  copy("ground_clearance_in", "number");
+  copy("length_in", "number");
+  copy("width_in", "number");
+  copy("height_in", "number");
+  copy("weight_lbs", "number");
+  copy("tire", "string", { max: 120 });
+  copy("warranty", "string", { max: 300 });
+  copy("tech", "string", { max: 400 });
+  copy("street_legal", "bool");
+  copy("headline", "string", { max: 180 });
+  copy("summary", "string", { max: 600 });
+  copy("description", "string", { max: 8000 });
+  copy("features", "array");
+  copy("seo_title", "string", { max: 180 });
+  copy("seo_description", "string", { max: 400 });
+  return out;
+}
+
+async function createListing(request, env) {
+  const auth = await checkAdminAuth(request, env);
+  if (auth) return auth;
+  if (!env.FEEDBACK_KV) return json({ error: "kv not configured" }, 503);
+  let body;
+  try { body = await request.json(); }
+  catch { return json({ error: "invalid JSON" }, 400); }
+  const slug = String(body?.slug || "").toLowerCase().trim();
+  if (!LISTING_SLUG_RE.test(slug)) {
+    return json({ error: "slug must be lowercase letters, numbers and dashes, 2-80 chars" }, 400);
+  }
+  // Prevent clobbering an existing listing with a POST
+  const existing = await env.FEEDBACK_KV.get(`listing:${slug}`);
+  if (existing) return json({ error: `slug "${slug}" already exists; use PATCH to update` }, 409);
+
+  const now = new Date().toISOString();
+  const record = {
+    slug,
+    condition: "used",
+    status: "draft",
+    images: [],
+    features: [],
+    ...sanitizeListingPayload(body, {}),
+    slug,  // ensure slug always matches the key
+    created_at: now,
+    updated_at: now,
+  };
+  const payload = JSON.stringify(record);
+  if (payload.length > LISTING_RECORD_MAX_BYTES) return json({ error: "listing payload too large" }, 413);
+  await env.FEEDBACK_KV.put(`listing:${slug}`, payload);
+  return json({ ok: true, listing: record });
+}
+
+async function updateListing(request, env, slug) {
+  const auth = await checkAdminAuth(request, env);
+  if (auth) return auth;
+  if (!env.FEEDBACK_KV) return json({ error: "kv not configured" }, 503);
+  const raw = await env.FEEDBACK_KV.get(`listing:${slug}`);
+  if (!raw) return json({ error: "listing not found" }, 404);
+  let existing;
+  try { existing = JSON.parse(raw); } catch { return json({ error: "listing malformed" }, 500); }
+  let body;
+  try { body = await request.json(); }
+  catch { return json({ error: "invalid JSON" }, 400); }
+  const merged = sanitizeListingPayload(body, existing);
+  merged.slug = slug;
+  merged.updated_at = new Date().toISOString();
+  // images[] is only edited through the dedicated endpoints below, so
+  // a stray `images` field in a PATCH body is ignored.
+  merged.images = existing.images || [];
+  const payload = JSON.stringify(merged);
+  if (payload.length > LISTING_RECORD_MAX_BYTES) return json({ error: "listing payload too large" }, 413);
+  await env.FEEDBACK_KV.put(`listing:${slug}`, payload);
+  return json({ ok: true, listing: merged });
+}
+
+async function deleteListing(request, env, slug) {
+  const auth = await checkAdminAuth(request, env);
+  if (auth) return auth;
+  if (!env.FEEDBACK_KV) return json({ error: "kv not configured" }, 503);
+  const raw = await env.FEEDBACK_KV.get(`listing:${slug}`);
+  if (!raw) return json({ error: "listing not found" }, 404);
+  let rec;
+  try { rec = JSON.parse(raw); } catch { rec = { images: [] }; }
+  // Delete every image key for this listing + the record itself.
+  for (const img of rec.images || []) {
+    try { await env.FEEDBACK_KV.delete(`listing-img:${slug}:${img.id}`); } catch {}
+  }
+  await env.FEEDBACK_KV.delete(`listing:${slug}`);
+  return json({ ok: true, deleted: slug });
+}
+
+// POST /api/listings/:slug/images  { data: "data:image/jpeg;base64,...", alt: "..." }
+async function addListingImage(request, env, slug) {
+  const auth = await checkAdminAuth(request, env);
+  if (auth) return auth;
+  if (!env.FEEDBACK_KV) return json({ error: "kv not configured" }, 503);
+  const raw = await env.FEEDBACK_KV.get(`listing:${slug}`);
+  if (!raw) return json({ error: "listing not found" }, 404);
+  let listing;
+  try { listing = JSON.parse(raw); } catch { return json({ error: "listing malformed" }, 500); }
+  listing.images = Array.isArray(listing.images) ? listing.images : [];
+  if (listing.images.length >= LISTING_IMG_MAX) {
+    return json({ error: `Max ${LISTING_IMG_MAX} images per listing — delete one first` }, 409);
+  }
+  let body;
+  try { body = await request.json(); }
+  catch { return json({ error: "invalid JSON" }, 400); }
+  const dataUrl = String(body?.data || "");
+  if (!/^data:image\/(jpeg|png|webp|gif);base64,/i.test(dataUrl)) {
+    return json({ error: "image must be a JPG/PNG/WebP/GIF data URL" }, 400);
+  }
+  if (dataUrl.length > LISTING_IMG_MAX_BYTES) {
+    return json({ error: `image too large (max ~1.8MB; got ${(dataUrl.length / 1_000_000).toFixed(1)}MB)` }, 413);
+  }
+  const imgId = "img_" + crypto.randomUUID().slice(0, 10);
+  const alt = String(body?.alt || "").slice(0, 300);
+  await env.FEEDBACK_KV.put(`listing-img:${slug}:${imgId}`, dataUrl);
+  listing.images.push({ id: imgId, alt });
+  listing.updated_at = new Date().toISOString();
+  await env.FEEDBACK_KV.put(`listing:${slug}`, JSON.stringify(listing));
+  return json({ ok: true, image: { id: imgId, alt } });
+}
+
+async function deleteListingImage(request, env, slug, imgId) {
+  const auth = await checkAdminAuth(request, env);
+  if (auth) return auth;
+  if (!env.FEEDBACK_KV) return json({ error: "kv not configured" }, 503);
+  const raw = await env.FEEDBACK_KV.get(`listing:${slug}`);
+  if (!raw) return json({ error: "listing not found" }, 404);
+  let listing;
+  try { listing = JSON.parse(raw); } catch { return json({ error: "listing malformed" }, 500); }
+  listing.images = (listing.images || []).filter(i => i.id !== imgId);
+  listing.updated_at = new Date().toISOString();
+  await env.FEEDBACK_KV.put(`listing:${slug}`, JSON.stringify(listing));
+  await env.FEEDBACK_KV.delete(`listing-img:${slug}:${imgId}`);
+  return json({ ok: true, deleted: imgId });
+}
+
+async function getListingImage(request, env, slug, imgId) {
+  if (!env.FEEDBACK_KV) return new Response("kv not configured", { status: 503 });
+  const dataUrl = await env.FEEDBACK_KV.get(`listing-img:${slug}:${imgId}`);
+  if (!dataUrl) return new Response("not found", { status: 404 });
+  const match = dataUrl.match(/^data:(image\/[a-zA-Z]+);base64,(.*)$/);
+  if (!match) return new Response("malformed image", { status: 500 });
+  const contentType = match[1];
+  const bytes = Uint8Array.from(atob(match[2]), c => c.charCodeAt(0));
+  return new Response(bytes, {
+    headers: {
+      "content-type": contentType,
+      // CF caches on the edge; browsers for a day. Images are mutable
+      // via the admin, but delete-then-re-upload gets a new imgId so
+      // the URL changes — safe to cache aggressively.
+      "cache-control": "public, max-age=86400, s-maxage=86400",
+    },
+  });
+}
+
+// ----- Server-rendered /carts2/<slug>/ detail page (SEO/AEO) -----
+function escHtmlNode(s) {
+  return String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+
+async function renderListingDetailPage(request, env, slug) {
+  const raw = env.FEEDBACK_KV ? await env.FEEDBACK_KV.get(`listing:${slug}`) : null;
+  if (!raw) {
+    // Fall through to env.ASSETS for the 404 page
+    return env.ASSETS.fetch(request);
+  }
+  let listing;
+  try { listing = JSON.parse(raw); }
+  catch { return env.ASSETS.fetch(request); }
+  if (listing.status !== "active") return env.ASSETS.fetch(request);
+
+  const dollars = c => c == null ? null : "$" + Math.round(Number(c) / 100).toLocaleString();
+  const title = listing.seo_title
+    || `${listing.year ? listing.year + " " : ""}${listing.make || "Golf cart"}${listing.model ? " " + listing.model : ""}${listing.color ? " · " + listing.color : ""} ${listing.condition === "new" ? "— New" : "— Used"} · Polk County Golf Carts`;
+  const desc = listing.seo_description
+    || listing.summary
+    || `${listing.condition === "new" ? "Brand-new" : "Used"} ${listing.make || "golf cart"}${listing.model ? " " + listing.model : ""} for sale at Polk County Golf Carts in Livingston, TX. Free pickup within 25 mi, extended service up to 75.`;
+  const url = `https://polkcountygolfcarts.com/carts2/${listing.slug}/`;
+  const hero = listing.images && listing.images[0]
+    ? `https://polkcountygolfcarts.com/api/listings/${listing.slug}/image/${listing.images[0].id}`
+    : "https://polkcountygolfcarts.com/assets/og/carts.png?v=v2sunset";
+
+  // Product JSON-LD — gives Google rich snippets + feeds ChatGPT/Perplexity
+  const jsonld = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": `${listing.year || ""} ${listing.make || ""} ${listing.model || ""}`.trim(),
+    "description": desc,
+    "url": url,
+    "image": listing.images?.map(i => `https://polkcountygolfcarts.com/api/listings/${listing.slug}/image/${i.id}`) || [hero],
+    "sku": listing.slug,
+    "brand": { "@type": "Brand", "name": listing.make || "Polk County Golf Carts" },
+    ...(listing.color ? { "color": listing.color } : {}),
+    ...(listing.year ? { "productionDate": String(listing.year) } : {}),
+    "offers": {
+      "@type": "Offer",
+      "url": url,
+      "priceCurrency": "USD",
+      ...(listing.price_cents ? { "price": (listing.price_cents / 100).toFixed(2) } : { "price": "0.00" }),
+      "availability": listing.status === "sold" ? "https://schema.org/SoldOut" : "https://schema.org/InStock",
+      "itemCondition": listing.condition === "new"
+        ? "https://schema.org/NewCondition" : "https://schema.org/UsedCondition",
+      "seller": { "@type": "AutoDealer", "name": "Polk County Golf Carts",
+        "telephone": "+1-936-223-1182",
+        "address": { "@type": "PostalAddress", "streetAddress": "1732 FM 3277",
+          "addressLocality": "Livingston", "addressRegion": "TX", "postalCode": "77351", "addressCountry": "US" } },
+    },
+  };
+
+  const gallery = (listing.images || []).map(img => `
+    <div class="d-gallery-item">
+      <img src="/api/listings/${listing.slug}/image/${img.id}" alt="${escHtmlNode(img.alt || `${listing.make || ""} ${listing.model || ""}`.trim())}" loading="lazy">
+    </div>`).join("");
+
+  const specRow = (label, value) => value == null || value === "" ? "" :
+    `<tr><th>${escHtmlNode(label)}</th><td>${escHtmlNode(value)}</td></tr>`;
+
+  const featureBullets = (listing.features || []).map(f => `<li>${escHtmlNode(f)}</li>`).join("");
+
+  const descriptionHtml = (listing.description || "")
+    .split(/\n{2,}/).map(p => `<p>${escHtmlNode(p).replace(/\n/g, "<br>")}</p>`).join("");
+
+  const priceLabel = dollars(listing.price_cents) || "Call for pricing";
+  const msrpLabel = dollars(listing.msrp_cents);
+  const savings = listing.msrp_cents && listing.price_cents && listing.msrp_cents > listing.price_cents
+    ? dollars(listing.msrp_cents - listing.price_cents) : null;
+  const conditionBadge = listing.condition === "new" ? "New" : "Used";
+
+  const html = `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>${escHtmlNode(title)}</title>
+  <meta name="description" content="${escHtmlNode(desc)}">
+  <link rel="canonical" href="${url}">
+  <meta name="theme-color" content="#e85a4f">
+  <link rel="icon" type="image/png" href="/assets/logos/favicon.png">
+  <meta property="og:title" content="${escHtmlNode(title)}">
+  <meta property="og:description" content="${escHtmlNode(desc)}">
+  <meta property="og:image" content="${hero}">
+  <meta property="og:url" content="${url}">
+  <meta property="og:type" content="product">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="${escHtmlNode(title)}">
+  <meta name="twitter:description" content="${escHtmlNode(desc)}">
+  <meta name="twitter:image" content="${hero}">
+  <link rel="stylesheet" href="/assets/site.css?v=carts2v1">
+  <style>
+    .d-detail { max-width: 1120px; margin: 0 auto; padding: 1.5rem 1.25rem 4rem; }
+    .d-crumbs { font-size: .85rem; color: var(--ink-soft); margin-bottom: 1rem; }
+    .d-crumbs a { color: var(--teal-dk); text-decoration: none; }
+    .d-crumbs a:hover { text-decoration: underline; }
+
+    .d-hero { display: grid; grid-template-columns: 1.1fr 1fr; gap: 2.5rem; margin-bottom: 3rem; align-items: start; }
+    @media (max-width: 900px) { .d-hero { grid-template-columns: 1fr; gap: 1.5rem; } }
+
+    .d-main-img { aspect-ratio: 4/3; border-radius: 16px; overflow: hidden; background: #f4efe4; box-shadow: 0 10px 40px rgba(31,90,104,.1); }
+    .d-main-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .d-main-img.empty { display: flex; align-items: center; justify-content: center; color: var(--ink-soft); font-size: 1.1rem; }
+
+    .d-thumbs { display: grid; grid-template-columns: repeat(5, 1fr); gap: .5rem; margin-top: .65rem; }
+    .d-thumb { aspect-ratio: 1/1; border-radius: 8px; overflow: hidden; background: #f4efe4; cursor: pointer; opacity: .75; transition: opacity .15s; border: 2px solid transparent; }
+    .d-thumb:hover, .d-thumb.active { opacity: 1; border-color: var(--coral); }
+    .d-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    .d-pitch .d-badges { display: flex; gap: .5rem; margin-bottom: .75rem; }
+    .d-badge { display: inline-block; padding: .35rem .8rem; border-radius: 999px; font: 700 .78rem/1 system-ui, sans-serif; letter-spacing: .05em; text-transform: uppercase; }
+    .d-badge.new { background: #dff0e1; color: #2f6b3b; }
+    .d-badge.used { background: #e6f1f3; color: #1f5a68; }
+    .d-badge.sold { background: #f8e3e1; color: #8a2a20; }
+    .d-pitch h1 { font: 700 clamp(1.8rem, 4vw, 2.6rem)/1.1 Georgia, serif; color: var(--teal-dk); margin: 0 0 .5rem; }
+    .d-pitch .d-headline { color: var(--ink); font-size: 1.1rem; margin: 0 0 1.25rem; }
+
+    .d-price-block { background: #fbf8f3; border: 1px solid var(--line); border-radius: 12px; padding: 1.2rem 1.4rem; margin: 1.25rem 0; }
+    .d-price-block .d-price { font: 800 2.2rem/1 Georgia, serif; color: var(--coral); display: block; }
+    .d-price-block .d-msrp { color: var(--ink-soft); text-decoration: line-through; font-size: .95rem; margin-left: .55rem; }
+    .d-price-block .d-savings { display: inline-block; margin-left: .55rem; background: #dff0e1; color: #2f6b3b; padding: .15rem .55rem; border-radius: 999px; font-size: .78rem; font-weight: 700; }
+    .d-price-block .d-pcall { font: 700 1.5rem/1 Georgia, serif; color: var(--teal-dk); }
+
+    .d-ctas { display: flex; gap: .75rem; flex-wrap: wrap; margin: 1rem 0 1.25rem; }
+    .d-ctas .btn { font-size: .95rem; padding: .75rem 1.2rem; }
+
+    .d-quickspecs { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--line); }
+    .d-quickspecs .d-spec { color: var(--ink); }
+    .d-quickspecs .d-spec b { display: block; color: var(--teal-dk); font-size: 1.05rem; }
+    .d-quickspecs .d-spec span { color: var(--ink-soft); font-size: .78rem; text-transform: uppercase; letter-spacing: .04em; }
+
+    .d-section { margin: 3rem 0; }
+    .d-section h2 { font: 700 clamp(1.4rem, 3vw, 1.8rem)/1.2 Georgia, serif; color: var(--teal-dk); margin: 0 0 1.25rem; }
+    .d-split { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; align-items: start; }
+    @media (max-width: 820px) { .d-split { grid-template-columns: 1fr; gap: 1.5rem; } }
+    .d-split .d-split-img { aspect-ratio: 4/3; border-radius: 12px; overflow: hidden; background: #f4efe4; }
+    .d-split .d-split-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .d-split p { color: var(--ink); font-size: 1rem; line-height: 1.6; margin: 0 0 1rem; }
+    .d-split ul.d-features { list-style: none; padding: 0; margin: 1rem 0; }
+    .d-split ul.d-features li { padding: .4rem 0 .4rem 1.75rem; position: relative; color: var(--ink); font-size: 1rem; }
+    .d-split ul.d-features li::before { content: "✓"; position: absolute; left: 0; color: var(--coral); font-weight: 900; }
+
+    .d-specs-table { width: 100%; border-collapse: collapse; font-size: .95rem; background: #fff; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+    .d-specs-table th, .d-specs-table td { padding: .75rem 1rem; text-align: left; border-bottom: 1px solid var(--line); }
+    .d-specs-table th { background: #fbf8f3; color: var(--ink-soft); font-weight: 600; width: 42%; }
+    .d-specs-table tr:last-child th, .d-specs-table tr:last-child td { border-bottom: 0; }
+
+    .d-gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: .75rem; margin-top: 1.5rem; }
+    @media (max-width: 700px) { .d-gallery { grid-template-columns: repeat(2, 1fr); } }
+    .d-gallery-item { aspect-ratio: 4/3; border-radius: 10px; overflow: hidden; background: #f4efe4; }
+    .d-gallery-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    .d-cta-band { background: linear-gradient(135deg, var(--teal-dk) 0%, #164550 100%); color: #fff; border-radius: 16px; padding: 2.5rem 2rem; text-align: center; margin: 3rem 0; }
+    .d-cta-band h2 { color: #fff; margin: 0 0 .5rem; font: 700 1.5rem/1.2 Georgia, serif; }
+    .d-cta-band p { color: #d6ecf0; margin: 0 0 1.5rem; }
+    .d-cta-band .btn { font-size: 1rem; padding: .85rem 1.6rem; }
+    .d-cta-band .btn.btn-coral:hover { filter: brightness(1.1); }
+  </style>
+  <script type="application/ld+json">${JSON.stringify(jsonld)}</script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="/">
+        <img src="/assets/logos/logo-color.png" alt="Polk County Golf Carts" width="60" height="60">
+        <span class="brand-word">Polk County Golf Carts<small>Livingston, TX</small></span>
+      </a>
+      <nav class="site-nav">
+        <a href="/carts2/">Carts</a>
+        <a href="/rentals/">Rentals</a>
+        <a href="/services/">Service</a>
+        <a href="/financing/">Financing</a>
+        <a href="/about-us/">About</a>
+        <a class="btn btn-coral" href="tel:9362231182">📞 936-223-1182</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="d-detail">
+    <nav class="d-crumbs">
+      <a href="/">Home</a> › <a href="/carts2/">Carts for sale</a> › ${escHtmlNode(`${listing.year || ""} ${listing.make || ""} ${listing.model || ""}`.trim() || listing.slug)}
+    </nav>
+
+    <!-- Hero -->
+    <section class="d-hero">
+      <div>
+        <div class="d-main-img ${listing.images?.length ? "" : "empty"}" id="d-main">
+          ${listing.images?.length
+            ? `<img src="/api/listings/${listing.slug}/image/${listing.images[0].id}" alt="${escHtmlNode(listing.images[0].alt || title)}" id="d-main-img">`
+            : "<span>No photos uploaded yet</span>"}
+        </div>
+        ${listing.images && listing.images.length > 1 ? `
+          <div class="d-thumbs">
+            ${listing.images.slice(0, 5).map((img, i) => `
+              <div class="d-thumb ${i === 0 ? "active" : ""}" data-img="/api/listings/${listing.slug}/image/${img.id}">
+                <img src="/api/listings/${listing.slug}/image/${img.id}" alt="${escHtmlNode(img.alt || "")}" loading="lazy">
+              </div>`).join("")}
+          </div>` : ""}
+      </div>
+      <div class="d-pitch">
+        <div class="d-badges">
+          <span class="d-badge ${listing.condition}">${conditionBadge}</span>
+          ${listing.status === "sold" ? '<span class="d-badge sold">Sold</span>' : ""}
+          ${listing.street_legal ? '<span class="d-badge" style="background:#fff2d6; color:#8a4a00;">Street legal</span>' : ""}
+        </div>
+        <h1>${escHtmlNode(`${listing.year || ""} ${listing.make || ""} ${listing.model || ""}`.trim())}${listing.color ? ' · <span style="color:var(--coral); font-size:.8em;">' + escHtmlNode(listing.color) + '</span>' : ""}</h1>
+        ${listing.headline ? `<p class="d-headline">${escHtmlNode(listing.headline)}</p>` : ""}
+
+        <div class="d-price-block">
+          ${listing.price_cents
+            ? `<span class="d-price">${priceLabel}</span>${msrpLabel ? `<span class="d-msrp">${msrpLabel} MSRP</span>` : ""}${savings ? `<span class="d-savings">Save ${savings}</span>` : ""}`
+            : `<span class="d-pcall">Call for pricing</span>`}
+        </div>
+
+        <div class="d-ctas">
+          <a class="btn btn-coral" href="tel:9362231182">📞 Call 936-223-1182</a>
+          <a class="btn btn-outline" href="/services/#request">Request details</a>
+          <a class="btn btn-outline" href="/financing/">Finance it</a>
+        </div>
+
+        <div class="d-quickspecs">
+          ${listing.seats ? `<div class="d-spec"><b>${escHtmlNode(listing.seats)}</b><span>Seats</span></div>` : ""}
+          ${listing.drivetrain ? `<div class="d-spec"><b>${escHtmlNode(listing.drivetrain === "electric" ? "Electric" : "Gas")}</b><span>Drivetrain</span></div>` : ""}
+          ${listing.top_speed_mph ? `<div class="d-spec"><b>${escHtmlNode(listing.top_speed_mph)} mph</b><span>Top speed</span></div>` : ""}
+          ${listing.range_mi ? `<div class="d-spec"><b>${escHtmlNode(listing.range_mi)} mi</b><span>Range</span></div>` : ""}
+          ${listing.mileage_hours ? `<div class="d-spec"><b>${escHtmlNode(listing.mileage_hours)} hrs</b><span>Hours</span></div>` : ""}
+        </div>
+      </div>
+    </section>
+
+    <!-- Feature section 1: Summary + features -->
+    ${(listing.summary || featureBullets) ? `
+    <section class="d-section">
+      <div class="d-split">
+        <div>
+          <h2>What makes this one special</h2>
+          ${listing.summary ? `<p>${escHtmlNode(listing.summary)}</p>` : ""}
+          ${featureBullets ? `<ul class="d-features">${featureBullets}</ul>` : ""}
+        </div>
+        <div>
+          ${listing.images && listing.images.length > 1
+            ? `<div class="d-split-img"><img src="/api/listings/${listing.slug}/image/${listing.images[1].id}" alt="${escHtmlNode(listing.images[1].alt || title)}"></div>`
+            : listing.images && listing.images.length
+            ? `<div class="d-split-img"><img src="/api/listings/${listing.slug}/image/${listing.images[0].id}" alt="${escHtmlNode(title)}"></div>`
+            : ""}
+        </div>
+      </div>
+    </section>` : ""}
+
+    <!-- Feature section 2: Specs table (2-col layout) -->
+    <section class="d-section">
+      <div class="d-split">
+        <div>
+          <h2>Full specifications</h2>
+          <p>Everything you need to compare — powertrain, dimensions, warranty. Questions on any of this? Call us.</p>
+          ${listing.condition === "used" && listing.condition_notes ? `
+            <h3 style="color:var(--teal-dk); margin:1.5rem 0 .5rem; font: 700 1rem Georgia, serif;">Condition notes</h3>
+            <p style="color:var(--ink); font-size:.95rem;">${escHtmlNode(listing.condition_notes)}</p>
+          ` : ""}
+        </div>
+        <div>
+          <table class="d-specs-table">
+            <tbody>
+              ${specRow("Condition", listing.condition === "new" ? "New" : "Used")}
+              ${specRow("Year", listing.year)}
+              ${specRow("Make", listing.make)}
+              ${specRow("Model", listing.model)}
+              ${specRow("Color", listing.color)}
+              ${specRow("Seats", listing.seats)}
+              ${specRow("Drivetrain", listing.drivetrain === "electric" ? "Electric (Lithium)" : listing.drivetrain === "gas" ? "Gas" : "")}
+              ${specRow("Top speed", listing.top_speed_mph ? listing.top_speed_mph + " mph" : "")}
+              ${specRow("Range", listing.range_mi ? listing.range_mi + " mi" : "")}
+              ${specRow("Battery", listing.battery)}
+              ${specRow("Motor", listing.motor)}
+              ${specRow("Drive type", listing.drive_type)}
+              ${specRow("Ground clearance", listing.ground_clearance_in ? listing.ground_clearance_in + " in" : "")}
+              ${specRow("Tires", listing.tire)}
+              ${specRow("Length", listing.length_in ? listing.length_in + " in" : "")}
+              ${specRow("Width", listing.width_in ? listing.width_in + " in" : "")}
+              ${specRow("Height", listing.height_in ? listing.height_in + " in" : "")}
+              ${specRow("Weight", listing.weight_lbs ? listing.weight_lbs + " lbs" : "")}
+              ${specRow("Hours", listing.mileage_hours)}
+              ${specRow("Street legal", listing.street_legal ? "Yes" : "")}
+              ${specRow("Warranty", listing.warranty)}
+              ${specRow("Tech", listing.tech)}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    ${descriptionHtml ? `
+    <section class="d-section">
+      <h2>About this cart</h2>
+      <div style="max-width: 820px; color: var(--ink); font-size: 1.02rem; line-height: 1.7;">
+        ${descriptionHtml}
+      </div>
+    </section>` : ""}
+
+    ${listing.images && listing.images.length > 1 ? `
+    <section class="d-section">
+      <h2>More photos</h2>
+      <div class="d-gallery">${gallery}</div>
+    </section>` : ""}
+
+    <section class="d-cta-band">
+      <h2>Interested? Give us a call.</h2>
+      <p>Family-owned since 2020. Free pickup &amp; delivery within 25 mi of Livingston.</p>
+      <a class="btn btn-coral" href="tel:9362231182">📞 936-223-1182</a>
+      <a class="btn btn-outline" href="/services/#request" style="margin-left:.5rem; background:transparent; color:#fff; border-color:#fff;">Message us</a>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container"><p style="text-align:center; color:var(--ink-soft); font-size:.85rem;">Polk County Golf Carts · 1732 FM 3277, Livingston, TX 77351 · <a href="tel:9362231182" style="color:var(--teal-dk);">936-223-1182</a></p></div>
+  </footer>
+
+  <script>
+    // Thumbnail click → swap hero image
+    document.querySelectorAll(".d-thumb").forEach(t => {
+      t.addEventListener("click", () => {
+        const src = t.dataset.img;
+        document.getElementById("d-main-img").src = src;
+        document.querySelectorAll(".d-thumb").forEach(x => x.classList.remove("active"));
+        t.classList.add("active");
+      });
+    });
+  </script>
+</body>
+</html>`;
+
+  return new Response(html, {
+    headers: {
+      "content-type": "text/html; charset=utf-8",
+      "cache-control": "public, max-age=60, s-maxage=60",
+    },
+  });
 }
 
 // The single source of truth for the "leave us a Google review"

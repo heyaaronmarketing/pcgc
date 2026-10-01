@@ -1,0 +1,655 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Cart Inventory · PCGC Admin</title>
+  <link rel="stylesheet" href="/assets/site.css">
+  <style>
+    body { background:#fbf8f3; color:#222; font-family: system-ui,-apple-system,Segoe UI,sans-serif; }
+    .wrap { max-width: 1200px; margin: 0 auto; padding: 1.25rem 1rem 4rem; }
+    h1 { font: 700 1.9rem/1.15 Georgia, serif; color:#1f5a68; margin:.4rem 0 .15rem; }
+    .sub { color:#666; font-size:.9rem; margin-bottom:1.2rem; }
+    nav.crumbs a { color:#1f5a68; text-decoration:none; margin-right:.7rem; }
+    nav.crumbs { font-size:.85rem; color:#888; margin-bottom:.9rem; }
+
+    .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; gap: 1rem; flex-wrap: wrap; }
+    .topbar .filters { display: flex; gap: .4rem; }
+    .topbar .filter-btn { background: #fff; border: 1px solid #ecd9c7; padding: .4rem .9rem; border-radius: 999px; cursor: pointer; font-size: .9rem; }
+    .topbar .filter-btn.active { background: #1f5a68; color: #fff; border-color: #1f5a68; }
+
+    .list-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem; }
+    .listing-card { background: #fff; border: 1px solid #ecd9c7; border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; }
+    .listing-card .img { aspect-ratio: 4/3; background: #f4efe4; position: relative; }
+    .listing-card .img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .listing-card .img.empty { display: flex; align-items: center; justify-content: center; color: #888; font-size: .85rem; }
+    .listing-card .badge-row { position: absolute; top: .5rem; left: .5rem; display: flex; gap: .3rem; }
+    .pill { display: inline-block; padding: .2rem .55rem; border-radius: 999px; font: 700 .7rem/1 system-ui, sans-serif; letter-spacing: .05em; text-transform: uppercase; }
+    .pill.new { background: #dff0e1; color: #2f6b3b; }
+    .pill.used { background: #e6f1f3; color: #1f5a68; }
+    .pill.draft { background: #fff2d6; color: #8a4a00; }
+    .pill.active { background: #dff0e1; color: #2f6b3b; }
+    .pill.sold { background: #f8e3e1; color: #8a2a20; }
+    .listing-card .body { padding: .85rem 1rem 1rem; flex: 1; display: flex; flex-direction: column; }
+    .listing-card h3 { font: 700 1rem/1.2 Georgia, serif; color: #1f5a68; margin: 0 0 .2rem; }
+    .listing-card .meta { color: #888; font-size: .82rem; margin: 0 0 .5rem; }
+    .listing-card .price { color: #e85a4f; font-weight: 700; margin-bottom: .5rem; }
+    .listing-card .status-row { display: flex; align-items: center; gap: .4rem; margin-bottom: .6rem; }
+    .listing-card .actions { display: flex; gap: .4rem; margin-top: auto; }
+    .listing-card .btn-sm { font-size: .82rem; padding: .35rem .65rem; border-radius: 6px; cursor: pointer; border: 1px solid; background: #fff; font-weight: 600; }
+    .listing-card .btn-edit { color: #1f5a68; border-color: #1f5a68; }
+    .listing-card .btn-view { color: #666; border-color: #ecd9c7; text-decoration: none; }
+    .listing-card .btn-del { color: #b3392e; border-color: #b3392e; margin-left: auto; }
+
+    .empty-state { text-align: center; padding: 4rem 1rem; background: #fff; border: 1px dashed #ecd9c7; border-radius: 12px; }
+    .empty-state h2 { color: #1f5a68; margin: 0 0 .5rem; }
+
+    /* Modal / form overlay */
+    .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,.4); display: flex; align-items: flex-start; justify-content: center; padding: 2rem 1rem; overflow-y: auto; z-index: 100; }
+    .modal-backdrop[hidden] { display: none; }
+    .modal { background: #fff; border-radius: 14px; max-width: 820px; width: 100%; padding: 1.5rem 1.5rem 2rem; }
+    .modal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 1px solid #ecd9c7; padding-bottom: .75rem; }
+    .modal-head h2 { color: #1f5a68; font: 700 1.3rem/1.2 Georgia, serif; margin: 0; }
+    .modal-head .close { background: none; border: 0; font-size: 1.5rem; cursor: pointer; color: #888; line-height: 1; }
+
+    .field { display: flex; flex-direction: column; gap: .25rem; margin-top: .85rem; }
+    .field > span { font: 600 .85rem inherit; color: #222; }
+    .field em { font-style: normal; color: #888; font-weight: 400; }
+    .field input, .field select, .field textarea {
+      font: 15px/1.4 inherit; color: #222; border: 1px solid #ecd9c7; border-radius: 8px;
+      padding: .55rem .75rem; background: #fff; width: 100%; box-sizing: border-box;
+    }
+    .field textarea { min-height: 80px; resize: vertical; font-family: inherit; }
+    .field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: #e85a4f; }
+    .field.inline-check { flex-direction: row; align-items: center; gap: .5rem; margin-top: .55rem; }
+    .field.inline-check input { width: auto; }
+    .field.inline-check span { font-weight: 500; font-size: .9rem; }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: .9rem; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: .9rem; }
+    @media (max-width: 580px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+
+    .section-head { font: 700 .95rem Georgia, serif; color: #1f5a68; margin: 1.25rem 0 .25rem; padding-bottom: .35rem; border-bottom: 1px solid #ecd9c7; }
+
+    .feat-row { display: flex; gap: .4rem; margin-top: .4rem; }
+    .feat-row input { flex: 1; }
+    .feat-row button { background: #fff; border: 1px solid #ecd9c7; border-radius: 6px; padding: 0 .7rem; cursor: pointer; color: #b3392e; }
+    .add-feat { background: #fff; border: 1px dashed #ecd9c7; color: #1f5a68; border-radius: 6px; padding: .5rem; font-size: .85rem; cursor: pointer; width: 100%; margin-top: .35rem; }
+
+    .btn-primary { background: #1f5a68; color: #fff; border: 0; border-radius: 8px; padding: .7rem 1.3rem; font-weight: 700; cursor: pointer; }
+    .btn-ghost { background: #fff; color: #666; border: 1px solid #ecd9c7; border-radius: 8px; padding: .7rem 1.3rem; font-weight: 600; cursor: pointer; }
+    .modal-actions { display: flex; gap: .5rem; justify-content: flex-end; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid #ecd9c7; align-items: center; }
+    .modal-msg { font-size: .85rem; margin-right: auto; }
+    .modal-msg.error { color: #b3392e; }
+    .modal-msg.success { color: #2f6b3b; }
+
+    .img-manager { margin-top: .5rem; }
+    .img-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: .5rem; margin-top: .5rem; }
+    .img-tile { aspect-ratio: 1/1; background: #f4efe4; border-radius: 8px; position: relative; overflow: hidden; }
+    .img-tile img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .img-tile .del-img { position: absolute; top: .25rem; right: .25rem; background: rgba(255,255,255,.9); border: 0; border-radius: 50%; width: 24px; height: 24px; cursor: pointer; color: #b3392e; font-weight: 700; }
+    .img-upload { display: flex; gap: .5rem; align-items: center; margin-top: .5rem; }
+
+    .quick-fill { margin-top: .5rem; display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; }
+    .quick-fill select { max-width: 220px; }
+    .quick-fill button { background: #fff2d6; border: 1px solid #e8c669; color: #8a4a00; border-radius: 6px; padding: .4rem .8rem; cursor: pointer; font-size: .85rem; font-weight: 600; }
+
+    .login-view { max-width: 420px; margin: 3rem auto; background: #fff; border: 1px solid #ecd9c7; border-radius: 12px; padding: 1.5rem 1.75rem; }
+    .login-view h1 { margin: 0 0 1rem; }
+    .login-view label { display: block; margin: .6rem 0 .25rem; font-weight: 600; font-size: .9rem; }
+    .login-view input { width: 100%; padding: .6rem .75rem; font-size: 1rem; border: 1px solid #ecd9c7; border-radius: 8px; box-sizing: border-box; }
+    .login-view button { margin-top: 1rem; background: #1f5a68; color: #fff; border: 0; padding: .65rem 1.1rem; font-weight: 600; border-radius: 8px; cursor: pointer; }
+    .login-view .err { color: #8a2a20; font-size: .85rem; margin-top: .5rem; }
+  </style>
+</head>
+<body>
+
+<div id="login-view" class="login-view" hidden>
+  <h1>Sign in</h1>
+  <p style="color:#888; font-size:.9rem;">Admin password required.</p>
+  <form id="login-form">
+    <label for="login-password">Password</label>
+    <input id="login-password" type="password" required autofocus autocomplete="current-password">
+    <button id="login-submit" type="submit">Sign in</button>
+    <div id="login-error" class="err" hidden></div>
+  </form>
+</div>
+
+<div id="main-view" class="wrap" hidden>
+  <nav class="crumbs">
+    <a href="/admin/dashboard/">← Dashboard</a>
+    <a href="/admin/rentals/">Bookings</a>
+    <a href="/admin/service-requests/">Service requests</a>
+    <a href="/admin/sessions/">Sessions</a>
+    <a href="/admin/seo/">SEO ranks</a>
+    <span>Cart inventory</span>
+  </nav>
+  <div class="topbar">
+    <div>
+      <h1>Cart inventory</h1>
+      <p class="sub">New &amp; used golf carts. Published listings go live at <a href="/carts2/" target="_blank" style="color:#1f5a68;">/carts2/</a>.</p>
+    </div>
+    <div class="filters">
+      <button class="filter-btn active" data-filter="">All</button>
+      <button class="filter-btn" data-filter="new">New</button>
+      <button class="filter-btn" data-filter="used">Used</button>
+      <button class="filter-btn" data-filter="draft">Drafts</button>
+    </div>
+    <button class="btn btn-coral" id="btn-new" style="padding:.65rem 1.1rem;">+ Add new listing</button>
+  </div>
+
+  <div id="list-grid" class="list-grid"></div>
+  <div id="empty-state" class="empty-state" hidden>
+    <h2>No listings yet.</h2>
+    <p style="color:#666;">Click <b>+ Add new listing</b> to create your first cart listing.</p>
+  </div>
+</div>
+
+<!-- Edit / Create modal -->
+<div id="modal-backdrop" class="modal-backdrop" hidden>
+  <div class="modal">
+    <div class="modal-head">
+      <h2 id="modal-title">New listing</h2>
+      <button type="button" class="close" id="modal-close" aria-label="Close">×</button>
+    </div>
+    <form id="listing-form">
+      <div class="grid-2">
+        <label class="field">
+          <span>Slug <em>(URL — lowercase, dashes only)</em></span>
+          <input type="text" name="slug" required pattern="[a-z0-9](?:[a-z0-9-]{0,78}[a-z0-9])?" placeholder="2026-breezy-breeze-6l-coral">
+        </label>
+        <label class="field">
+          <span>Status</span>
+          <select name="status">
+            <option value="draft">Draft (hidden)</option>
+            <option value="active">Active (public)</option>
+            <option value="sold">Sold</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="grid-2">
+        <label class="field">
+          <span>Condition</span>
+          <select name="condition" required>
+            <option value="new">New</option>
+            <option value="used">Used</option>
+          </select>
+        </label>
+        <div class="quick-fill">
+          <label style="font-size:.82rem; color:#666; font-weight:600;">Quick-fill Breezy EV:</label>
+          <select id="breezy-quickfill">
+            <option value="">— Select model —</option>
+            <option value="breeze-4">Breeze 4</option>
+            <option value="breeze-4l">Breeze 4L</option>
+            <option value="breeze-6l">Breeze 6L</option>
+            <option value="terrain-6">Terrain 6</option>
+          </select>
+          <button type="button" id="btn-quickfill">Fill specs</button>
+        </div>
+      </div>
+
+      <h3 class="section-head">Identity</h3>
+      <div class="grid-3">
+        <label class="field"><span>Make</span><input type="text" name="make" placeholder="Breezy EV"></label>
+        <label class="field"><span>Model</span><input type="text" name="model" placeholder="Breeze 6L"></label>
+        <label class="field"><span>Year</span><input type="number" name="year" min="1980" max="2030"></label>
+      </div>
+      <div class="grid-3">
+        <label class="field"><span>Color</span><input type="text" name="color" placeholder="Coral"></label>
+        <label class="field"><span>Seats</span><input type="number" name="seats" min="1" max="12"></label>
+        <label class="field">
+          <span>Drivetrain</span>
+          <select name="drivetrain">
+            <option value="">—</option>
+            <option value="electric">Electric</option>
+            <option value="gas">Gas</option>
+          </select>
+        </label>
+      </div>
+
+      <h3 class="section-head">Price</h3>
+      <div class="grid-3">
+        <label class="field"><span>Price <em>(USD)</em></span><input type="number" name="price_usd" min="0" step="1" placeholder="9999"></label>
+        <label class="field"><span>MSRP <em>(optional)</em></span><input type="number" name="msrp_usd" min="0" step="1"></label>
+        <label class="field"><span>Hours / mileage <em>(used only)</em></span><input type="number" name="mileage_hours" min="0" step="1"></label>
+      </div>
+      <label class="field"><span>Condition notes <em>(used only)</em></span><textarea name="condition_notes" placeholder="Minor scratch on left rear fender…"></textarea></label>
+
+      <h3 class="section-head">Marketing copy</h3>
+      <label class="field"><span>Headline <em>(sub-title on the page)</em></span><input type="text" name="headline" placeholder="The family flagship — six seats, lifted, lithium"></label>
+      <label class="field"><span>Summary <em>(1-2 sentences for feature section)</em></span><textarea name="summary" rows="3"></textarea></label>
+      <label class="field"><span>Full description <em>(long-form, multiple paragraphs OK)</em></span><textarea name="description" rows="5"></textarea></label>
+
+      <div style="margin-top:.85rem;">
+        <span style="font: 600 .85rem inherit; color:#222;">Feature bullets</span>
+        <div id="features-list"></div>
+        <button type="button" class="add-feat" id="btn-add-feat">+ Add feature</button>
+      </div>
+
+      <h3 class="section-head">Specifications</h3>
+      <div class="grid-3">
+        <label class="field"><span>Top speed <em>(mph)</em></span><input type="number" name="top_speed_mph" step="0.1"></label>
+        <label class="field"><span>Range <em>(miles, e.g. "45-55")</em></span><input type="text" name="range_mi"></label>
+        <label class="field"><span>Ground clearance <em>(in)</em></span><input type="number" name="ground_clearance_in" step="0.1"></label>
+      </div>
+      <div class="grid-2">
+        <label class="field"><span>Battery</span><input type="text" name="battery" placeholder="48V · 125Ah Lithium"></label>
+        <label class="field"><span>Motor</span><input type="text" name="motor" placeholder="5 kW AC"></label>
+      </div>
+      <div class="grid-3">
+        <label class="field"><span>Length (in)</span><input type="number" name="length_in" step="0.1"></label>
+        <label class="field"><span>Width (in)</span><input type="number" name="width_in" step="0.1"></label>
+        <label class="field"><span>Height (in)</span><input type="number" name="height_in" step="0.1"></label>
+      </div>
+      <div class="grid-2">
+        <label class="field"><span>Weight (lbs)</span><input type="number" name="weight_lbs"></label>
+        <label class="field"><span>Tires</span><input type="text" name="tire" placeholder="23x10-14 DOT off-road"></label>
+      </div>
+      <div class="grid-2">
+        <label class="field"><span>Warranty</span><input type="text" name="warranty" placeholder="2-year bumper-to-bumper · 8-year battery"></label>
+        <label class="field"><span>Tech / infotainment</span><input type="text" name="tech"></label>
+      </div>
+      <label class="field inline-check">
+        <input type="checkbox" name="street_legal"><span>Street legal (LSV)</span>
+      </label>
+
+      <h3 class="section-head">SEO <em style="font-weight:400; color:#888;">(optional overrides)</em></h3>
+      <label class="field"><span>SEO title <em>(auto-generated if blank)</em></span><input type="text" name="seo_title"></label>
+      <label class="field"><span>SEO description <em>(auto-generated if blank)</em></span><textarea name="seo_description" rows="2"></textarea></label>
+
+      <h3 class="section-head">Photos</h3>
+      <div class="img-manager" id="img-manager">
+        <p style="color:#888; font-size:.85rem; margin:0;">Save the listing first to add photos.</p>
+      </div>
+
+      <div class="modal-actions">
+        <span class="modal-msg" id="modal-msg"></span>
+        <button type="button" class="btn-ghost" id="modal-cancel">Cancel</button>
+        <button type="submit" class="btn-primary" id="modal-save">Save listing</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+(() => {
+  // Breezy EV catalog — mirrors BREEZY_EV_MODELS in build.py
+  const BREEZY_EV = {
+    "breeze-4": { make:"Breezy EV", model:"Breeze 4", seats:4, drivetrain:"electric",
+      ground_clearance_in:5.0, weight_lbs:1102, length_in:116.7, width_in:48.8, height_in:78.0,
+      range_mi:"45–55", top_speed_mph:25, tire:"215/35 R14 DOT",
+      headline:"The everyday 4-seater. Street-cruiser stance, family-cruiser comfort.",
+      summary:"Four passengers, low-profile street stance, all the modern touches (Lithium battery, CarPlay, Bluetooth sound bar) without the lift kit. Perfect for the neighborhood, the cul-de-sac, and the front-nine path.",
+      battery:"48V · 125Ah Lithium", motor:"5 kW AC induction (Navitas 600A)",
+      warranty:"2-year bumper-to-bumper · 8-year Lithium battery",
+      tech:"Wireless CarPlay/Android Auto · Bluetooth sound bar · LED lighting",
+      street_legal:true },
+    "breeze-4l": { make:"Breezy EV", model:"Breeze 4L", seats:4, drivetrain:"electric",
+      ground_clearance_in:6.85, weight_lbs:1213, length_in:119.3, width_in:51.6, height_in:82.5,
+      range_mi:"35–50", top_speed_mph:25, tire:"23x10-14 DOT off-road",
+      headline:"The 4-seater, lifted. Off-road tires, lake-life attitude.",
+      summary:"Same Breeze 4 platform with a lift kit and aggressive 23x10-14 DOT tires. Ride higher, see further, hit gravel roads and grass and the trail to the deer lease without thinking twice. Same Lithium powertrain, same warranty, more capability.",
+      battery:"48V · 125Ah Lithium", motor:"5 kW AC induction (Navitas 600A)",
+      warranty:"2-year bumper-to-bumper · 8-year Lithium battery",
+      tech:"Wireless CarPlay/Android Auto · Bluetooth sound bar · LED lighting",
+      street_legal:true },
+    "breeze-6l": { make:"Breezy EV", model:"Breeze 6L", seats:6, drivetrain:"electric",
+      ground_clearance_in:6.85, weight_lbs:1389, length_in:149.0, width_in:51.6, height_in:82.2,
+      range_mi:"45–55", top_speed_mph:25, tire:"23x10-14 DOT off-road",
+      headline:"Six seats. Lifted. Built for the whole family.",
+      summary:"The family flagship. Six forward-facing seats with quilted upholstery, the same lift and tire package as the Breeze 4L, and the room to load up the kids, the cousins, and a cooler. Our best-selling rental fleet model and our most-asked-for new cart.",
+      battery:"48V · 125Ah Lithium", motor:"5 kW AC induction (Navitas 600A)",
+      warranty:"2-year bumper-to-bumper · 8-year Lithium battery",
+      tech:"Wireless CarPlay/Android Auto · Bluetooth sound bar · LED lighting",
+      street_legal:true },
+    "terrain-6": { make:"Breezy EV", model:"Terrain 6", seats:6, drivetrain:"electric",
+      ground_clearance_in:7.1, weight_lbs:1299, length_in:146.0, width_in:51.8, height_in:80.4,
+      range_mi:"35–50", top_speed_mph:25, tire:"23x10-14 DOT off-road (heavy-duty)",
+      headline:"When you need to go places golf carts don't go.",
+      summary:"Six seats and the highest ground clearance in the Breezy EV lineup. Built for the customer who wants the lift, the room, and the toughest stance we sell. Ranches, deer leases, beach houses, sand — the Terrain 6 is the cart that gets there.",
+      battery:"48V · 125Ah Lithium", motor:"5 kW AC induction (Navitas 600A)",
+      warranty:"2-year bumper-to-bumper · 8-year Lithium battery",
+      tech:"Wireless CarPlay/Android Auto · Bluetooth sound bar · LED lighting",
+      street_legal:true },
+  };
+
+  const loginView = document.getElementById("login-view");
+  const mainView = document.getElementById("main-view");
+  const loginForm = document.getElementById("login-form");
+  const loginPassword = document.getElementById("login-password");
+  const loginError = document.getElementById("login-error");
+  const loginSubmit = document.getElementById("login-submit");
+  const listGrid = document.getElementById("list-grid");
+  const emptyState = document.getElementById("empty-state");
+  const modalBackdrop = document.getElementById("modal-backdrop");
+  const modalTitle = document.getElementById("modal-title");
+  const modalMsg = document.getElementById("modal-msg");
+  const modalSave = document.getElementById("modal-save");
+  const listingForm = document.getElementById("listing-form");
+  const imgManager = document.getElementById("img-manager");
+  const featuresList = document.getElementById("features-list");
+
+  let ALL = [];
+  let currentFilter = "";
+  let editingSlug = null;  // null = creating new; set = editing existing
+
+  function esc(s) { return String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+
+  function showLogin() { loginView.hidden = false; mainView.hidden = true; }
+  function showMain() { loginView.hidden = true; mainView.hidden = false; }
+
+  function fmtPrice(c) { return c == null ? null : "$" + Math.round(c/100).toLocaleString(); }
+
+  function renderList() {
+    const items = currentFilter
+      ? ALL.filter(l => currentFilter === "draft" ? l.status === "draft" : l.condition === currentFilter)
+      : ALL;
+    if (!items.length) { listGrid.innerHTML = ""; emptyState.hidden = false; return; }
+    emptyState.hidden = true;
+    listGrid.innerHTML = items.map(l => {
+      const title = [l.year, l.make, l.model].filter(Boolean).join(" ") || l.slug;
+      const metaBits = [l.color, l.seats ? l.seats + "-seater" : null, l.drivetrain].filter(Boolean);
+      const price = fmtPrice(l.price_cents);
+      const hero = l.hero_image_id
+        ? '<div class="img"><img src="/api/listings/' + encodeURIComponent(l.slug) + '/image/' + encodeURIComponent(l.hero_image_id) + '" alt="' + esc(title) + '" loading="lazy"><div class="badge-row"><span class="pill ' + l.condition + '">' + (l.condition === "new" ? "New" : "Used") + '</span><span class="pill ' + l.status + '">' + l.status + '</span></div></div>'
+        : '<div class="img empty"><span>No photo</span><div class="badge-row"><span class="pill ' + l.condition + '">' + (l.condition === "new" ? "New" : "Used") + '</span><span class="pill ' + l.status + '">' + l.status + '</span></div></div>';
+      return '<article class="listing-card">' + hero
+        + '<div class="body">'
+        +   '<h3>' + esc(title) + '</h3>'
+        +   (metaBits.length ? '<p class="meta">' + esc(metaBits.join(" · ")) + '</p>' : "")
+        +   (price ? '<p class="price">' + price + '</p>' : '<p class="price" style="color:#888;">Call for pricing</p>')
+        +   '<p class="meta" style="margin-bottom:.4rem;">Slug: <code>' + esc(l.slug) + '</code></p>'
+        +   '<div class="actions">'
+        +     '<button class="btn-sm btn-edit" data-edit="' + esc(l.slug) + '">Edit</button>'
+        +     '<a class="btn-sm btn-view" href="/carts2/' + encodeURIComponent(l.slug) + '/" target="_blank">View →</a>'
+        +     '<button class="btn-sm btn-del" data-del="' + esc(l.slug) + '">Delete</button>'
+        +   '</div>'
+        + '</div></article>';
+    }).join("");
+  }
+
+  async function loadList() {
+    try {
+      const res = await fetch("/api/listings?includeDraft=1", { credentials: "same-origin" });
+      if (res.status === 401) { showLogin(); return; }
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      const data = await res.json();
+      ALL = data.listings || [];
+      showMain();
+      renderList();
+    } catch (e) {
+      listGrid.innerHTML = '<p style="color:#b3392e;">Failed to load: ' + esc(e.message) + '</p>';
+    }
+  }
+
+  function openModal(slug) {
+    editingSlug = slug;
+    modalMsg.textContent = "";
+    modalMsg.className = "modal-msg";
+    featuresList.innerHTML = "";
+    listingForm.reset();
+    if (slug) {
+      modalTitle.textContent = "Edit listing";
+      fetch("/api/listings/" + encodeURIComponent(slug), { credentials: "same-origin" })
+        .then(r => r.json())
+        .then(l => {
+          fillForm(l);
+          renderImages(l);
+        })
+        .catch(() => { modalMsg.textContent = "Failed to load listing"; modalMsg.className = "modal-msg error"; });
+    } else {
+      modalTitle.textContent = "New listing";
+      imgManager.innerHTML = '<p style="color:#888; font-size:.85rem; margin:0;">Save the listing first to add photos.</p>';
+    }
+    modalBackdrop.hidden = false;
+  }
+
+  function closeModal() {
+    modalBackdrop.hidden = true;
+    editingSlug = null;
+  }
+
+  function fillForm(l) {
+    const f = listingForm;
+    for (const name of ["slug","status","condition","make","model","color","headline","summary","description",
+                        "range_mi","battery","motor","drive_type","tire","warranty","tech","seo_title","seo_description",
+                        "condition_notes"]) {
+      if (f[name]) f[name].value = l[name] ?? "";
+    }
+    for (const name of ["year","seats","top_speed_mph","ground_clearance_in","length_in","width_in","height_in","weight_lbs","mileage_hours"]) {
+      if (f[name]) f[name].value = l[name] ?? "";
+    }
+    if (f.street_legal) f.street_legal.checked = !!l.street_legal;
+    if (f.price_usd) f.price_usd.value = l.price_cents ? (l.price_cents / 100) : "";
+    if (f.msrp_usd) f.msrp_usd.value = l.msrp_cents ? (l.msrp_cents / 100) : "";
+    // Slug is immutable after create — disable the field
+    if (editingSlug) f.slug.disabled = true; else f.slug.disabled = false;
+    featuresList.innerHTML = "";
+    (l.features || []).forEach(addFeatureRow);
+  }
+
+  function addFeatureRow(value = "") {
+    const row = document.createElement("div");
+    row.className = "feat-row";
+    row.innerHTML = '<input type="text" placeholder="e.g. 7-year warranty" value="' + esc(value) + '"><button type="button" title="Remove">×</button>';
+    row.querySelector("button").addEventListener("click", () => row.remove());
+    featuresList.appendChild(row);
+  }
+  document.getElementById("btn-add-feat").addEventListener("click", () => addFeatureRow());
+
+  function collectFeatures() {
+    return [...featuresList.querySelectorAll("input")].map(i => i.value.trim()).filter(Boolean);
+  }
+
+  function renderImages(l) {
+    const images = l.images || [];
+    const canUpload = images.length < 20;
+    imgManager.innerHTML =
+      '<div class="img-grid">' +
+        images.map(img =>
+          '<div class="img-tile">' +
+            '<img src="/api/listings/' + encodeURIComponent(l.slug) + '/image/' + encodeURIComponent(img.id) + '" alt="' + esc(img.alt || "") + '">' +
+            '<button type="button" class="del-img" data-img-id="' + esc(img.id) + '" title="Delete photo">×</button>' +
+          '</div>').join("") +
+      '</div>' +
+      '<div class="img-upload">' +
+        (canUpload
+          ? '<input type="file" id="img-input" accept="image/*" multiple>' +
+            '<button type="button" class="btn-ghost" id="img-upload-btn" style="padding:.5rem 1rem; font-size:.85rem;">Upload</button>'
+          : '<p style="color:#888; font-size:.85rem;">Maximum 20 photos. Delete one to add more.</p>') +
+      '</div>' +
+      '<p style="color:#888; font-size:.78rem; margin-top:.4rem;">First photo = hero image. Max 1.8 MB per file. JPG/PNG/WebP.</p>';
+
+    imgManager.querySelectorAll(".del-img").forEach(btn => {
+      btn.addEventListener("click", async () => {
+        if (!confirm("Delete this photo?")) return;
+        const id = btn.dataset.imgId;
+        const res = await fetch("/api/listings/" + encodeURIComponent(l.slug) + "/images/" + encodeURIComponent(id), {
+          method: "DELETE", credentials: "same-origin",
+        });
+        if (res.ok) {
+          // Refetch and re-render images
+          const r = await fetch("/api/listings/" + encodeURIComponent(l.slug), { credentials: "same-origin" });
+          const fresh = await r.json();
+          renderImages(fresh);
+          loadList();
+        } else {
+          alert("Failed to delete");
+        }
+      });
+    });
+
+    const uploadBtn = imgManager.querySelector("#img-upload-btn");
+    if (uploadBtn) {
+      uploadBtn.addEventListener("click", async () => {
+        const input = imgManager.querySelector("#img-input");
+        const files = [...(input.files || [])];
+        if (!files.length) { alert("Pick a photo first"); return; }
+        uploadBtn.disabled = true;
+        uploadBtn.textContent = "Uploading…";
+        let uploaded = 0;
+        for (const file of files) {
+          if (file.size > 2_500_000) { alert('"' + file.name + '" is too large (>2.5 MB). Resize and try again.'); continue; }
+          const dataUrl = await new Promise((res, rej) => {
+            const r = new FileReader();
+            r.onload = () => res(r.result);
+            r.onerror = rej;
+            r.readAsDataURL(file);
+          });
+          const res = await fetch("/api/listings/" + encodeURIComponent(l.slug) + "/images", {
+            method: "POST", headers: { "content-type": "application/json" }, credentials: "same-origin",
+            body: JSON.stringify({ data: dataUrl, alt: "" }),
+          });
+          if (res.ok) uploaded++;
+          else {
+            const d = await res.json().catch(() => ({}));
+            alert('Upload failed for "' + file.name + '": ' + (d.error || res.status));
+            break;
+          }
+        }
+        // Refetch and re-render
+        const r = await fetch("/api/listings/" + encodeURIComponent(l.slug), { credentials: "same-origin" });
+        const fresh = await r.json();
+        renderImages(fresh);
+        loadList();
+      });
+    }
+  }
+
+  listingForm.addEventListener("submit", async (ev) => {
+    ev.preventDefault();
+    modalMsg.textContent = "";
+    modalMsg.className = "modal-msg";
+    const f = listingForm;
+    const body = {};
+    for (const el of f.elements) {
+      if (!el.name) continue;
+      if (el.type === "checkbox") body[el.name] = el.checked;
+      else if (el.type === "number") body[el.name] = el.value === "" ? null : Number(el.value);
+      else body[el.name] = el.value;
+    }
+    body.features = collectFeatures();
+    if (body.price_usd != null) body.price_cents = Math.round(Number(body.price_usd) * 100);
+    if (body.msrp_usd != null) body.msrp_cents = Math.round(Number(body.msrp_usd) * 100);
+    delete body.price_usd; delete body.msrp_usd;
+
+    modalSave.disabled = true;
+    const prev = modalSave.textContent;
+    modalSave.textContent = "Saving…";
+    try {
+      let res, data;
+      if (editingSlug) {
+        res = await fetch("/api/listings/" + encodeURIComponent(editingSlug), {
+          method: "PATCH", headers: { "content-type": "application/json" },
+          credentials: "same-origin", body: JSON.stringify(body),
+        });
+      } else {
+        res = await fetch("/api/listings", {
+          method: "POST", headers: { "content-type": "application/json" },
+          credentials: "same-origin", body: JSON.stringify(body),
+        });
+      }
+      data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        modalMsg.textContent = data.error || "Save failed (HTTP " + res.status + ")";
+        modalMsg.className = "modal-msg error";
+        modalSave.disabled = false; modalSave.textContent = prev;
+        return;
+      }
+      modalMsg.textContent = "Saved · you can now upload photos below";
+      modalMsg.className = "modal-msg success";
+      editingSlug = data.listing.slug;
+      f.slug.disabled = true;
+      renderImages(data.listing);
+      loadList();
+      modalSave.disabled = false; modalSave.textContent = prev;
+    } catch (e) {
+      modalMsg.textContent = "Network error: " + e.message;
+      modalMsg.className = "modal-msg error";
+      modalSave.disabled = false; modalSave.textContent = prev;
+    }
+  });
+
+  listGrid.addEventListener("click", async (ev) => {
+    const editBtn = ev.target.closest(".btn-edit");
+    const delBtn = ev.target.closest(".btn-del");
+    if (editBtn) { openModal(editBtn.dataset.edit); return; }
+    if (delBtn) {
+      const slug = delBtn.dataset.del;
+      if (!confirm('Delete listing "' + slug + '"? This cannot be undone.')) return;
+      const res = await fetch("/api/listings/" + encodeURIComponent(slug), { method: "DELETE", credentials: "same-origin" });
+      if (res.ok) loadList();
+      else alert("Delete failed");
+    }
+  });
+
+  document.getElementById("btn-new").addEventListener("click", () => openModal(null));
+  document.getElementById("modal-close").addEventListener("click", closeModal);
+  document.getElementById("modal-cancel").addEventListener("click", closeModal);
+  modalBackdrop.addEventListener("click", (ev) => { if (ev.target === modalBackdrop) closeModal(); });
+
+  document.getElementById("btn-quickfill").addEventListener("click", () => {
+    const sel = document.getElementById("breezy-quickfill");
+    const defaults = BREEZY_EV[sel.value];
+    if (!defaults) { alert("Pick a model first"); return; }
+    for (const key of Object.keys(defaults)) {
+      const el = listingForm[key];
+      if (el) {
+        if (el.type === "checkbox") el.checked = !!defaults[key];
+        else el.value = defaults[key];
+      }
+    }
+    // Breezy EV = always new, electric
+    if (listingForm.condition) listingForm.condition.value = "new";
+    if (listingForm.drivetrain) listingForm.drivetrain.value = "electric";
+    // Autofill slug if blank
+    if (!listingForm.slug.disabled && !listingForm.slug.value) {
+      const y = listingForm.year.value || new Date().getFullYear();
+      const slug = y + "-breezy-ev-" + sel.value;
+      listingForm.slug.value = slug;
+    }
+  });
+
+  document.querySelectorAll(".filter-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      currentFilter = btn.dataset.filter;
+      renderList();
+    });
+  });
+
+  loginForm.addEventListener("submit", async (ev) => {
+    ev.preventDefault();
+    loginError.hidden = true;
+    loginSubmit.disabled = true;
+    const prev = loginSubmit.textContent;
+    loginSubmit.textContent = "Signing in…";
+    try {
+      const res = await fetch("/api/admin/login", {
+        method: "POST", headers: { "content-type": "application/json" },
+        credentials: "same-origin", body: JSON.stringify({ password: loginPassword.value }),
+      });
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}));
+        loginError.textContent = d.error || "Sign-in failed (HTTP " + res.status + ")";
+        loginError.hidden = false;
+        loginSubmit.disabled = false; loginSubmit.textContent = prev;
+        return;
+      }
+      loginPassword.value = "";
+      loadList();
+    } catch (e) {
+      loginError.textContent = "Network error: " + e.message;
+      loginError.hidden = false;
+      loginSubmit.disabled = false; loginSubmit.textContent = prev;
+    }
+  });
+
+  loadList();
+})();
+</script>
+</body>
+</html>
