@@ -35,7 +35,21 @@
     .listing-card h3 { font: 700 1rem/1.2 Georgia, serif; color: #1f5a68; margin: 0 0 .2rem; }
     .listing-card .meta { color: #888; font-size: .82rem; margin: 0 0 .5rem; }
     .listing-card .price { color: #e85a4f; font-weight: 700; margin-bottom: .5rem; }
-    .listing-card .status-row { display: flex; align-items: center; gap: .4rem; margin-bottom: .6rem; }
+    .listing-card .status-row { display: flex; align-items: center; gap: .5rem; margin-bottom: .6rem; justify-content: space-between; }
+    .listing-card .status-row .label { font-size: .78rem; color: #666; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
+    .listing-card .status-row .status-text { font-size: .85rem; font-weight: 700; }
+    .listing-card .status-row .status-text.active { color: #2f6b3b; }
+    .listing-card .status-row .status-text.draft { color: #8a4a00; }
+    .listing-card .status-row .status-text.sold { color: #8a2a20; }
+    /* iOS-style switch */
+    .toggle { position: relative; display: inline-block; width: 44px; height: 24px; }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle .slider { position: absolute; cursor: pointer; inset: 0; background: #dcd2c2; transition: .18s; border-radius: 999px; }
+    .toggle .slider::before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; top: 3px; background: #fff; transition: .18s; border-radius: 50%; box-shadow: 0 1px 2px rgba(0,0,0,.15); }
+    .toggle input:checked + .slider { background: #2f6b3b; }
+    .toggle input:checked + .slider::before { transform: translateX(20px); }
+    .toggle input:disabled + .slider { opacity: .5; cursor: not-allowed; }
+    .toggle.pending .slider { opacity: .5; }
     .listing-card .actions { display: flex; gap: .4rem; margin-top: auto; }
     .listing-card .btn-sm { font-size: .82rem; padding: .35rem .65rem; border-radius: 6px; cursor: pointer; border: 1px solid; background: #fff; font-weight: 600; }
     .listing-card .btn-edit { color: #1f5a68; border-color: #1f5a68; }
@@ -71,6 +85,14 @@
     @media (max-width: 580px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
 
     .section-head { font: 700 .95rem Georgia, serif; color: #1f5a68; margin: 1.25rem 0 .25rem; padding-bottom: .35rem; border-bottom: 1px solid #ecd9c7; }
+    details.modal-section { margin-top: 1.25rem; border: 1px solid #ecd9c7; border-radius: 10px; background: #fbf8f3; overflow: hidden; }
+    details.modal-section > summary { padding: .75rem 1rem; cursor: pointer; font: 700 .95rem Georgia, serif; color: #1f5a68; list-style: none; display: flex; align-items: center; justify-content: space-between; user-select: none; }
+    details.modal-section > summary::-webkit-details-marker { display: none; }
+    details.modal-section > summary::after { content: "▸"; color: #888; transition: transform .15s; font-size: .9rem; }
+    details.modal-section[open] > summary::after { transform: rotate(90deg); }
+    details.modal-section > summary em { font-style: normal; color: #888; font-weight: 400; font-size: .85rem; margin-left: .5rem; }
+    details.modal-section > .section-body { padding: .5rem 1rem 1rem; background: #fff; border-top: 1px solid #ecd9c7; }
+    details.modal-section > .section-body > :first-child { margin-top: .35rem; }
 
     .feat-row { display: flex; gap: .4rem; margin-top: .4rem; }
     .feat-row input { flex: 1; }
@@ -190,79 +212,101 @@
         </div>
       </div>
 
-      <h3 class="section-head">Identity</h3>
-      <div class="grid-3">
-        <label class="field"><span>Make</span><input type="text" name="make" placeholder="Breezy EV"></label>
-        <label class="field"><span>Model</span><input type="text" name="model" placeholder="Breeze 6L"></label>
-        <label class="field"><span>Year</span><input type="number" name="year" min="1980" max="2030"></label>
-      </div>
-      <div class="grid-3">
-        <label class="field"><span>Color</span><input type="text" name="color" placeholder="Coral"></label>
-        <label class="field"><span>Seats</span><input type="number" name="seats" min="1" max="12"></label>
-        <label class="field">
-          <span>Drivetrain</span>
-          <select name="drivetrain">
-            <option value="">—</option>
-            <option value="electric">Electric</option>
-            <option value="gas">Gas</option>
-          </select>
-        </label>
-      </div>
+      <details class="modal-section" open>
+        <summary>Identity <em>— make, model, year, color, seats</em></summary>
+        <div class="section-body">
+          <div class="grid-3">
+            <label class="field"><span>Make</span><input type="text" name="make" placeholder="Breezy EV"></label>
+            <label class="field"><span>Model</span><input type="text" name="model" placeholder="Breeze 6L"></label>
+            <label class="field"><span>Year</span><input type="number" name="year" min="1980" max="2030"></label>
+          </div>
+          <div class="grid-3">
+            <label class="field"><span>Color</span><input type="text" name="color" placeholder="Coral"></label>
+            <label class="field"><span>Seats</span><input type="number" name="seats" min="1" max="12"></label>
+            <label class="field">
+              <span>Drivetrain</span>
+              <select name="drivetrain">
+                <option value="">—</option>
+                <option value="electric">Electric</option>
+                <option value="gas">Gas</option>
+              </select>
+            </label>
+          </div>
+        </div>
+      </details>
 
-      <h3 class="section-head">Price</h3>
-      <div class="grid-3">
-        <label class="field"><span>Price <em>(USD)</em></span><input type="number" name="price_usd" min="0" step="1" placeholder="9999"></label>
-        <label class="field"><span>MSRP <em>(optional)</em></span><input type="number" name="msrp_usd" min="0" step="1"></label>
-        <label class="field"><span>Hours / mileage <em>(used only)</em></span><input type="number" name="mileage_hours" min="0" step="1"></label>
-      </div>
-      <label class="field"><span>Condition notes <em>(used only)</em></span><textarea name="condition_notes" placeholder="Minor scratch on left rear fender…"></textarea></label>
+      <details class="modal-section" open>
+        <summary>Price &amp; condition</summary>
+        <div class="section-body">
+          <div class="grid-3">
+            <label class="field"><span>Price <em>(USD)</em></span><input type="number" name="price_usd" min="0" step="1" placeholder="9999"></label>
+            <label class="field"><span>MSRP <em>(optional)</em></span><input type="number" name="msrp_usd" min="0" step="1"></label>
+            <label class="field"><span>Hours / mileage <em>(used only)</em></span><input type="number" name="mileage_hours" min="0" step="1"></label>
+          </div>
+          <label class="field"><span>Condition notes <em>(used only)</em></span><textarea name="condition_notes" placeholder="Minor scratch on left rear fender…"></textarea></label>
+        </div>
+      </details>
 
-      <h3 class="section-head">Marketing copy</h3>
-      <label class="field"><span>Headline <em>(sub-title on the page)</em></span><input type="text" name="headline" placeholder="The family flagship — six seats, lifted, lithium"></label>
-      <label class="field"><span>Summary <em>(1-2 sentences for feature section)</em></span><textarea name="summary" rows="3"></textarea></label>
-      <label class="field"><span>Full description <em>(long-form, multiple paragraphs OK)</em></span><textarea name="description" rows="5"></textarea></label>
+      <details class="modal-section" open>
+        <summary>Marketing copy <em>— headline, summary, description, features</em></summary>
+        <div class="section-body">
+          <label class="field"><span>Headline <em>(sub-title on the page)</em></span><input type="text" name="headline" placeholder="The family flagship — six seats, lifted, lithium"></label>
+          <label class="field"><span>Summary <em>(1-2 sentences for feature section)</em></span><textarea name="summary" rows="3"></textarea></label>
+          <label class="field"><span>Full description <em>(long-form, multiple paragraphs OK)</em></span><textarea name="description" rows="5"></textarea></label>
 
-      <div style="margin-top:.85rem;">
-        <span style="font: 600 .85rem inherit; color:#222;">Feature bullets</span>
-        <div id="features-list"></div>
-        <button type="button" class="add-feat" id="btn-add-feat">+ Add feature</button>
-      </div>
+          <div style="margin-top:.85rem;">
+            <span style="font: 600 .85rem inherit; color:#222;">Feature bullets</span>
+            <div id="features-list"></div>
+            <button type="button" class="add-feat" id="btn-add-feat">+ Add feature</button>
+          </div>
+        </div>
+      </details>
 
-      <h3 class="section-head">Specifications</h3>
-      <div class="grid-3">
-        <label class="field"><span>Top speed <em>(mph)</em></span><input type="number" name="top_speed_mph" step="0.1"></label>
-        <label class="field"><span>Range <em>(miles, e.g. "45-55")</em></span><input type="text" name="range_mi"></label>
-        <label class="field"><span>Ground clearance <em>(in)</em></span><input type="number" name="ground_clearance_in" step="0.1"></label>
-      </div>
-      <div class="grid-2">
-        <label class="field"><span>Battery</span><input type="text" name="battery" placeholder="48V · 125Ah Lithium"></label>
-        <label class="field"><span>Motor</span><input type="text" name="motor" placeholder="5 kW AC"></label>
-      </div>
-      <div class="grid-3">
-        <label class="field"><span>Length (in)</span><input type="number" name="length_in" step="0.1"></label>
-        <label class="field"><span>Width (in)</span><input type="number" name="width_in" step="0.1"></label>
-        <label class="field"><span>Height (in)</span><input type="number" name="height_in" step="0.1"></label>
-      </div>
-      <div class="grid-2">
-        <label class="field"><span>Weight (lbs)</span><input type="number" name="weight_lbs"></label>
-        <label class="field"><span>Tires</span><input type="text" name="tire" placeholder="23x10-14 DOT off-road"></label>
-      </div>
-      <div class="grid-2">
-        <label class="field"><span>Warranty</span><input type="text" name="warranty" placeholder="2-year bumper-to-bumper · 8-year battery"></label>
-        <label class="field"><span>Tech / infotainment</span><input type="text" name="tech"></label>
-      </div>
-      <label class="field inline-check">
-        <input type="checkbox" name="street_legal"><span>Street legal (LSV)</span>
-      </label>
+      <details class="modal-section" open>
+        <summary>Photos <span id="img-count" style="margin-left:.5rem; color:#888; font-weight:400; font-size:.85rem;"></span></summary>
+        <div class="section-body">
+          <div class="img-manager" id="img-manager"></div>
+        </div>
+      </details>
 
-      <h3 class="section-head">SEO <em style="font-weight:400; color:#888;">(optional overrides)</em></h3>
-      <label class="field"><span>SEO title <em>(auto-generated if blank)</em></span><input type="text" name="seo_title"></label>
-      <label class="field"><span>SEO description <em>(auto-generated if blank)</em></span><textarea name="seo_description" rows="2"></textarea></label>
+      <details class="modal-section">
+        <summary>Specifications <em>— powertrain, dimensions, warranty</em></summary>
+        <div class="section-body">
+          <div class="grid-3">
+            <label class="field"><span>Top speed <em>(mph)</em></span><input type="number" name="top_speed_mph" step="0.1"></label>
+            <label class="field"><span>Range <em>(miles, e.g. "45-55")</em></span><input type="text" name="range_mi"></label>
+            <label class="field"><span>Ground clearance <em>(in)</em></span><input type="number" name="ground_clearance_in" step="0.1"></label>
+          </div>
+          <div class="grid-2">
+            <label class="field"><span>Battery</span><input type="text" name="battery" placeholder="48V · 125Ah Lithium"></label>
+            <label class="field"><span>Motor</span><input type="text" name="motor" placeholder="5 kW AC"></label>
+          </div>
+          <div class="grid-3">
+            <label class="field"><span>Length (in)</span><input type="number" name="length_in" step="0.1"></label>
+            <label class="field"><span>Width (in)</span><input type="number" name="width_in" step="0.1"></label>
+            <label class="field"><span>Height (in)</span><input type="number" name="height_in" step="0.1"></label>
+          </div>
+          <div class="grid-2">
+            <label class="field"><span>Weight (lbs)</span><input type="number" name="weight_lbs"></label>
+            <label class="field"><span>Tires</span><input type="text" name="tire" placeholder="23x10-14 DOT off-road"></label>
+          </div>
+          <div class="grid-2">
+            <label class="field"><span>Warranty</span><input type="text" name="warranty" placeholder="2-year bumper-to-bumper · 8-year battery"></label>
+            <label class="field"><span>Tech / infotainment</span><input type="text" name="tech"></label>
+          </div>
+          <label class="field inline-check">
+            <input type="checkbox" name="street_legal"><span>Street legal (LSV)</span>
+          </label>
+        </div>
+      </details>
 
-      <h3 class="section-head">Photos</h3>
-      <div class="img-manager" id="img-manager">
-        <p style="color:#888; font-size:.85rem; margin:0;">Save the listing first to add photos.</p>
-      </div>
+      <details class="modal-section">
+        <summary>SEO <em>— optional overrides</em></summary>
+        <div class="section-body">
+          <label class="field"><span>SEO title <em>(auto-generated if blank)</em></span><input type="text" name="seo_title"></label>
+          <label class="field"><span>SEO description <em>(auto-generated if blank)</em></span><textarea name="seo_description" rows="2"></textarea></label>
+        </div>
+      </details>
 
       <div class="modal-actions">
         <span class="modal-msg" id="modal-msg"></span>
@@ -333,7 +377,11 @@
 
   let ALL = [];
   let currentFilter = "";
-  let editingSlug = null;  // null = creating new; set = editing existing
+  let editingSlug = null;        // null = creating new; set = editing existing
+  // Pre-save photo queue (only used while editingSlug is null). Each
+  // entry: { id (local), name, dataUrl, size }. Flushed to the server
+  // right after the Save POST creates the listing and returns a slug.
+  let pendingImages = [];
 
   function esc(s) { return String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
 
@@ -355,11 +403,21 @@
       const hero = l.hero_image_id
         ? '<div class="img"><img src="/api/listings/' + encodeURIComponent(l.slug) + '/image/' + encodeURIComponent(l.hero_image_id) + '" alt="' + esc(title) + '" loading="lazy"><div class="badge-row"><span class="pill ' + l.condition + '">' + (l.condition === "new" ? "New" : "Used") + '</span><span class="pill ' + l.status + '">' + l.status + '</span></div></div>'
         : '<div class="img empty"><span>No photo</span><div class="badge-row"><span class="pill ' + l.condition + '">' + (l.condition === "new" ? "New" : "Used") + '</span><span class="pill ' + l.status + '">' + l.status + '</span></div></div>';
+      const isSold = l.status === "sold";
+      const isActive = l.status === "active";
+      const statusTxt = isActive ? "Active · public" : l.status === "draft" ? "Draft · hidden" : "Sold";
+      const toggleRow = '<div class="status-row">'
+        + '<div><span class="label">Status</span><br><span class="status-text ' + esc(l.status) + '">' + statusTxt + '</span></div>'
+        + (isSold
+            ? '<label class="toggle" title="Sold listings don\'t use the toggle — edit to change"><input type="checkbox" disabled><span class="slider"></span></label>'
+            : '<label class="toggle" title="Flip between Draft (hidden) and Active (public)"><input type="checkbox" class="toggle-active" data-slug="' + esc(l.slug) + '"' + (isActive ? ' checked' : '') + '><span class="slider"></span></label>')
+        + '</div>';
       return '<article class="listing-card">' + hero
         + '<div class="body">'
         +   '<h3>' + esc(title) + '</h3>'
         +   (metaBits.length ? '<p class="meta">' + esc(metaBits.join(" · ")) + '</p>' : "")
         +   (price ? '<p class="price">' + price + '</p>' : '<p class="price" style="color:#888;">Call for pricing</p>')
+        +   toggleRow
         +   '<p class="meta" style="margin-bottom:.4rem;">Slug: <code>' + esc(l.slug) + '</code></p>'
         +   '<div class="actions">'
         +     '<button class="btn-sm btn-edit" data-edit="' + esc(l.slug) + '">Edit</button>'
@@ -386,6 +444,7 @@
 
   function openModal(slug) {
     editingSlug = slug;
+    pendingImages = [];
     modalMsg.textContent = "";
     modalMsg.className = "modal-msg";
     featuresList.innerHTML = "";
@@ -397,11 +456,13 @@
         .then(l => {
           fillForm(l);
           renderImages(l);
+          updateImgCount(l.images?.length || 0);
         })
         .catch(() => { modalMsg.textContent = "Failed to load listing"; modalMsg.className = "modal-msg error"; });
     } else {
       modalTitle.textContent = "New listing";
-      imgManager.innerHTML = '<p style="color:#888; font-size:.85rem; margin:0;">Save the listing first to add photos.</p>';
+      renderPendingImages();
+      updateImgCount(0);
     }
     modalBackdrop.hidden = false;
   }
@@ -409,6 +470,64 @@
   function closeModal() {
     modalBackdrop.hidden = true;
     editingSlug = null;
+    pendingImages = [];
+  }
+
+  function updateImgCount(n) {
+    const el = document.getElementById("img-count");
+    if (el) el.textContent = n ? "(" + n + ")" : "";
+  }
+
+  function renderPendingImages() {
+    const canUpload = pendingImages.length < 20;
+    imgManager.innerHTML =
+      (pendingImages.length === 0
+        ? '<p style="color:#888; font-size:.85rem; margin:0 0 .5rem;">Add photos below — they\'ll be uploaded when you save the listing. First photo = hero.</p>'
+        : '') +
+      '<div class="img-grid">' +
+        pendingImages.map((img, idx) =>
+          '<div class="img-tile">' +
+            '<img src="' + img.dataUrl + '" alt="">' +
+            '<button type="button" class="del-img" data-pending-idx="' + idx + '" title="Remove">×</button>' +
+          '</div>').join("") +
+      '</div>' +
+      '<div class="img-upload">' +
+        (canUpload
+          ? '<input type="file" id="img-input-pending" accept="image/*" multiple>' +
+            '<button type="button" class="btn-ghost" id="btn-queue-img" style="padding:.5rem 1rem; font-size:.85rem;">Add to listing</button>'
+          : '<p style="color:#888; font-size:.85rem;">Maximum 20 photos.</p>') +
+      '</div>' +
+      '<p style="color:#888; font-size:.78rem; margin-top:.4rem;">Max 1.8 MB per file. JPG/PNG/WebP.</p>';
+
+    imgManager.querySelectorAll(".del-img[data-pending-idx]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        pendingImages.splice(Number(btn.dataset.pendingIdx), 1);
+        renderPendingImages();
+        updateImgCount(pendingImages.length);
+      });
+    });
+
+    const addBtn = imgManager.querySelector("#btn-queue-img");
+    if (addBtn) {
+      addBtn.addEventListener("click", async () => {
+        const input = imgManager.querySelector("#img-input-pending");
+        const files = [...(input.files || [])];
+        if (!files.length) { alert("Pick a photo first"); return; }
+        for (const file of files) {
+          if (pendingImages.length >= 20) { alert("Max 20 photos — remove one first."); break; }
+          if (file.size > 2_500_000) { alert('"' + file.name + '" is too large (>2.5 MB). Resize and try again.'); continue; }
+          const dataUrl = await new Promise((res, rej) => {
+            const r = new FileReader();
+            r.onload = () => res(r.result);
+            r.onerror = rej;
+            r.readAsDataURL(file);
+          });
+          pendingImages.push({ name: file.name, dataUrl, size: file.size });
+        }
+        renderPendingImages();
+        updateImgCount(pendingImages.length);
+      });
+    }
   }
 
   function fillForm(l) {
@@ -540,14 +659,15 @@
     modalSave.textContent = "Saving…";
     try {
       let res, data;
-      if (editingSlug) {
-        res = await fetch("/api/listings/" + encodeURIComponent(editingSlug), {
-          method: "PATCH", headers: { "content-type": "application/json" },
+      const isCreate = !editingSlug;
+      if (isCreate) {
+        res = await fetch("/api/listings", {
+          method: "POST", headers: { "content-type": "application/json" },
           credentials: "same-origin", body: JSON.stringify(body),
         });
       } else {
-        res = await fetch("/api/listings", {
-          method: "POST", headers: { "content-type": "application/json" },
+        res = await fetch("/api/listings/" + encodeURIComponent(editingSlug), {
+          method: "PATCH", headers: { "content-type": "application/json" },
           credentials: "same-origin", body: JSON.stringify(body),
         });
       }
@@ -558,13 +678,34 @@
         modalSave.disabled = false; modalSave.textContent = prev;
         return;
       }
-      modalMsg.textContent = "Saved · you can now upload photos below";
-      modalMsg.className = "modal-msg success";
-      editingSlug = data.listing.slug;
-      f.slug.disabled = true;
-      renderImages(data.listing);
+      // On create, flush the pending-images queue so photos go up at
+      // the same click — owner doesn't have to come back after save.
+      if (isCreate && pendingImages.length) {
+        const newSlug = data.listing.slug;
+        let uploaded = 0;
+        for (let i = 0; i < pendingImages.length; i++) {
+          modalSave.textContent = "Uploading photos (" + (i + 1) + "/" + pendingImages.length + ")…";
+          const img = pendingImages[i];
+          const upRes = await fetch("/api/listings/" + encodeURIComponent(newSlug) + "/images", {
+            method: "POST", headers: { "content-type": "application/json" },
+            credentials: "same-origin", body: JSON.stringify({ data: img.dataUrl, alt: "" }),
+          });
+          if (!upRes.ok) {
+            const err = await upRes.json().catch(() => ({}));
+            modalMsg.textContent = "Listing saved, but photo upload failed on \"" + img.name + "\": " + (err.error || upRes.status) + ". You can retry from the edit modal.";
+            modalMsg.className = "modal-msg error";
+            modalSave.disabled = false; modalSave.textContent = prev;
+            loadList();
+            return;
+          }
+          uploaded++;
+        }
+      }
+      // Close the modal + refresh the list on every success. The toast
+      // in the list grid confirms the save; no need for a modal state
+      // the owner has to dismiss.
+      closeModal();
       loadList();
-      modalSave.disabled = false; modalSave.textContent = prev;
     } catch (e) {
       modalMsg.textContent = "Network error: " + e.message;
       modalMsg.className = "modal-msg error";
@@ -582,6 +723,47 @@
       const res = await fetch("/api/listings/" + encodeURIComponent(slug), { method: "DELETE", credentials: "same-origin" });
       if (res.ok) loadList();
       else alert("Delete failed");
+    }
+  });
+
+  // Status toggle on each card: flip between draft ↔ active without
+  // opening the full edit modal. Sold listings have the toggle
+  // disabled — those need an Edit to change.
+  listGrid.addEventListener("change", async (ev) => {
+    const t = ev.target.closest(".toggle-active");
+    if (!t) return;
+    const slug = t.dataset.slug;
+    const nextStatus = t.checked ? "active" : "draft";
+    const wrap = t.closest(".toggle");
+    wrap.classList.add("pending");
+    t.disabled = true;
+    try {
+      const res = await fetch("/api/listings/" + encodeURIComponent(slug), {
+        method: "PATCH", headers: { "content-type": "application/json" },
+        credentials: "same-origin", body: JSON.stringify({ status: nextStatus }),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        alert("Status change failed: " + (err.error || res.status));
+        t.checked = !t.checked;  // revert the switch
+      } else {
+        // Update the text label next to the toggle in-place so the
+        // card doesn't flicker from a full reload.
+        const label = wrap.parentElement.querySelector(".status-text");
+        if (label) {
+          label.className = "status-text " + nextStatus;
+          label.textContent = nextStatus === "active" ? "Active · public" : "Draft · hidden";
+        }
+        // Sync in-memory state so filter counts stay accurate.
+        const l = ALL.find(x => x.slug === slug);
+        if (l) l.status = nextStatus;
+      }
+    } catch (e) {
+      alert("Network error: " + e.message);
+      t.checked = !t.checked;
+    } finally {
+      wrap.classList.remove("pending");
+      t.disabled = false;
     }
   });
 
