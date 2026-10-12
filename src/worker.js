@@ -56,6 +56,15 @@ export default {
     if (url.pathname === "/api/service-request" && request.method === "POST") {
       return submitServiceRequest(request, env);
     }
+    if (url.pathname === "/api/agreements" && request.method === "GET") {
+      return listAgreements(request, env);
+    }
+    {
+      const m = url.pathname.match(/^\/api\/agreements\/(PCGC-[A-Z0-9]{6})\/pdf$/);
+      if (m && request.method === "GET") {
+        return downloadAgreementPdf(request, env, m[1]);
+      }
+    }
     if (url.pathname === "/api/service-requests" && request.method === "GET") {
       return listServiceRequests(request, env);
     }
@@ -751,6 +760,93 @@ async function listBookings(request, env) {
     })
   );
   return json({ entries: entries.filter(Boolean) });
+}
+
+// Admin-only — lists every booking that has a signed rental agreement
+// attached. Returns a trimmed shape (no base64 PDF or signature bytes
+// in the list payload; those come down one at a time via
+// /api/agreements/:bookingId/pdf). Sorted signed-at desc so the newest
+// contracts are on top of /admin/agreements/.
+async function listAgreements(request, env) {
+  if (!env.FEEDBACK_KV) return json({ error: "kv not configured" }, 503);
+  const auth = await checkAdminAuth(request, env);
+  if (auth) return auth;
+  const result = await env.FEEDBACK_KV.list({ prefix: "booking:", limit: KV_LIST_LIMIT });
+  const rows = await Promise.all(result.keys.map(async (k) => {
+    const raw = await env.FEEDBACK_KV.get(k.name);
+    if (!raw) return null;
+    let rec;
+    try { rec = JSON.parse(raw); } catch { return null; }
+    const ag = rec.agreement;
+    if (!ag || !ag.signedAt) return null;
+    const dates = rec.dates || {};
+    return {
+      bookingId: rec.id,
+      status: rec.status,
+      signedAt: ag.signedAt,
+      agreementVersion: ag.version,
+      typedName: ag.typedName,
+      dlNumber: ag.dlNumber,
+      dlState: ag.dlState,
+      hasPdf: !!ag.pdfBase64,
+      pdfBytes: ag.pdfBase64?.length || 0,
+      customer: {
+        name: rec.contact?.name || null,
+        email: rec.contact?.email || null,
+        phone: rec.contact?.phone || null,
+      },
+      dates: {
+        start: dates.start, end: dates.end,
+        pickupTime: dates.pickupTime, dropoffTime: dates.dropoffTime,
+      },
+      items: (rec.items || []).map(it => ({ id: it.id, name: it.name, qty: it.qty })),
+      pricing: { total: rec.pricing?.total || rec.pricing?.grand || null },
+      delivery: rec.delivery,
+    };
+  }));
+  const agreements = rows.filter(Boolean)
+    .sort((a, b) => (b.signedAt || "").localeCompare(a.signedAt || ""));
+  return json({ agreements });
+}
+
+// Admin-only — streams the stored PDF for a single booking back to the
+// browser as an attachment. The PDF is base64-encoded jsPDF output
+// generated client-side at booking time (see rentals.js). If the
+// booking is older and `pdfBase64` is missing we return 404 — the
+// admin UI falls back to a link to the live /agreement/ page which
+// can regenerate.
+async function downloadAgreementPdf(request, env, bookingId) {
+  if (!env.FEEDBACK_KV) return new Response("kv not configured", { status: 503 });
+  const auth = await checkAdminAuth(request, env);
+  if (auth) return auth;
+  // Linear scan — same pattern as updateBookingStatus / deleteBooking.
+  let cursor;
+  do {
+    const page = await env.FEEDBACK_KV.list({ prefix: "booking:", cursor });
+    for (const k of page.keys) {
+      const raw = await env.FEEDBACK_KV.get(k.name);
+      if (!raw) continue;
+      let rec;
+      try { rec = JSON.parse(raw); } catch { continue; }
+      if (rec.id !== bookingId) continue;
+      const b64 = rec.agreement?.pdfBase64;
+      if (!b64) return new Response("no PDF stored for this booking", { status: 404 });
+      const binary = atob(b64);
+      const bytes = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+      const customer = (rec.contact?.name || "customer").replace(/[^A-Za-z0-9]+/g, "_").slice(0, 60) || "customer";
+      const filename = `PCGC-agreement-${bookingId}-${customer}.pdf`;
+      return new Response(bytes, {
+        headers: {
+          "content-type": "application/pdf",
+          "content-disposition": `attachment; filename="${filename}"`,
+          "cache-control": "private, no-store",
+        },
+      });
+    }
+    cursor = page.list_complete ? undefined : page.cursor;
+  } while (cursor);
+  return new Response("booking not found", { status: 404 });
 }
 
 // Admin-only listing of failed / uncaught booking attempts. Keys live

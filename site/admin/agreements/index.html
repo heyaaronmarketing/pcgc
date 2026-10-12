@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Signed Agreements · PCGC Admin</title>
+  <link rel="stylesheet" href="/assets/site.css">
+  <style>
+    body { background:#fbf8f3; color:#222; font-family: system-ui,-apple-system,Segoe UI,sans-serif; }
+    .wrap { max-width: 1100px; margin: 0 auto; padding: 1.25rem 1rem 3rem; }
+    h1 { font: 700 1.9rem/1.15 Georgia, serif; color:#1f5a68; margin:.4rem 0 .15rem; }
+    .sub { color:#666; font-size:.9rem; margin-bottom:1.2rem; }
+    nav.crumbs { font-size:.85rem; color:#888; margin-bottom:.9rem; }
+    nav.crumbs a { color:#1f5a68; text-decoration:none; margin-right:.7rem; }
+
+    .kpis { display:grid; grid-template-columns: repeat(4,1fr); gap:.5rem; margin:.5rem 0 1.4rem; }
+    @media (max-width: 700px) { .kpis { grid-template-columns: repeat(2,1fr); } }
+    .kpi { background:#fff; border:1px solid #ecd9c7; border-radius:12px; padding: .9rem 1.05rem; }
+    .kpi b { display:block; font: 700 1.5rem/1.1 Georgia, serif; color:#1f5a68; }
+    .kpi span { color:#666; font-size:.78rem; text-transform:uppercase; letter-spacing:.05em; }
+
+    .toolbar { display:flex; justify-content:space-between; align-items:center; gap:1rem; flex-wrap:wrap; margin-bottom: .85rem; }
+    .search input { padding:.5rem .75rem; border:1px solid #ecd9c7; border-radius:8px; font-size:.95rem; min-width:260px; background:#fff; }
+
+    .ag-list { display:flex; flex-direction:column; gap:.65rem; }
+    .ag { background:#fff; border:1px solid #ecd9c7; border-left:4px solid #1f5a68; border-radius:12px; padding: .95rem 1.15rem; display:grid; grid-template-columns: 1fr auto; gap:.85rem; align-items:center; }
+    @media (max-width: 640px) { .ag { grid-template-columns: 1fr; } .ag .actions { justify-self: start; } }
+    .ag .meta { display:flex; gap:.65rem; align-items:baseline; flex-wrap:wrap; font-size:.86rem; color:#666; margin-bottom:.3rem; }
+    .ag .meta .id { font: 700 .9rem ui-monospace, monospace; color:#1f5a68; }
+    .ag .meta .signed { color:#2f6b3b; font-weight:600; }
+    .ag h3 { margin:.1rem 0 .3rem; font: 700 1.02rem/1.2 Georgia, serif; color:#222; }
+    .ag .row { color:#444; font-size:.88rem; margin:.2rem 0; }
+    .ag .row b { color:#1f5a68; font-weight:600; }
+    .ag .row a { color:#1f5a68; text-decoration:none; font-weight:600; }
+    .ag .row a:hover { text-decoration: underline; }
+    .ag .pill { display:inline-block; padding:.12rem .55rem; border-radius:999px; font: 700 .72rem/1 system-ui, sans-serif; letter-spacing:.04em; text-transform:uppercase; }
+    .ag .pill.new { background:#fde9e6; color:#c2261a; }
+    .ag .pill.paid-part { background:#fff2d6; color:#8a4a00; }
+    .ag .pill.paid-full { background:#d6ecf0; color:#1f5a68; }
+    .ag .pill.complete { background:#dff0e1; color:#2f6b3b; }
+
+    .ag .actions { display:flex; gap:.4rem; flex-wrap:wrap; }
+    .ag .btn-dl { background:#1f5a68; color:#fff; border:0; border-radius:8px; padding:.55rem 1rem; font-weight:600; font-size:.88rem; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:.35rem; }
+    .ag .btn-dl:hover { background:#164550; }
+    .ag .btn-dl:disabled { opacity:.5; cursor:not-allowed; }
+    .ag .btn-view { background:#fff; color:#1f5a68; border:1px solid #1f5a68; border-radius:8px; padding:.55rem 1rem; font-weight:600; font-size:.88rem; cursor:pointer; text-decoration:none; }
+    .ag .no-pdf { color:#8a4a00; font-size:.78rem; }
+
+    .empty { background:#fff; border:1px dashed #ecd9c7; border-radius:12px; padding:3rem 1rem; text-align:center; color:#666; }
+
+    .login-view { max-width:420px; margin:3rem auto; background:#fff; border:1px solid #ecd9c7; border-radius:12px; padding:1.5rem 1.75rem; }
+    .login-view h1 { margin:0 0 1rem; }
+    .login-view label { display:block; margin:.6rem 0 .25rem; font-weight:600; font-size:.9rem; }
+    .login-view input { width:100%; padding:.6rem .75rem; font-size:1rem; border:1px solid #ecd9c7; border-radius:8px; box-sizing:border-box; }
+    .login-view button { margin-top:1rem; background:#1f5a68; color:#fff; border:0; padding:.65rem 1.1rem; font-weight:600; border-radius:8px; cursor:pointer; }
+    .login-view .err { color:#8a2a20; font-size:.85rem; margin-top:.5rem; }
+    .muted { color:#888; }
+  </style>
+</head>
+<body>
+<div id="login-view" class="login-view" hidden>
+  <h1>Sign in</h1>
+  <p class="muted" style="font-size:.9rem;">Admin password required.</p>
+  <form id="login-form">
+    <label for="login-password">Password</label>
+    <input id="login-password" type="password" required autofocus autocomplete="current-password">
+    <button id="login-submit" type="submit">Sign in</button>
+    <div id="login-error" class="err" hidden></div>
+  </form>
+</div>
+
+<div id="main-view" class="wrap" hidden>
+  <nav class="crumbs">
+    <a href="/admin/dashboard/">← Dashboard</a>
+    <a href="/admin/rentals/">Bookings</a>
+    <a href="/admin/service-requests/">Service requests</a>
+    <a href="/admin/carts/">Cart inventory</a>
+    <a href="/admin/sessions/">Sessions</a>
+    <a href="/admin/attempts/">Attempts</a>
+    <a href="/admin/seo/">SEO</a>
+    <span>Agreements</span>
+  </nav>
+  <h1>Signed rental agreements</h1>
+  <p class="sub">Every booking that completed the e-signature step. Click <b>Download PDF</b> to pull the full signed contract as a PDF.</p>
+
+  <div class="kpis" id="kpis" hidden>
+    <div class="kpi"><b id="kpi-total">0</b><span>signed agreements</span></div>
+    <div class="kpi"><b id="kpi-30d">0</b><span>last 30 days</span></div>
+    <div class="kpi"><b id="kpi-withpdf">0</b><span>with downloadable PDF</span></div>
+    <div class="kpi"><b id="kpi-active">0</b><span>bookings currently active</span></div>
+  </div>
+
+  <div class="toolbar">
+    <div class="search">
+      <input type="search" id="search" placeholder="Search by customer name, booking id, or email…">
+    </div>
+    <div class="muted" style="font-size:.82rem;" id="result-count"></div>
+  </div>
+
+  <div id="ag-list" class="ag-list"></div>
+  <div id="empty" class="empty" hidden>
+    <b>No signed agreements yet.</b><br>
+    <span class="muted">They'll appear here as customers complete the signature step on /rentals/.</span>
+  </div>
+</div>
+
+<script>
+(() => {
+  const loginView = document.getElementById("login-view");
+  const mainView = document.getElementById("main-view");
+  const loginForm = document.getElementById("login-form");
+  const loginPassword = document.getElementById("login-password");
+  const loginError = document.getElementById("login-error");
+  const loginSubmit = document.getElementById("login-submit");
+  const listEl = document.getElementById("ag-list");
+  const empty = document.getElementById("empty");
+  const kpis = document.getElementById("kpis");
+  const search = document.getElementById("search");
+  const resultCount = document.getElementById("result-count");
+
+  let ALL = [];
+
+  function escHtml(s) { return String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+  function fmtTs(iso) { try { return new Date(iso).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" }); } catch { return iso || "—"; } }
+  function fmtDate(iso) { if (!iso) return "—"; try { return new Date(iso + "T00:00:00").toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" }); } catch { return iso; } }
+  function fmtBytes(n) { if (!n) return ""; if (n < 1024) return n + " B"; if (n < 1_048_576) return Math.round(n/1024) + " KB"; return (n/1_048_576).toFixed(1) + " MB"; }
+
+  function statusLabel(s) {
+    return { "new": "New Order", "paid-part": "Paid · Partial", "paid-full": "Paid · Full", "complete": "Complete",
+             "picked-up": "Picked Up (legacy)", "delivered": "Delivered (legacy)", "returned": "Returned (legacy)" }[s] || s || "—";
+  }
+
+  function render(items) {
+    kpis.hidden = false;
+    document.getElementById("kpi-total").textContent = ALL.length;
+    const day = 24 * 60 * 60 * 1000;
+    document.getElementById("kpi-30d").textContent = ALL.filter(a => Date.now() - Date.parse(a.signedAt) <= 30 * day).length;
+    document.getElementById("kpi-withpdf").textContent = ALL.filter(a => a.hasPdf).length;
+    document.getElementById("kpi-active").textContent = ALL.filter(a => a.status === "new" || a.status === "paid-part" || a.status === "paid-full").length;
+
+    if (!items.length) { empty.hidden = false; listEl.innerHTML = ""; resultCount.textContent = ""; return; }
+    empty.hidden = true;
+    resultCount.textContent = items.length + " of " + ALL.length;
+    listEl.innerHTML = items.map(a => {
+      const c = a.customer || {};
+      const d = a.dates || {};
+      const title = (c.name || "(no name)") + " · " + (a.items.map(i => i.name).join(", ") || "no carts");
+      const period = d.start && d.end ? (fmtDate(d.start) + " → " + fmtDate(d.end)) : "—";
+      return '<article class="ag" data-id="' + escHtml(a.bookingId) + '">' +
+        '<div>' +
+          '<div class="meta">' +
+            '<span class="id">' + escHtml(a.bookingId) + '</span>' +
+            '<span class="signed">✓ Signed ' + escHtml(fmtTs(a.signedAt)) + '</span>' +
+            '<span class="pill ' + escHtml(a.status || "new") + '">' + escHtml(statusLabel(a.status)) + '</span>' +
+          '</div>' +
+          '<h3>' + escHtml(title) + '</h3>' +
+          '<div class="row"><b>Signed by:</b> ' + escHtml(a.typedName || "—") +
+            ' · <b>DL:</b> ' + escHtml(a.dlNumber || "—") + ' (' + escHtml(a.dlState || "—") + ')' +
+            (c.email ? ' · <a href="mailto:' + escHtml(c.email) + '">' + escHtml(c.email) + '</a>' : "") +
+            (c.phone ? ' · <a href="tel:' + escHtml(c.phone) + '">' + escHtml(c.phone) + '</a>' : "") +
+          '</div>' +
+          '<div class="row"><b>Rental:</b> ' + escHtml(period) +
+            (a.pricing?.total ? ' · <b>Total:</b> $' + Number(a.pricing.total).toFixed(2) : "") +
+            (a.delivery ? ' · <b>Delivery:</b> ' + escHtml(a.delivery) : "") +
+          '</div>' +
+        '</div>' +
+        '<div class="actions">' +
+          (a.hasPdf
+            ? '<button class="btn-dl" data-dl="' + escHtml(a.bookingId) + '" title="Download the signed PDF (' + fmtBytes(a.pdfBytes) + ')">⬇ PDF</button>'
+            : '<a class="btn-view" href="/agreement/?id=' + encodeURIComponent(a.bookingId) + '" target="_blank" title="No PDF stored — open live agreement to regenerate">View &amp; regen</a>') +
+          '<a class="btn-view" href="/admin/rentals/" target="_blank" style="padding:.55rem .9rem;">Booking</a>' +
+        '</div>' +
+      '</article>';
+    }).join("");
+  }
+
+  function applyFilter() {
+    const q = search.value.trim().toLowerCase();
+    if (!q) { render(ALL); return; }
+    const filtered = ALL.filter(a => {
+      const hay = [a.bookingId, a.customer?.name, a.customer?.email, a.customer?.phone, a.typedName, a.dlNumber]
+        .filter(Boolean).join(" ").toLowerCase();
+      return hay.includes(q);
+    });
+    render(filtered);
+  }
+
+  search.addEventListener("input", applyFilter);
+
+  async function load() {
+    try {
+      const res = await fetch("/api/agreements", { credentials: "same-origin" });
+      if (res.status === 401) { showLogin(); return; }
+      if (!res.ok) {
+        listEl.innerHTML = '<div class="empty">Failed to load: HTTP ' + res.status + '</div>';
+        showMain(); return;
+      }
+      const data = await res.json();
+      ALL = data.agreements || [];
+      showMain();
+      render(ALL);
+    } catch (e) {
+      listEl.innerHTML = '<div class="empty">Network error: ' + escHtml(e.message) + '</div>';
+      showMain();
+    }
+  }
+
+  function showLogin() { loginView.hidden = false; mainView.hidden = true; }
+  function showMain() { loginView.hidden = true; mainView.hidden = false; }
+
+  // Download handler — click → fetch the PDF with credentials, Blob-ify, trigger browser save.
+  listEl.addEventListener("click", async (ev) => {
+    const btn = ev.target.closest(".btn-dl");
+    if (!btn) return;
+    const bookingId = btn.dataset.dl;
+    const prev = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = "Downloading…";
+    try {
+      const res = await fetch("/api/agreements/" + encodeURIComponent(bookingId) + "/pdf", { credentials: "same-origin" });
+      if (!res.ok) {
+        alert("Download failed: HTTP " + res.status);
+        btn.disabled = false; btn.textContent = prev; return;
+      }
+      const blob = await res.blob();
+      // Pull the server-set filename if present
+      const disp = res.headers.get("content-disposition") || "";
+      const match = disp.match(/filename="([^"]+)"/);
+      const filename = match ? match[1] : ("PCGC-agreement-" + bookingId + ".pdf");
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url; a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 500);
+      btn.textContent = "✓ Downloaded";
+      setTimeout(() => { btn.textContent = prev; btn.disabled = false; }, 1600);
+    } catch (e) {
+      alert("Download failed: " + e.message);
+      btn.disabled = false; btn.textContent = prev;
+    }
+  });
+
+  loginForm.addEventListener("submit", async (ev) => {
+    ev.preventDefault();
+    loginError.hidden = true;
+    loginSubmit.disabled = true;
+    const prev = loginSubmit.textContent;
+    loginSubmit.textContent = "Signing in…";
+    try {
+      const res = await fetch("/api/admin/login", {
+        method: "POST", headers: { "content-type": "application/json" },
+        credentials: "same-origin", body: JSON.stringify({ password: loginPassword.value }),
+      });
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}));
+        loginError.textContent = d.error || "Sign-in failed (HTTP " + res.status + ")";
+        loginError.hidden = false;
+        loginSubmit.disabled = false; loginSubmit.textContent = prev; return;
+      }
+      loginPassword.value = "";
+      load();
+    } catch (e) {
+      loginError.textContent = "Network error: " + e.message;
+      loginError.hidden = false;
+      loginSubmit.disabled = false; loginSubmit.textContent = prev;
+    }
+  });
+
+  load();
+})();
+</script>
+</body>
+</html>
