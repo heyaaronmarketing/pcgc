@@ -1625,37 +1625,58 @@ def page_financing():
         <section class="alt" id="partners" style="scroll-margin-top:5rem;">
           <div class="container">
             <div class="section-head">
-              <span class="eyebrow">Our partners</span>
-              <h2>Two lenders. We shop both for you.</h2>
-              <p class="lede-text">We don't make money on financing &mdash; we work with two lenders because their programs fit different customers, and we want to put you with the one that gives you the best terms.</p>
+              <span class="eyebrow">Three ways to pay</span>
+              <h2>Pick the path that fits your credit &amp; cash.</h2>
+              <p class="lede-text">We don't make money on financing &mdash; we work with two lenders and one rent-to-own partner because they fit different buyers. Scan the three cards below and the right one will jump out.</p>
             </div>
-            <div class="cards">
-              <div class="card" style="display:flex; flex-direction:column;">
-                <span class="eyebrow">Apply online</span>
+            <div class="cards finance-cards">
+              <div class="card finance-card finance-finance" style="display:flex; flex-direction:column;">
+                <span class="eyebrow">Apply online &middot; Financing</span>
                 <h3>Lendmark Financial</h3>
-                <p>National lender with a golf-cart-specific program. Works across the credit spectrum &mdash; often the right fit for customers with less-than-perfect credit, or for buyers who want a longer term to lower the monthly payment.</p>
+                <p class="finance-fit"><b>Best for:</b> buyers with fair-to-good credit who want the <b>lowest total cost</b> and are comfortable with a traditional loan.</p>
                 <ul class="checks">
                   <li>Soft pull pre-qualification</li>
                   <li>Same-day decision in most cases</li>
+                  <li><b>10&ndash;20% down</b> typical</li>
                   <li>Terms 24&ndash;84 months</li>
                   <li>No prepayment penalty</li>
+                  <li><b>You own it from day one</b></li>
                 </ul>
                 <div style="margin-top:auto; padding-top:1rem;">
                   <a class="btn btn-coral" href="{apply_lendmark}" target="_blank" rel="noopener" data-cta="finance-apply-lendmark" style="width:100%; text-align:center;">Apply with Lendmark &rarr;</a>
                 </div>
               </div>
-              <div class="card alt" style="display:flex; flex-direction:column;">
-                <span class="eyebrow">Talk to us</span>
+              <div class="card alt finance-card finance-finance" style="display:flex; flex-direction:column;">
+                <span class="eyebrow">Talk to us &middot; Financing</span>
                 <h3>Dealer Direct</h3>
-                <p>Manufacturer-backed program with competitive rates on new Breezy EV carts. Often the better fit for customers with <b>stronger credit who want the lowest APR</b>, especially on the new Breeze 4, 4L, 6L, and Terrain 6.</p>
+                <p class="finance-fit"><b>Best for:</b> buyers with <b>strong credit</b> who want the manufacturer-backed rate on a new Breezy EV.</p>
                 <ul class="checks">
                   <li>Soft pull pre-qualification</li>
                   <li>Manufacturer-backed rates on new carts</li>
+                  <li><b>10&ndash;20% down</b> typical</li>
                   <li>Terms 24&ndash;72 months</li>
                   <li>No prepayment penalty</li>
+                  <li><b>You own it from day one</b></li>
                 </ul>
                 <div style="margin-top:auto; padding-top:1rem;">
                   <a class="btn btn-ghost" href="{apply_dealer}" target="_blank" rel="noopener" data-cta="finance-apply-dealer-direct" style="width:100%; text-align:center;">Apply with Dealer Direct &rarr;</a>
+                </div>
+              </div>
+              <div class="card finance-card finance-rto" style="display:flex; flex-direction:column;">
+                <span class="finance-rto-badge">Different kind of program</span>
+                <span class="eyebrow" style="color:var(--coral);">Rent to Own &middot; HCI AppXpress</span>
+                <h3>Rent to Own</h3>
+                <p class="finance-fit"><b>Best for:</b> buyers whose credit <b>can't get approved for a loan</b> &mdash; 500s, no credit history, past bankruptcy. No big down.</p>
+                <ul class="checks">
+                  <li>Soft pull &mdash; <b>no credit minimum</b></li>
+                  <li>Approvals in minutes</li>
+                  <li><b>No down payment</b> &mdash; first month at delivery</li>
+                  <li>Terms typically 36&ndash;48 months</li>
+                  <li>Early buyout, no penalty</li>
+                  <li><b>Return anytime</b> during the term</li>
+                </ul>
+                <div style="margin-top:auto; padding-top:1rem;">
+                  <a class="btn btn-coral" href="/rent-to-own/" data-cta="finance-apply-rto" style="width:100%; text-align:center;">See Rent-to-Own details &rarr;</a>
                 </div>
               </div>
             </div>
@@ -1742,7 +1763,7 @@ def page_financing():
               <a class="btn btn-coral" href="{apply_lendmark}" target="_blank" rel="noopener" data-cta="finance-apply-bottom">Apply with Lendmark &rarr;</a>
               <a class="btn btn-ghost" href="tel:{BIZ['phone_primary'].replace('-','')}">📞 Call {BIZ['phone_primary']}</a>
             </div>
-            <p style="margin-top:1.25rem; color:var(--ink-soft); font-size:.95rem;">Credit stretched thin? Our <a href="/rent-to-own/" style="color:var(--teal-dk); font-weight:600;">rent-to-own program</a> is built for buyers who conventional loans don't fit — no big down, soft credit check, approvals in the 500s.</p>
+            <p style="margin-top:1.25rem; color:var(--ink-soft); font-size:.95rem;">Not a fit for a bank loan? See our <a href="/rent-to-own/" style="color:var(--teal-dk); font-weight:600;">rent-to-own program &rarr;</a></p>
           </div>
         </section>
         """)

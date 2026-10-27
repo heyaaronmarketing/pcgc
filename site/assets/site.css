@@ -239,6 +239,46 @@ section.alt .divider::before, section.alt .divider::after { background: var(--li
 .card h3 { margin-bottom: .35rem; }
 .card p { color: var(--ink-soft); margin: 0; }
 
+/* Finance "three ways to pay" cards — the first two are standard
+   bank-loan options (shared visual language); the third is rent-to-own
+   which is a different kind of program and gets a distinct treatment:
+   coral left stripe accent + a "Different kind of program" ribbon
+   so visitors can see at a glance it's not just a third lender. */
+.finance-cards .finance-card { position: relative; padding-top: 1.5rem; }
+.finance-cards .finance-card .checks { margin-top: .75rem; margin-bottom: .5rem; }
+.finance-cards .finance-fit {
+  background: #fbf8f3;
+  border-left: 3px solid var(--teal-dk);
+  padding: .55rem .75rem;
+  font-size: .9rem;
+  margin: .25rem 0 .5rem;
+  color: var(--ink);
+  border-radius: 4px;
+}
+.finance-cards .finance-rto {
+  border-top: 3px solid var(--coral);
+  border-left: 4px solid var(--coral);
+  background: linear-gradient(180deg, #fff8f6 0%, var(--bg-alt) 100%);
+}
+.finance-cards .finance-rto .finance-fit {
+  background: #fde9e6;
+  border-left-color: var(--coral);
+  color: #8a2a20;
+}
+.finance-cards .finance-rto .finance-rto-badge {
+  position: absolute;
+  top: -10px;
+  right: 1rem;
+  background: var(--coral);
+  color: #fff;
+  font: 700 .72rem/1 system-ui, sans-serif;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  padding: .35rem .7rem;
+  border-radius: 999px;
+  box-shadow: 0 4px 12px rgba(232, 90, 79, 0.35);
+}
+
 /* Feature list */
 ul.checks { list-style: none; padding: 0; margin: 0 0 1.5rem; }
 ul.checks li {
