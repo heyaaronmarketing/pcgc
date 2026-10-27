@@ -11,6 +11,7 @@ Run:  python3 build.py
 """
 import os
 import re
+import json
 from textwrap import dedent
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "site")
@@ -1741,6 +1742,7 @@ def page_financing():
               <a class="btn btn-coral" href="{apply_lendmark}" target="_blank" rel="noopener" data-cta="finance-apply-bottom">Apply with Lendmark &rarr;</a>
               <a class="btn btn-ghost" href="tel:{BIZ['phone_primary'].replace('-','')}">📞 Call {BIZ['phone_primary']}</a>
             </div>
+            <p style="margin-top:1.25rem; color:var(--ink-soft); font-size:.95rem;">Credit stretched thin? Our <a href="/rent-to-own/" style="color:var(--teal-dk); font-weight:600;">rent-to-own program</a> is built for buyers who conventional loans don't fit — no big down, soft credit check, approvals in the 500s.</p>
           </div>
         </section>
         """)
@@ -1753,6 +1755,347 @@ def page_financing():
 # These render with noindex+nofollow, are not linked from the primary
 # nav, are not in sitemap.xml, and robots.txt Disallows /breezy-ev/.
 # They're meant to be reviewed via direct URL before being unhidden.
+
+
+def page_rent_to_own():
+    """
+    /rent-to-own/ — standalone SEO/AEO-optimized landing page for the
+    HCI AppXpress rent-to-own program.
+
+    Keyword targets (DataForSEO 2026-10-27, US, Google Ads):
+      "rent to own golf cart" / "rent to own golf carts" / "golf cart
+      lease to own" — all 1,000/mo (same bucket). Secondary: "golf cart
+      rent to own" 170/mo, "rent to own golf cart near me" 50/mo. Also
+      pulls adjacent intent: "golf cart financing bad credit" 260/mo,
+      "buy here pay here golf cart" 260/mo, "no credit check golf cart"
+      140/mo, "golf cart financing no credit check" 50/mo.
+
+    Primary CTA → HCI AppXpress dealer 1523 qualify form (opens in a
+    new tab, rel=noopener for safety). Secondary CTA → phone call.
+
+    Schema stack:
+      - WebPage (Service variant via "offers")
+      - BreadcrumbList (3-step crumb)
+      - FAQPage with 10 Q&A — the big AEO win, this feeds "People
+        also ask" and ChatGPT/Perplexity direct quotes.
+      - LocalBusiness context is carried in the global graph on
+        every page so no need to repeat it here.
+    """
+    HCI_APPLY = "https://app.hci.net/appxpress/qualify/rto?n=1&d=1523"
+
+    # FAQs picked to answer the actual AEO queries buyers type:
+    #   "how does rent to own golf cart work", "no credit check",
+    #   "down payment", "early buyout", "repair during RTO", "delivery",
+    #   "credit score", "term length", "insurance", "end of term options".
+    faqs = [
+        ("How does rent to own a golf cart work?",
+         f"Our rent-to-own program is run through <b>HCI AppXpress</b>, a national specialty-finance partner. You pick a cart from our lot, apply online in about 90 seconds, and get an instant pre-qualification. Approved applicants put down the first payment, we deliver the cart, and you make monthly payments until you own it — or buy it out early for a discount. We service it the whole time."),
+        ("Do you need good credit to qualify?",
+         "No. The rent-to-own path exists specifically for buyers who can't get approved through traditional golf-cart loans. HCI AppXpress looks at <b>income and ability to pay</b> more than credit score. Many approvals happen in the 500s and even without a credit history at all."),
+        ("Is there a credit check?",
+         "Yes, but it's a <b>soft check</b> at the pre-qualification step — it won't hurt your score. A hard pull only happens if you decide to move forward with the agreement."),
+        ("How much is the down payment?",
+         "There's no traditional down payment. You pay the <b>first monthly payment</b> at delivery to get started — that's it. No $2,000 down like a conventional loan."),
+        ("What are the monthly payments on a rent-to-own golf cart?",
+         "Payments depend on the cart you pick and the term length you choose, but most Breezy EV carts land in the <b>$150–$350 per month</b> range. Used carts are lower. You'll see the exact number before you sign anything."),
+        ("Can I buy the cart out early?",
+         "Yes. HCI AppXpress agreements include an <b>early buyout option</b>. Pay off the remaining balance (minus the finance charge) at any point and the cart is yours free and clear. There's no prepayment penalty."),
+        ("What happens if the cart needs service during rent-to-own?",
+         f"We service it. Any mechanical issue inside normal wear-and-tear while you're still renting is on us — our 20-point service package, Breezy EV warranty, and the free pickup within 25 miles of Livingston all apply the same as a cash sale. Call <a href='tel:{BIZ['phone_primary'].replace('-','')}'>{BIZ['phone_primary']}</a>."),
+        ("Do you deliver rent-to-own carts?",
+         f"Yes — free delivery within <b>25 miles of Livingston, TX</b>, extended delivery 25–50 miles ($50) and 50–100 miles ($75). We handle every delivery personally, show you how to operate and charge the cart, and leave you with the paperwork and support numbers."),
+        ("What's the term length — how long until I own it?",
+         "Terms typically run <b>36 to 48 months</b>, depending on the cart and your approval. Shorter terms = larger monthly payment but faster ownership. Longer terms = smaller monthly, more total cost. You pick what fits your budget."),
+        ("What if I decide I don't want it anymore?",
+         "You can return the cart during the rental period without an early-termination penalty — it's one of the biggest reasons buyers pick RTO over a loan. You lose the payments you've already made (same as any rental), but you don't owe a lump sum like you would on a repossessed loan."),
+    ]
+
+    faq_schema = {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {
+                "@type": "Question",
+                "name": q,
+                "acceptedAnswer": {"@type": "Answer", "text": re.sub(r"<[^>]+>", "", a)},
+            }
+            for q, a in faqs
+        ],
+    }
+    breadcrumb_schema = {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://polkcountygolfcarts.com/"},
+            {"@type": "ListItem", "position": 2, "name": "Financing", "item": "https://polkcountygolfcarts.com/financing/"},
+            {"@type": "ListItem", "position": 3, "name": "Rent to Own", "item": "https://polkcountygolfcarts.com/rent-to-own/"},
+        ],
+    }
+    service_schema = {
+        "@context": "https://schema.org",
+        "@type": "Service",
+        "name": "Rent-to-Own Golf Cart Program",
+        "serviceType": "Rent-to-Own Financing",
+        "provider": {"@type": "AutoDealer", "@id": "https://polkcountygolfcarts.com/#business"},
+        "areaServed": {"@type": "AdministrativeArea", "name": "East Texas"},
+        "description": "Rent-to-own golf cart program through HCI AppXpress. No traditional down payment, soft credit check, flexible 36-48 month terms, early buyout available. New Breezy EV and quality used carts eligible.",
+        "offers": {
+            "@type": "Offer",
+            "url": "https://polkcountygolfcarts.com/rent-to-own/",
+            "availability": "https://schema.org/InStock",
+            "priceSpecification": {
+                "@type": "PriceSpecification",
+                "priceCurrency": "USD",
+                "price": "150.00",
+                "description": "Monthly payment starting from (varies by cart + term + credit).",
+            },
+        },
+    }
+    sd = json.dumps([service_schema, faq_schema, breadcrumb_schema])
+
+    faq_items = "".join(
+        f"""<details class="rto-faq"><summary>{q}</summary><div class="rto-faq-body"><p>{a}</p></div></details>"""
+        for q, a in faqs
+    )
+
+    return (
+        head(
+            "Rent-to-Own Golf Carts — No Big Down Payment, Flexible Terms",
+            "Rent-to-own golf carts in East Texas through HCI AppXpress. No traditional down payment, soft credit check, approvals for all credit profiles, 36-48 month terms, early buyout, free local delivery. Apply in 90 seconds.",
+            "/rent-to-own/",
+            og_slug="financing",
+            structured_data=sd,
+        )
+        + header("/rent-to-own/")
+        + dedent(f"""\
+        <style>
+          .rto-hero {{ background: linear-gradient(135deg, #fbf8f3 0%, #e6f1f3 100%); padding: 3rem 0 3.5rem; }}
+          .rto-hero-grid {{ display: grid; grid-template-columns: 1.1fr 1fr; gap: 3rem; align-items: center; max-width: 1120px; margin: 0 auto; padding: 0 1.25rem; }}
+          @media (max-width: 900px) {{ .rto-hero-grid {{ grid-template-columns: 1fr; gap: 2rem; }} }}
+          .rto-hero .eyebrow {{ display:inline-block; font: 700 .82rem/1 system-ui, sans-serif; letter-spacing:.08em; text-transform:uppercase; color: var(--coral); background: #fde9e6; padding: .4rem .85rem; border-radius: 999px; }}
+          .rto-hero h1 {{ font: 700 clamp(2.1rem, 5vw, 3.1rem)/1.1 Georgia, serif; color: var(--teal-dk); margin: .75rem 0 1rem; }}
+          .rto-hero .lede {{ color: var(--ink); font-size: 1.15rem; line-height: 1.5; margin: 0 0 1.5rem; }}
+          .rto-hero ul.wins {{ list-style:none; padding:0; margin:0 0 1.75rem; display: grid; gap: .5rem; }}
+          .rto-hero ul.wins li {{ padding: .2rem 0 .2rem 1.8rem; position: relative; color: var(--ink); font-size: 1rem; font-weight: 500; }}
+          .rto-hero ul.wins li::before {{ content: "✓"; position: absolute; left:0; color: var(--coral); font-weight: 900; font-size: 1.2rem; }}
+          .rto-cta-primary {{ display: inline-block; background: var(--coral); color:#fff; padding: 1.1rem 1.9rem; border-radius: 12px; font-weight: 700; text-decoration: none; font-size: 1.08rem; box-shadow: 0 6px 20px rgba(232,90,79,.3); transition: transform .12s, box-shadow .12s; }}
+          .rto-cta-primary:hover {{ transform: translateY(-1px); box-shadow: 0 10px 28px rgba(232,90,79,.4); }}
+          .rto-cta-sub {{ display: block; margin-top: .5rem; color: var(--ink-soft); font-size: .85rem; }}
+          .rto-hero-card {{ background:#fff; border-radius:16px; padding:1.75rem; box-shadow: 0 20px 60px rgba(31,90,104,.12); }}
+          .rto-hero-card h3 {{ font: 700 1.15rem Georgia, serif; color: var(--teal-dk); margin: 0 0 .75rem; }}
+          .rto-hero-card .money {{ font: 800 clamp(2.4rem, 5vw, 3rem)/1 Georgia, serif; color: var(--coral); display: block; }}
+          .rto-hero-card .money small {{ font-size: 1rem; font-weight: 500; color: var(--ink-soft); display: block; margin-top: .35rem; }}
+          .rto-hero-card .row {{ display: flex; justify-content: space-between; padding: .55rem 0; border-bottom: 1px solid #ecd9c7; font-size: .95rem; }}
+          .rto-hero-card .row:last-of-type {{ border-bottom: 0; }}
+          .rto-hero-card .row b {{ color: var(--teal-dk); }}
+          .rto-trust {{ display: flex; gap: 1.25rem; flex-wrap: wrap; margin-top: 1.25rem; color: var(--ink-soft); font-size: .9rem; }}
+          .rto-trust span b {{ color: var(--teal-dk); }}
+
+          .rto-section {{ padding: 3.5rem 0; }}
+          .rto-section .container {{ max-width: 1080px; margin: 0 auto; padding: 0 1.25rem; }}
+          .rto-section h2 {{ font: 700 clamp(1.6rem, 3.5vw, 2.1rem)/1.2 Georgia, serif; color: var(--teal-dk); text-align: center; margin: 0 0 .5rem; }}
+          .rto-section .section-lede {{ text-align: center; color: var(--ink); max-width: 640px; margin: 0 auto 2.5rem; font-size: 1.05rem; }}
+
+          .rto-steps {{ display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }}
+          @media (max-width: 820px) {{ .rto-steps {{ grid-template-columns: 1fr; }} }}
+          .rto-step {{ background:#fff; border:1px solid #ecd9c7; border-radius:14px; padding: 1.75rem 1.5rem; text-align: center; }}
+          .rto-step .num {{ display: inline-flex; align-items:center; justify-content:center; width: 48px; height: 48px; background: var(--teal-dk); color: #fff; border-radius: 50%; font: 800 1.3rem Georgia, serif; margin-bottom: 1rem; }}
+          .rto-step h3 {{ font: 700 1.15rem Georgia, serif; color: var(--teal-dk); margin: 0 0 .55rem; }}
+          .rto-step p {{ color: var(--ink); font-size: .95rem; margin: 0; line-height: 1.5; }}
+
+          .rto-split {{ display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; max-width: 1080px; margin: 0 auto; padding: 0 1.25rem; }}
+          @media (max-width: 820px) {{ .rto-split {{ grid-template-columns: 1fr; gap: 1.5rem; }} }}
+          .rto-col {{ background: #fbf8f3; border-radius: 14px; padding: 1.75rem; }}
+          .rto-col h3 {{ font: 700 1.25rem Georgia, serif; color: var(--teal-dk); margin: 0 0 1rem; }}
+          .rto-col ul {{ list-style: none; padding: 0; margin: 0; }}
+          .rto-col ul li {{ padding: .55rem 0 .55rem 1.8rem; position: relative; color: var(--ink); font-size: 1rem; border-bottom: 1px solid #ecd9c7; }}
+          .rto-col ul li:last-child {{ border-bottom: 0; }}
+          .rto-col ul li::before {{ content: "✓"; position: absolute; left: 0; color: var(--coral); font-weight: 900; }}
+
+          .rto-table-wrap {{ max-width: 820px; margin: 0 auto; padding: 0 1.25rem; }}
+          .rto-table {{ width: 100%; border-collapse: collapse; background: #fff; border: 1px solid #ecd9c7; border-radius: 12px; overflow: hidden; }}
+          .rto-table th, .rto-table td {{ padding: 1rem 1.25rem; text-align: left; border-bottom: 1px solid #ecd9c7; }}
+          .rto-table th {{ background: #fbf8f3; color: var(--teal-dk); font-weight: 600; width: 42%; }}
+          .rto-table tr:last-child th, .rto-table tr:last-child td {{ border-bottom: 0; }}
+
+          .rto-faq {{ background: #fff; border: 1px solid #ecd9c7; border-radius: 10px; margin-bottom: .65rem; max-width: 820px; margin-left: auto; margin-right: auto; }}
+          .rto-faq summary {{ padding: 1rem 1.25rem; cursor: pointer; font: 700 1rem/1.3 Georgia, serif; color: var(--teal-dk); list-style: none; display: flex; justify-content: space-between; align-items: center; user-select: none; }}
+          .rto-faq summary::-webkit-details-marker {{ display: none; }}
+          .rto-faq summary::after {{ content: "+"; color: var(--coral); font-size: 1.5rem; font-weight: 300; transition: transform .15s; }}
+          .rto-faq[open] summary::after {{ transform: rotate(45deg); }}
+          .rto-faq-body {{ padding: 0 1.25rem 1rem; }}
+          .rto-faq-body p {{ margin: 0; color: var(--ink); font-size: .98rem; line-height: 1.6; }}
+
+          .rto-cta-band {{ background: linear-gradient(135deg, var(--teal-dk) 0%, #164550 100%); color: #fff; padding: 3rem 1.5rem; text-align: center; border-radius: 16px; max-width: 1080px; margin: 2rem auto; }}
+          .rto-cta-band h2 {{ color: #fff; margin: 0 0 .75rem; font: 700 clamp(1.5rem, 3vw, 1.9rem) Georgia, serif; }}
+          .rto-cta-band p {{ color: #d6ecf0; margin: 0 0 1.5rem; font-size: 1.05rem; }}
+          .rto-cta-band .rto-cta-primary {{ font-size: 1.1rem; padding: 1.1rem 2.2rem; }}
+          .rto-cta-band .rto-call-alt {{ display: block; margin-top: 1rem; color: #d6ecf0; font-size: .95rem; }}
+          .rto-cta-band .rto-call-alt a {{ color: #fff; font-weight: 600; }}
+        </style>
+
+        <section class="rto-hero">
+          <div class="rto-hero-grid">
+            <div>
+              <span class="eyebrow">Rent to Own · HCI AppXpress</span>
+              <h1>Rent-to-own a golf cart. No big down payment. All credit welcome.</h1>
+              <p class="lede">Pick a cart. Apply in 90 seconds. Drive it home — and own it in 36–48 months. The <b>fastest path to a cart</b> for buyers who can't do a conventional loan.</p>
+              <ul class="wins">
+                <li>No $2,000 down — just your <b>first month</b> at delivery</li>
+                <li><b>Soft credit check</b> to pre-qualify — won't hurt your score</li>
+                <li>Approvals across <b>all credit profiles</b>, including 500s and no-history</li>
+                <li>Early buyout, no prepayment penalty</li>
+                <li>Free local delivery &amp; full warranty service through the term</li>
+              </ul>
+              <a class="rto-cta-primary" href="{HCI_APPLY}" target="_blank" rel="noopener" data-track="rto-apply-hero">Apply in 90 seconds →</a>
+              <small class="rto-cta-sub">Opens the secure HCI AppXpress application in a new tab. Dealer #1523.</small>
+              <div class="rto-trust">
+                <span><b>★★★★★</b> 5.0 Google · BBB Accredited</span>
+                <span><b>Family-owned</b> since 2020</span>
+              </div>
+            </div>
+            <div class="rto-hero-card" aria-label="Example monthly payment">
+              <h3>Example monthly payment</h3>
+              <span class="money">$199<small>/month · 48-month term · $12,999 Breezy EV Breeze 6L</small></span>
+              <div class="row"><span>First payment at delivery</span><b>$199</b></div>
+              <div class="row"><span>Credit check</span><b>Soft pull</b></div>
+              <div class="row"><span>Early buyout</span><b>Any time, no penalty</b></div>
+              <div class="row"><span>Service during term</span><b>Included</b></div>
+              <p style="margin: 1rem 0 0; color: var(--ink-soft); font-size: .78rem;">Illustration only. Actual terms depend on cart, credit, and approval. See your personalized offer in the application.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="rto-section" style="background:#fff;">
+          <div class="container">
+            <h2>How it works</h2>
+            <p class="section-lede">Three steps from "I need a cart" to "it's in my driveway."</p>
+            <div class="rto-steps">
+              <div class="rto-step">
+                <div class="num">1</div>
+                <h3>Apply online</h3>
+                <p>90-second application through HCI AppXpress. Soft credit check. Pre-qualification is instant — no hard pull until you decide to move forward.</p>
+              </div>
+              <div class="rto-step">
+                <div class="num">2</div>
+                <h3>Pick your cart</h3>
+                <p>Any new Breezy EV in our lineup or a refurbished used cart from our lot. We'll quote the exact monthly payment on the one you want.</p>
+              </div>
+              <div class="rto-step">
+                <div class="num">3</div>
+                <h3>Ride it home</h3>
+                <p>Pay the first monthly payment. We deliver (free within 25 mi), walk you through operation, and you make monthly payments until you own it.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="rto-section">
+          <h2>Who qualifies</h2>
+          <p class="section-lede">The rent-to-own path is designed for buyers who conventional loans don't fit. Here's how to tell if it's right for you.</p>
+          <div class="rto-split">
+            <div class="rto-col">
+              <h3>Great fit if you have…</h3>
+              <ul>
+                <li>Credit score in the 500s or low 600s</li>
+                <li>No credit history yet</li>
+                <li>A past bankruptcy, repo, or late payments on file</li>
+                <li>Self-employed or 1099 income (hard for banks)</li>
+                <li>Cash on hand for the first month but not a big down</li>
+                <li>Need the cart <b>now</b>, not after a 2-week bank decision</li>
+              </ul>
+            </div>
+            <div class="rto-col">
+              <h3>What you need to apply</h3>
+              <ul>
+                <li>Valid driver's license or state ID</li>
+                <li>Social Security number (soft pull only)</li>
+                <li>Proof of income — pay stub, bank deposit, benefit letter</li>
+                <li>Active bank account for monthly payments</li>
+                <li>Delivery address inside our East Texas service area</li>
+                <li>About 90 seconds to fill out the form</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section class="rto-section" style="background: #fbf8f3;">
+          <div class="container">
+            <h2>Program details</h2>
+            <p class="section-lede">The straight-up facts about what you're signing up for.</p>
+            <div class="rto-table-wrap">
+              <table class="rto-table">
+                <tbody>
+                  <tr><th>Finance partner</th><td>HCI AppXpress (dealer #1523)</td></tr>
+                  <tr><th>Credit required</th><td>No minimum score — soft pull only</td></tr>
+                  <tr><th>Down payment</th><td>First monthly payment at delivery (no traditional down)</td></tr>
+                  <tr><th>Term length</th><td>Typically 36 to 48 months</td></tr>
+                  <tr><th>Monthly payment range</th><td>~$150–$350 depending on cart + term + credit</td></tr>
+                  <tr><th>Early buyout</th><td>Available any time, no prepayment penalty</td></tr>
+                  <tr><th>Eligible carts</th><td>New Breezy EV + refurbished used carts on our lot</td></tr>
+                  <tr><th>Delivery</th><td>Free within 25 mi of Livingston · $50 for 25–50 mi · $75 for 50–100 mi</td></tr>
+                  <tr><th>Service during term</th><td>20-point service, warranty work, pickup &amp; delivery all included</td></tr>
+                  <tr><th>Return option</th><td>Return the cart during the term — no early-termination penalty</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- Mid-page CTA band to catch buyers who've seen enough -->
+        <div style="padding: 0 1.25rem;">
+          <div class="rto-cta-band">
+            <h2>Ready to see what you qualify for?</h2>
+            <p>90-second form. Soft credit pull. Instant decision.</p>
+            <a class="rto-cta-primary" href="{HCI_APPLY}" target="_blank" rel="noopener" data-track="rto-apply-midpage">Apply with HCI AppXpress →</a>
+            <span class="rto-call-alt">or call <a href="tel:{BIZ['phone_primary'].replace('-','')}">{BIZ['phone_primary']}</a> and we'll walk you through it</span>
+          </div>
+        </div>
+
+        <section class="rto-section">
+          <div class="container">
+            <h2>Rent-to-own golf cart FAQ</h2>
+            <p class="section-lede">The real questions buyers ask us — straight answers, no fine-print games.</p>
+            {faq_items}
+          </div>
+        </section>
+
+        <section class="rto-section" style="background:#fff; padding-top: 1rem;">
+          <div class="container">
+            <h2>Not sure RTO is right? Compare your options.</h2>
+            <p class="section-lede">We work with three ways to pay — cash, financing, and rent-to-own. Pick whichever fits.</p>
+            <div class="rto-steps">
+              <div class="rto-step">
+                <h3>Pay cash</h3>
+                <p>Lowest total cost. Best if you have the full price in hand and strong credit isn't relevant.</p>
+                <p style="margin-top:.75rem;"><a href="/carts/" style="color:var(--coral); font-weight:700; text-decoration:none;">See the fleet →</a></p>
+              </div>
+              <div class="rto-step">
+                <h3>Finance it</h3>
+                <p>Lendmark Financial or Dealer Direct. Requires decent credit (580+), 10-20% down, 24-84 month terms. Lower total cost than RTO.</p>
+                <p style="margin-top:.75rem;"><a href="/financing/" style="color:var(--coral); font-weight:700; text-decoration:none;">Financing details →</a></p>
+              </div>
+              <div class="rto-step" style="border: 2px solid var(--coral);">
+                <h3 style="color: var(--coral);">★ Rent to own</h3>
+                <p>HCI AppXpress. No credit minimum, no big down, flexible terms, return anytime. Fastest approvals, works with every credit profile.</p>
+                <p style="margin-top:.75rem;"><a href="{HCI_APPLY}" target="_blank" rel="noopener" style="color:var(--coral); font-weight:700; text-decoration:none;" data-track="rto-apply-compare">Apply now →</a></p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <div style="padding: 0 1.25rem 3rem;">
+          <div class="rto-cta-band">
+            <h2>Still have questions? Talk to a real person.</h2>
+            <p>Family-owned shop in Livingston, TX. We'll walk you through everything — no high-pressure sales pitch.</p>
+            <a class="rto-cta-primary" href="tel:{BIZ['phone_primary'].replace('-','')}" style="background:#fff; color: var(--teal-dk);">📞 {BIZ['phone_primary']}</a>
+            <span class="rto-call-alt">or <a href="{HCI_APPLY}" target="_blank" rel="noopener" data-track="rto-apply-footer">apply online →</a></span>
+          </div>
+        </div>
+        """)
+        + footer()
+    )
+
 
 def _format_dollars(n):
     return "${:,}".format(int(n))
@@ -3439,6 +3782,7 @@ PAGES = {
     "404.html":           page_404,
     "contact/index.html": page_contact,
     "financing/index.html": page_financing,
+    "rent-to-own/index.html": page_rent_to_own,
     "privacy/index.html": page_privacy,
     # Hidden Breezy EV product tree (noindex + robots Disallow + no
     # sitemap + no nav link). Direct URL only until client signs off.
@@ -3494,7 +3838,7 @@ def main():
         )
     # Public URLs for the sitemap. Phase 1-3 pages (Breezy EV product
     # tree, town service-area pages, pillar guides) added below.
-    urls = ["/", "/carts/", "/services/", "/rentals/", "/financing/", "/about-us/", "/contact/", "/privacy/", "/leave-a-review/"]
+    urls = ["/", "/carts/", "/services/", "/rentals/", "/financing/", "/rent-to-own/", "/about-us/", "/contact/", "/privacy/", "/leave-a-review/"]
     urls += [
         "/breezy-ev/",
         "/breezy-ev/compare/",
