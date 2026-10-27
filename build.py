@@ -730,7 +730,7 @@ def page_home():
               <div class="card">
                 <div class="icon">1</div>
                 <h3>Carts for every budget</h3>
-                <p>Brand-new 2026 Breezy EV carts, refurbished carts, and used carts — electric and gas. 4- or 6-seater, eight color options, financing through Lendmark Financial or Dealer Direct.</p>
+                <p>Brand-new 2026 Breezy EV carts, refurbished carts, and used carts — electric and gas. 4- or 6-seater, eight color options, financing or rent-to-own through <a href="/financing/" style="color:var(--teal-dk);">three partners</a>.</p>
               </div>
               <div class="card alt">
                 <div class="icon">2</div>
@@ -762,10 +762,10 @@ def page_home():
               <a class="btn btn-coral" href="/carts/">See all specs &amp; colors →</a>
             </div>
             <div class="price-box">
-              <span class="eyebrow">Financing available</span>
+              <span class="eyebrow">Three ways to pay</span>
               <h3 class="mt-0" style="color:var(--ink)">Pay over time.</h3>
-              <p class="muted">Apply through <b>Lendmark Financial</b> or <b>Dealer Direct</b> — answer in minutes, pay over time.</p>
-              <a class="btn btn-teal" href="/contact/">Get a quote</a>
+              <p class="muted">Finance it with <b>Lendmark</b> or <b>Dealer Direct</b>, or go <b>rent-to-own</b> (no credit minimum). See all three.</p>
+              <a class="btn btn-coral" href="/financing/" style="display:block; text-align:center;">See financing options &rarr;</a>
             </div>
           </div>
         </section>
@@ -892,10 +892,11 @@ def page_carts():
                 </div>
               </div>
               <div class="price-box">
-                <span class="eyebrow">Financing</span>
+                <span class="eyebrow">Three ways to pay</span>
                 <h3 class="mt-0" style="color:var(--ink)">Pay over time.</h3>
-                <p class="muted">We work with <b>Lendmark Financial</b> and <b>Dealer Direct</b>. Apply in minutes, answer same-day.</p>
-                <a class="btn btn-teal" href="tel:{BIZ['phone_primary'].replace('-','')}">Apply by phone</a>
+                <p class="muted">Finance it with <b>Lendmark</b> or <b>Dealer Direct</b>, or go <b>rent-to-own</b> through HCI AppXpress (no credit minimum). See all three on the financing page.</p>
+                <a class="btn btn-coral" href="/financing/" style="display:block; text-align:center;">See financing options &rarr;</a>
+                <a class="btn btn-ghost" href="tel:{BIZ['phone_primary'].replace('-','')}" style="display:block; text-align:center; margin-top:.5rem;">or call {BIZ['phone_primary']}</a>
               </div>
             </div>
           </div>
@@ -1596,7 +1597,7 @@ def page_financing():
     return (
         head(
             "Golf Cart Financing in Texas — Apply Now · Polk County Golf Carts",
-            "Finance a golf cart in Texas through Polk County Golf Carts. Soft credit pull, same-day decisions, terms 24-84 months. Apply online with Lendmark Financial or talk to us about Dealer Direct.",
+            "Finance a golf cart in Texas through Polk County Golf Carts — three ways to pay: Lendmark Financial, Dealer Direct, or rent-to-own via HCI AppXpress. Soft credit pull, same-day decisions, no credit minimum for RTO.",
             "/financing/",
             og_slug="financing",
             # JSON-LD supports an array of top-level entities — encode
@@ -2321,7 +2322,7 @@ def page_breezy_lineup():
                 <div class="card-body">
                   <span class="eyebrow">Financing</span>
                   <h3>Pay over time</h3>
-                  <p>Lendmark Financial &amp; Dealer Direct — soft pulls, same-day decisions, terms 24-84 months.</p>
+                  <p>Three ways to pay — Lendmark, Dealer Direct, or rent-to-own. <a href="/financing/" style="color:var(--teal-dk); font-weight:600;">See all three →</a></p>
                 </div>
               </a>
               <a class="card alt" href="/breezy-ev/street-legal/">
@@ -2351,7 +2352,7 @@ def page_breezy_lineup():
               <ul class="checks">
                 <li>BBB Accredited · 5.0-star Google reviews</li>
                 <li>Free pickup &amp; delivery within 25 miles, extended up to 75 miles</li>
-                <li>Financing through Lendmark Financial &amp; Dealer Direct</li>
+                <li><a href="/financing/" style="color:var(--teal-dk);">Three ways to pay</a> — Lendmark, Dealer Direct, or rent-to-own</li>
                 <li>Custom paint, lift kits, sound systems &amp; more in-house</li>
               </ul>
               <a class="btn btn-coral" href="tel:{BIZ['phone_primary'].replace('-','')}">📞 Talk to Us today</a>
@@ -2548,12 +2549,12 @@ def page_breezy_model(slug):
             <div>
               <span class="eyebrow">Authorized dealer · East Texas</span>
               <h2>Buy local. Service local.</h2>
-              <p class="lede-text">Every {name} we sell comes with the same set of things you can't get online: free pickup &amp; delivery within 25 miles (75 with our extended service), in-house warranty work, financing through Lendmark or Dealer Direct, and the same family-owned shop standing behind it for the life of the cart.</p>
+              <p class="lede-text">Every {name} we sell comes with the same set of things you can't get online: free pickup &amp; delivery within 25 miles (75 with our extended service), in-house warranty work, <a href="/financing/" style="color:var(--teal-dk);">three ways to pay</a> (financing or rent-to-own), and the same family-owned shop standing behind it for the life of the cart.</p>
               <ul class="checks">
                 <li>BBB Accredited · 5.0-star Google reviews</li>
                 <li>Free pickup &amp; delivery within 25 miles</li>
                 <li>Extended service up to 75 miles ($75 flat)</li>
-                <li>Financing through Lendmark &amp; Dealer Direct</li>
+                <li><a href="/financing/" style="color:var(--teal-dk);">Three ways to pay</a> — financing or rent-to-own</li>
                 <li>{BREEZY_EV_COMMON['warranty']}</li>
               </ul>
               <a class="btn btn-coral" href="tel:{BIZ['phone_primary'].replace('-','')}">📞 Talk to Us today</a>
@@ -3573,7 +3574,7 @@ def page_town(slug):
               <ul class="checks">
                 <li><b>BBB Accredited · 5-star Google reviews</b></li>
                 <li>{"Free pickup &amp; delivery to " + t['short_name'] if free else "$75 flat extended delivery to " + t['short_name']}</li>
-                <li>Financing through Lendmark Financial &amp; Dealer Direct</li>
+                <li><a href="/financing/" style="color:var(--teal-dk);">Three ways to pay</a> — Lendmark, Dealer Direct, or rent-to-own</li>
                 <li>Custom paint, lift kits, sound systems &amp; more in-house</li>
                 <li>2-year warranty + 8-year Lithium battery warranty</li>
               </ul>
