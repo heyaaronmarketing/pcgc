@@ -1667,11 +1667,10 @@ def page_financing():
                 <span class="finance-rto-badge">Different kind of program</span>
                 <span class="eyebrow" style="color:var(--coral);">Rent to Own &middot; HCI AppXpress</span>
                 <h3>Rent to Own</h3>
-                <p class="finance-fit"><b>Best for:</b> buyers whose credit <b>can't get approved for a loan</b> &mdash; 500s, no credit history, past bankruptcy. No big down.</p>
+                <p class="finance-fit"><b>Best for:</b> buyers whose credit <b>can't get approved for a loan</b> &mdash; 500s, no credit history, past bankruptcy.</p>
                 <ul class="checks">
                   <li>Soft pull &mdash; <b>no credit minimum</b></li>
                   <li>Approvals in minutes</li>
-                  <li><b>No down payment</b> &mdash; first month at delivery</li>
                   <li>Terms typically 36&ndash;48 months</li>
                   <li>Early buyout, no penalty</li>
                   <li><b>Return anytime</b> during the term</li>
@@ -1817,7 +1816,7 @@ def page_rent_to_own():
         ("Is there a credit check?",
          "Yes, but it's a <b>soft check</b> at the pre-qualification step — it won't hurt your score. A hard pull only happens if you decide to move forward with the agreement."),
         ("How much is the down payment?",
-         "There's no traditional down payment. You pay the <b>first monthly payment</b> at delivery to get started — that's it. No $2,000 down like a conventional loan."),
+         f"The down payment depends on your approval terms through HCI AppXpress. You'll see the exact amount in the application before you sign anything — call <a href='tel:{BIZ['phone_primary'].replace('-','')}'>{BIZ['phone_primary']}</a> if you want us to walk through your specific numbers first."),
         ("What are the monthly payments on a rent-to-own golf cart?",
          "Payments depend on the cart you pick and the term length you choose, but most Breezy EV carts land in the <b>$150–$350 per month</b> range. Used carts are lower. You'll see the exact number before you sign anything."),
         ("Can I buy the cart out early?",
@@ -1860,7 +1859,7 @@ def page_rent_to_own():
         "serviceType": "Rent-to-Own Financing",
         "provider": {"@type": "AutoDealer", "@id": "https://polkcountygolfcarts.com/#business"},
         "areaServed": {"@type": "AdministrativeArea", "name": "East Texas"},
-        "description": "Rent-to-own golf cart program through HCI AppXpress. No traditional down payment, soft credit check, flexible 36-48 month terms, early buyout available. New Breezy EV and quality used carts eligible.",
+        "description": "Rent-to-own golf cart program through HCI AppXpress. Soft credit check, flexible 36-48 month terms, early buyout available, return anytime during the term. New Breezy EV and quality used carts eligible.",
         "offers": {
             "@type": "Offer",
             "url": "https://polkcountygolfcarts.com/rent-to-own/",
@@ -1883,7 +1882,7 @@ def page_rent_to_own():
     return (
         head(
             "Rent-to-Own Golf Carts — No Big Down Payment, Flexible Terms",
-            "Rent-to-own golf carts in East Texas through HCI AppXpress. No traditional down payment, soft credit check, approvals for all credit profiles, 36-48 month terms, early buyout, free local delivery. Apply in 90 seconds.",
+            "Rent-to-own golf carts in East Texas through HCI AppXpress. Soft credit check, approvals for all credit profiles, 36-48 month terms, early buyout, return anytime, free local delivery. Apply in 90 seconds.",
             "/rent-to-own/",
             og_slug="financing",
             structured_data=sd,
@@ -1960,13 +1959,13 @@ def page_rent_to_own():
           <div class="rto-hero-grid">
             <div>
               <span class="eyebrow">Rent to Own · HCI AppXpress</span>
-              <h1>Rent-to-own a golf cart. No big down payment. All credit welcome.</h1>
+              <h1>Rent-to-own a golf cart. Flexible terms. All credit welcome.</h1>
               <p class="lede">Pick a cart. Apply in 90 seconds. Drive it home — and own it in 36–48 months. The <b>fastest path to a cart</b> for buyers who can't do a conventional loan.</p>
               <ul class="wins">
-                <li>No $2,000 down — just your <b>first month</b> at delivery</li>
                 <li><b>Soft credit check</b> to pre-qualify — won't hurt your score</li>
                 <li>Approvals across <b>all credit profiles</b>, including 500s and no-history</li>
                 <li>Early buyout, no prepayment penalty</li>
+                <li>Return anytime during the term — no termination penalty</li>
                 <li>Free local delivery &amp; full warranty service through the term</li>
               </ul>
               <a class="rto-cta-primary" href="{HCI_APPLY}" target="_blank" rel="noopener" data-track="rto-apply-hero">Apply in 90 seconds →</a>
@@ -2023,7 +2022,7 @@ def page_rent_to_own():
                 <li>No credit history yet</li>
                 <li>A past bankruptcy, repo, or late payments on file</li>
                 <li>Self-employed or 1099 income (hard for banks)</li>
-                <li>Cash on hand for the first month but not a big down</li>
+                <li>Prefer flexible terms over a traditional loan</li>
                 <li>Need the cart <b>now</b>, not after a 2-week bank decision</li>
               </ul>
             </div>
@@ -2050,7 +2049,7 @@ def page_rent_to_own():
                 <tbody>
                   <tr><th>Finance partner</th><td>HCI AppXpress (dealer #1523)</td></tr>
                   <tr><th>Credit required</th><td>No minimum score — soft pull only</td></tr>
-                  <tr><th>Down payment</th><td>First monthly payment at delivery (no traditional down)</td></tr>
+                  <tr><th>Down payment</th><td>Set by HCI approval — see your exact amount in the application</td></tr>
                   <tr><th>Term length</th><td>Typically 36 to 48 months</td></tr>
                   <tr><th>Monthly payment range</th><td>~$150–$350 depending on cart + term + credit</td></tr>
                   <tr><th>Early buyout</th><td>Available any time, no prepayment penalty</td></tr>
@@ -2099,7 +2098,7 @@ def page_rent_to_own():
               </div>
               <div class="rto-step" style="border: 2px solid var(--coral);">
                 <h3 style="color: var(--coral);">★ Rent to own</h3>
-                <p>HCI AppXpress. No credit minimum, no big down, flexible terms, return anytime. Fastest approvals, works with every credit profile.</p>
+                <p>HCI AppXpress. No credit minimum, flexible terms, return anytime. Fastest approvals, works with every credit profile.</p>
                 <p style="margin-top:.75rem;"><a href="{HCI_APPLY}" target="_blank" rel="noopener" style="color:var(--coral); font-weight:700; text-decoration:none;" data-track="rto-apply-compare">Apply now →</a></p>
               </div>
             </div>
