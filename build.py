@@ -357,6 +357,96 @@ TOWN_PAGES = {
         "nearby": "B.A. Steinhagen Lake · Lake Tejas · Big Thicket National Preserve · Dogwood Trails",
         "lifestyle_angle": "small-town lake & pines",
     },
+    "shepherd-tx": {
+        "name": "Shepherd, TX",
+        "short_name": "Shepherd",
+        "county": "San Jacinto County",
+        "distance_mi": 22,
+        "delivery": "free",
+        "hook": "US-59 corridor. Shepherd sits inside our free delivery zone — we drop off, show you how it runs, and leave the paperwork in the console.",
+        "use_cases": [
+            ("Lake Livingston south-shore property", "Dock runs, driveway cruising, and the slow drive to the ramp during tournament weekends."),
+            ("Hunting leases & acreage", "The woods east of Shepherd run deep. A lifted Breezy EV or Terrain 6 is the right rig for feed runs."),
+            ("Trade Days traffic", "Coldspring Trade Days monthly — carts are everywhere and the right one gets noticed."),
+        ],
+        "nearby": "Lake Livingston south shore · US-59 corridor · Sam Houston National Forest · Big Creek Scenic Area",
+        "lifestyle_angle": "south-shore country living",
+    },
+    "point-blank-tx": {
+        "name": "Point Blank, TX",
+        "short_name": "Point Blank",
+        "county": "San Jacinto County",
+        "distance_mi": 17,
+        "delivery": "free",
+        "hook": "Lake Livingston west shore. Point Blank and Cape Royale are the most cart-dense communities on the lake — and we're inside the free delivery zone.",
+        "use_cases": [
+            ("Cape Royale cart life", "Gated community, POA-maintained private roads, 776 homes, and the kind of place where every third driveway has a cart."),
+            ("Lake-house dock access", "Dock-to-house runs, boat ramp shuttles, neighborhood cruising on the lakefront streets."),
+            ("Second-home weekend trips", "A third of Point Blank homes are vacation properties. A cart stays at the lake house for the weekend owner."),
+        ],
+        "nearby": "Cape Royale · Lake Livingston west shore · Point Blank Marina · Governor's Point",
+        "lifestyle_angle": "lake-life retirement",
+    },
+    "cleveland-tx": {
+        "name": "Cleveland, TX",
+        "short_name": "Cleveland",
+        "county": "Liberty County",
+        "distance_mi": 45,
+        "delivery": "extended",
+        "hook": "Gateway to Colony Ridge. Cleveland is Liberty County's fastest-growing town — and nobody up here has a cart dealer of record. We deliver on a flat $75 extended fee.",
+        "use_cases": [
+            ("Colony Ridge neighborhoods", "Utility-first use. 40,000+ residents, 42,000 lots, and the right cart replaces a second vehicle for the shop and school run."),
+            ("Trinity River bottom property", "Acreage east of 59 where a lifted Breezy EV gets places a sedan can't."),
+            ("New construction neighborhoods", "150 new rooftops a month. First-time cart buyers who want delivery, financing, and someone who answers the phone."),
+        ],
+        "nearby": "Colony Ridge · Trinity River · US-59 corridor · Big Thicket preserve edge",
+        "lifestyle_angle": "boom-town utility",
+    },
+    "liberty-tx": {
+        "name": "Liberty, TX",
+        "short_name": "Liberty",
+        "county": "Liberty County",
+        "distance_mi": 65,
+        "delivery": "extended",
+        "hook": "The Liberty County seat and the Trinity-adjacent small-town market. We deliver to Liberty on the extended service plan — flat $75 anywhere inside our 75-mile reach.",
+        "use_cases": [
+            ("In-town neighborhood use", "Old-growth streets off Grand Avenue and the lots inside the loop — the kind of neighborhoods where a cart is the right second vehicle."),
+            ("River property & deer leases", "Trinity bottomland acreage with gravel roads and tight gates. A 4L or Terrain 6 is built for this."),
+            ("Dayton & Mont Belvieu commute belt", "Family carts for the weekend driveway crowd — cheaper than a car, faster than walking the block."),
+        ],
+        "nearby": "Trinity River · Grand Ave historic district · Liberty Municipal Golf Course · Dayton & Mont Belvieu",
+        "lifestyle_angle": "historic Trinity-town",
+    },
+    "dayton-tx": {
+        "name": "Dayton, TX",
+        "short_name": "Dayton",
+        "county": "Liberty County",
+        "distance_mi": 70,
+        "delivery": "extended",
+        "hook": "Dayton is one of Liberty County's two anchors and the Houston-commute belt's eastern edge. Flat $75 delivery to anywhere inside Dayton city limits and the surrounding acreage.",
+        "use_cases": [
+            ("Commuter-town neighborhood use", "The kind of 10,000-person town where everyone recognizes a lifted cart on the right street."),
+            ("Hunting & river acreage", "The Trinity bottomland between Dayton and Liberty is deer-lease country. Lifted carts carry the feed."),
+            ("Houston-weekender second cart", "Dayton sits inside the Houston metro commute belt. First-time cart buyers who want someone who delivers and services."),
+        ],
+        "nearby": "Trinity River · US-90 corridor · Liberty & Mont Belvieu · Grand Parkway (99)",
+        "lifestyle_angle": "commuter-belt small town",
+    },
+    "new-waverly-tx": {
+        "name": "New Waverly, TX",
+        "short_name": "New Waverly",
+        "county": "Walker County",
+        "distance_mi": 45,
+        "delivery": "extended",
+        "hook": "New Waverly sits where Sam Houston National Forest meets I-45. We deliver flat-rate $75 through our extended service plan.",
+        "use_cases": [
+            ("Sam Houston National Forest acreage", "The country east of I-45 — ranch gates, gravel roads, and the kind of 7-inch-ground-clearance situations the Terrain 6 was built for."),
+            ("Riverside & Lake Conroe north rim", "A ten-minute cart ride between the lake house, the dock, and the camper — if it's electric, nobody hears you leave."),
+            ("Deer-lease country", "September through January, the lifted-cart demand triples. We stock lifted 4-seaters and 6-seaters year-round."),
+        ],
+        "nearby": "Sam Houston National Forest · Riverside · Lake Conroe north rim · I-45 corridor",
+        "lifestyle_angle": "forest & lake",
+    },
 }
 
 
@@ -478,7 +568,7 @@ def breezy_model_faqs(model):
         },
         {
             "q": "Is it street legal in Texas?",
-            "a": "Yes — with the optional <b>street-legal kit</b> the {0} is registered as a Low Speed Vehicle, which Texas allows on roads posted 35 mph or less. The kit adds headlights, turn signals, mirrors, seat belts, a horn, and a license-plate mount. We handle the install and the paperwork.".format(name),
+            "a": "The {0} is sold as a <b>golf cart</b>, not a factory LSV — so public-road use in Texas is limited to specific exceptions under Transportation Code §551.403 (master planned communities like Cape Royale, Elkins Lake, and Waterwood; roads under 35 mph within 5 miles of a golf course during daytime; or city-authorized streets). Our <b>street equipment package</b> (headlights, taillights, mirrors, SMV emblem) gets the cart compliant with §551.402 and plated through TxDMV. For full street access on 35-45 mph roads you'd need a factory-manufactured LSV. See our <a href='/street-legal-texas/'>street-legal Texas guide</a> for the full breakdown.".format(name),
         },
         {
             "q": "What's the warranty?",
@@ -757,7 +847,7 @@ def page_home():
                 <li>2-year bumper-to-bumper warranty</li>
                 <li>Top speed 37 mph — or lock kids to 5 mph from your phone</li>
                 <li>Bluetooth sound bar, LED lights, CarPlay touchscreen</li>
-                <li>Optional full street-legal kit</li>
+                <li>Street-equipment package + TX Golf Cart plate</li>
               </ul>
               <a class="btn btn-coral" href="/carts/">See all specs &amp; colors →</a>
             </div>
@@ -862,7 +952,7 @@ def page_carts():
               <div class="card">
                 <div class="icon">🛣️</div>
                 <h3>Street-legal kit</h3>
-                <p>Optional full street-legal package. Headlights, turn signals, mirrors — everything Texas DMV needs.</p>
+                <p>Street-equipment package to <b>plate it as a Texas golf cart</b> for use inside platted master planned communities, on roads under 35 mph near a golf course, or on city-authorized streets. (<a href="/street-legal-texas/" style="color:var(--teal-dk); font-weight:600;">What counts as street legal in Texas?</a>)</p>
               </div>
               <div class="card alt">
                 <div class="icon">👥</div>
@@ -2325,7 +2415,7 @@ def page_breezy_lineup():
                   <p>Three ways to pay — Lendmark, Dealer Direct, or rent-to-own. <a href="/financing/" style="color:var(--teal-dk); font-weight:600;">See all three →</a></p>
                 </div>
               </a>
-              <a class="card alt" href="/breezy-ev/street-legal/">
+              <a class="card alt" href="/street-legal-texas/">
                 <div class="card-body">
                   <span class="eyebrow">Texas LSV</span>
                   <h3>Street-legal in three steps</h3>
@@ -2774,17 +2864,17 @@ def page_breezy_financing():
 def page_breezy_street_legal():
     faqs = [
         ("Are golf carts street legal in Texas?",
-         "Yes — with the right equipment. Under Texas Transportation Code §551.301-551.350, a golf cart qualifies as a <b>Low Speed Vehicle (LSV)</b> when it has the required safety equipment installed. LSVs can be driven on public roads with posted speed limits of <b>35 mph or less</b>."),
-        ("What's included in the street-legal kit?",
-         "<b>Headlights, turn signals, brake lights, side mirrors, a horn, a windshield, seat belts</b>, and a license-plate mount. The kit is installed at our shop and inspected as part of the LSV registration process. We handle the install and the paperwork."),
-        ("Where can I legally drive an LSV in Texas?",
-         "On any street with a <b>posted speed limit of 35 mph or less</b>. That includes neighborhood streets, most residential roads, and the side streets in most East Texas towns. You can also <b>cross</b> a higher-speed road (e.g. cross US-59 at an intersection) but can't drive along one."),
-        ("Do I need insurance and a license?",
-         "Yes to both. Texas requires <b>liability insurance</b> on LSVs and a <b>valid driver's license</b> to operate one. Insurance is typically <b>$10-20 / month</b> through any standard auto insurer — much cheaper than a car policy. The driver's license requirement is the same as a passenger car: 16+, class C, no special endorsement needed."),
-        ("Do I need to register the cart?",
-         "Yes. After we install the kit, you'll register the LSV at the Polk County tax office (or the county where you live). Registration is <b>~$50/year</b>. We provide the title and paperwork you need to walk into the office and walk out registered."),
-        ("Can kids drive a street-legal cart?",
-         "Only with a valid driver's license — same as a car. Kids under 16 can ride as passengers but can't be the driver on public roads. Off-road on private property, no license required."),
+         "Only in specific places. Under Texas Transportation Code <a href='https://texas.public.law/statutes/tex._transp._code_section_551.403' target='_blank' rel='noopener'>§551.403</a>, a golf cart may use public roads inside a <b>master planned community</b> with uniform restrictive covenants, on <b>roads posted 35 mph or less within 5 miles of a golf course</b> during daytime, or on streets a city has specifically authorized. In our East Texas service area no city has passed a cart ordinance, so the practical path is a cart-friendly subdivision like Cape Royale, Elkins Lake, or Waterwood. For full details see our <a href='/street-legal-texas/'>county-by-county street-legal guide</a>."),
+        ("Can I turn a golf cart into an LSV by adding equipment?",
+         "<b>No.</b> A Low Speed Vehicle (LSV) is a federal classification under FMVSS 500 — it gets a 17-digit VIN at the factory, is titled and plated like a car, and may use roads up to 45 mph. Adding lights and mirrors to a golf cart does not make it an LSV. For full street access on 35-45 mph roads you need a factory-manufactured LSV; we can order one if that's the goal."),
+        ("What's included in the street-equipment package?",
+         "The §551.402 statutory list: <b>headlamps, taillamps, reflectors, parking brake, mirrors, and a slow-moving-vehicle emblem</b>. We install, inspect, and provide the paperwork to get your Texas Golf Cart plate from TxDMV. The plate is a one-time non-expiring plate — statutory cap $10, counties charge about $15 with processing."),
+        ("Do I need insurance and a driver's license?",
+         "<b>Driver's license: yes</b>, under <a href='https://ezel.ai/ag-opinions/tx/kp-0364' target='_blank' rel='noopener'>AG Opinion KP-0364 (2021)</a>, any public-road use requires a valid Texas driver's license. <b>Insurance:</b> required when operating under a city ordinance (none of our local cities have one); not strictly required for the master-planned-community or golf-course exceptions, but strongly recommended. Most auto insurers will add a cart to your policy for $10-20/month."),
+        ("Do I need to plate the cart?",
+         "Yes if you use it on any public road under one of the §551.403 exceptions — a <b>Texas Golf Cart plate</b> from TxDMV via Form 130-U at your county tax office. The exception: carts used only inside a master planned community (like Cape Royale) don't need to be plated."),
+        ("Can kids drive a cart?",
+         "Only with a valid driver's license — same as a car — if the cart is on a public road. On <b>private roads inside a master planned community</b> the POA sets the rules, and many allow under-16 drivers on internal streets. On your own private property, no license needed."),
     ]
     sd = _breezy_supporting_schemas(
         [("Home", "/"), ("Breezy EV", "/breezy-ev/"), ("Street legal", "/breezy-ev/street-legal/")],
@@ -3794,6 +3884,565 @@ def page_404():
     )
 
 
+# ---------------- Growth Plan Wave 1 pages (2026-10-28) ---------------- #
+
+
+def page_street_legal_tx():
+    """
+    /street-legal-texas/ — authoritative county-by-county guide.
+    The site's old "golf cart = LSV with the kit" copy was legally
+    wrong (a modified golf cart NEVER becomes an LSV under FMVSS 500).
+    This page gets it right, cites statute, and separates the two
+    vehicle classes — the biggest AEO/SEO play we have for the
+    "street legal golf cart texas" family (5-15k/mo US searches).
+    """
+    faqs = [
+        ("Are golf carts street legal in Texas?",
+         "Only in specific places. Under Texas Transportation Code <a href='https://texas.public.law/statutes/tex._transp._code_section_551.403' target='_blank' rel='noopener'>§551.403</a>, a golf cart may use public roads in just four situations: (1) inside a <b>platted master planned community</b> with uniform restrictive covenants (think Cape Royale, Elkins Lake); (2) on beaches open to vehicles; (3) on roads posted <b>35 mph or less</b>, during daytime, within <b>5 miles of where the cart is parked, going to or from a golf course</b>; (4) on streets a city has specifically authorized by ordinance. If none of those apply, the cart is not street legal on that road."),
+        ("What's the difference between a golf cart and an LSV?",
+         "They're two different vehicle classes under federal and Texas law. A <b>golf cart</b> is defined as a vehicle designed to carry a golfer and golf equipment, speed-limited, and governed by §551.401-404. A <b>Low Speed Vehicle (LSV)</b> is a federal class under FMVSS 500 — it has a 17-digit VIN, is titled and registered like a car, carries standard license plates, requires liability insurance, and may use roads posted up to <b>45 mph</b>. A modified golf cart never becomes an LSV — the LSV classification comes from the manufacturer at build time."),
+        ("Can I add a street-legal kit to make my golf cart an LSV?",
+         "No. Adding headlights, mirrors, and a windshield to a golf cart does <b>not</b> turn it into an LSV. It's still a golf cart under Texas law, bound by the same §551.403 restrictions. If you want LSV road access, you have to buy a factory LSV with the FMVSS 500 VIN."),
+        ("Does my city allow golf carts on public roads?",
+         "We checked every city in our service area and none of them — Livingston, Onalaska, Coldspring, Shepherd, Point Blank, Cleveland, Liberty, Dayton, or Huntsville — has passed a golf-cart street ordinance. Huntsville voted one down 7-2 in 2020. That means in our region, public-road use rests entirely on the master-planned-community exception, the golf-course exception, or private POA roads."),
+        ("Can my county authorize golf carts on county roads?",
+         "No. Under <a href='https://texas.public.law/statutes/tex._transp._code_section_551.404' target='_blank' rel='noopener'>§551.404(c)</a>, only Red River County or Gulf-coast counties may authorize county-road use. Polk, San Jacinto, Walker, and Liberty counties do not have this authority — and the 2025 Texas Legislature did not change it."),
+        ("What equipment is required?",
+         "A street-eligible golf cart needs: <b>headlamps, taillamps, reflectors, parking brake, mirrors, and a slow-moving-vehicle emblem</b>. That's the full statutory list from §551.402. It does not need turn signals, a windshield, or a horn — though those are good ideas."),
+        ("Do I need a driver's license to drive one on a road?",
+         "Yes. Attorney General Opinion <a href='https://ezel.ai/ag-opinions/tx/kp-0364' target='_blank' rel='noopener'>KP-0364 (2021)</a> is clear: operating a golf cart on any public road requires a valid Texas driver's license. The one exception is private roads inside a master planned community where the POA sets its own rules — many allow underage drivers on their internal streets."),
+        ("Do I need insurance?",
+         "Liability insurance is required when operating under a <b>city ordinance</b> (none of our local cities have one). It is not strictly required for the master-planned-community or golf-course exceptions — but we strongly recommend liability coverage on any cart that's driven anywhere other than your own property. Most standard auto insurers will add a cart to your policy for $10-20/month."),
+        ("Do I need a license plate?",
+         "Yes — a <b>Texas Golf Cart plate</b> from TxDMV. It's a one-time, non-expiring plate (statutory cap $10; counties charge about $15 with processing). Fill out Form 130-U at your county tax office. The one exception: carts used only inside a master planned community don't need to be plated."),
+        ("What about Cape Royale, Elkins Lake, or Waterwood — can I drive my cart there?",
+         "Yes. All three qualify as master planned communities with POA-maintained private roads under the §551.403 exception. Each has its own POA rules about equipment and speed, but Texas statute itself allows cart use on those internal streets. That's why these subdivisions have some of the highest cart ownership densities in East Texas."),
+    ]
+    faq_schema = {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": re.sub(r"<[^>]+>", "", a)}}
+            for q, a in faqs
+        ],
+    }
+    breadcrumb_schema = {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://polkcountygolfcarts.com/"},
+            {"@type": "ListItem", "position": 2, "name": "Street Legal in Texas", "item": "https://polkcountygolfcarts.com/street-legal-texas/"},
+        ],
+    }
+    sd = json.dumps([faq_schema, breadcrumb_schema])
+
+    faq_items = "".join(
+        f"""<details class="rto-faq"><summary>{q}</summary><div class="rto-faq-body"><p>{a}</p></div></details>"""
+        for q, a in faqs
+    )
+
+    cities = [
+        ("Livingston", "Polk", "No ordinance", "Master-planned subdivisions only. Public city streets are not authorized for golf-cart use."),
+        ("Onalaska", "Polk", "No ordinance", "Public streets are not authorized. Private lake subdivisions (Yaupon Cove, Beacon Bay) use the POA-road exception."),
+        ("Coldspring", "San Jacinto", "No ordinance", "City streets are not authorized. <b>Cape Royale</b> and other master-planned communities are the legal path."),
+        ("Shepherd", "San Jacinto", "No ordinance", "Public streets are not authorized. Private subdivision use only."),
+        ("Point Blank", "San Jacinto", "No ordinance", "City streets are not authorized. <b>Cape Royale</b> master-planned community permits POA use."),
+        ("Cleveland", "Liberty", "No ordinance", "Public streets are not authorized. Colony Ridge private roads follow POA rules."),
+        ("Liberty", "Liberty", "No ordinance", "Public streets are not authorized."),
+        ("Dayton", "Liberty", "No ordinance", "Public streets are not authorized."),
+        ("Huntsville", "Walker", "No (voted down 7-2 in 2020)", "Public streets are not authorized. <b>Elkins Lake</b> and <b>Waterwood</b> master-planned communities permit POA use."),
+        ("New Waverly", "Walker", "No ordinance", "Public streets are not authorized."),
+    ]
+    city_rows = "\n".join(
+        f'<tr><td><b>{c}</b></td><td>{county}</td><td>{ord_}</td><td>{notes}</td></tr>'
+        for c, county, ord_, notes in cities
+    )
+
+    return (
+        head(
+            "Are Golf Carts Street Legal in Texas? County-by-County Guide",
+            "Golf cart street-legal rules in Polk, San Jacinto, Walker, and Liberty counties — exact Texas Transportation Code citations, city-by-city ordinance status, LSV vs golf cart differences, equipment requirements, and plates. Written by a Livingston TX dealer.",
+            "/street-legal-texas/",
+            og_slug="services",
+            structured_data=sd,
+        )
+        + header("/street-legal-texas/")
+        + dedent(f"""\
+        <section class="rto-hero" style="padding: 2.5rem 0 2rem;">
+          <div class="container">
+            <div style="max-width: 820px; margin: 0 auto; text-align: center;">
+              <span class="eyebrow" style="display:inline-block; font: 700 .82rem/1 system-ui, sans-serif; letter-spacing:.08em; text-transform:uppercase; color: var(--coral); background: #fde9e6; padding: .4rem .85rem; border-radius: 999px;">Guide · 2026 Texas law</span>
+              <h1 style="font: 700 clamp(2rem, 5vw, 2.8rem)/1.1 Georgia, serif; color: var(--teal-dk); margin: 1rem 0;">Are golf carts street legal in Texas?</h1>
+              <p class="lede" style="font-size: 1.15rem; color: var(--ink); max-width: 680px; margin: 0 auto;">Short answer: <b>only in specific places</b>. Under Texas Transportation Code §551.403, a golf cart can use public roads in four narrow situations. We'll walk through each — plus the county-by-county reality for East Texas.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="rto-section" style="background:#fff;">
+          <div class="container" style="max-width:820px;">
+            <h2>The quick answer</h2>
+            <p style="font-size: 1.05rem; color: var(--ink);">A golf cart in Texas may legally use a public road only when <b>one of these four things is true</b>:</p>
+            <ul class="checks" style="font-size: 1rem;">
+              <li>You're inside a <b>master planned community</b> with uniform restrictive covenants (Cape Royale, Elkins Lake, Waterwood).</li>
+              <li>You're on a <b>beach open to vehicles</b>.</li>
+              <li>You're on a road posted <b>35 mph or less</b>, during <b>daytime</b>, within <b>5 miles</b> of where the cart is parked, <b>going to or from a golf course</b>.</li>
+              <li>You're on a street a <b>city has authorized</b> by ordinance.</li>
+            </ul>
+            <p style="font-size: 1.05rem; color: var(--ink); margin-top: 1rem;">If none of those apply, the cart isn't street legal on that road. In our 4-county service area (Polk, San Jacinto, Walker, Liberty) no city has passed a golf-cart ordinance, so public-road use rests almost entirely on the master-planned-community exception.</p>
+          </div>
+        </section>
+
+        <section class="rto-section">
+          <div class="container" style="max-width:820px;">
+            <h2>Golf cart vs. LSV — the critical distinction</h2>
+            <p>Most of the confusion about "street legal" comes from mixing up two different vehicle classes. Here's how Texas and federal law separate them:</p>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin: 1.5rem 0;">
+              <div style="background:#fbf8f3; border-left: 4px solid var(--teal-dk); border-radius:10px; padding: 1.25rem 1.4rem;">
+                <h3 style="color: var(--teal-dk); margin:0 0 .5rem; font: 700 1.1rem Georgia, serif;">Golf cart</h3>
+                <ul style="padding-left: 1.1rem; margin: 0; font-size: .95rem; color: var(--ink);">
+                  <li>Governed by Tex. Transp. Code §551.401-404</li>
+                  <li>Speed-limited by design (typically 20-25 mph)</li>
+                  <li>Public-road use <b>restricted to the four exceptions</b> above</li>
+                  <li>Needs a one-time TxDMV Golf Cart plate (except in MPCs)</li>
+                  <li>Must have headlamps, taillamps, reflectors, parking brake, mirrors, SMV emblem</li>
+                </ul>
+              </div>
+              <div style="background:#e6f1f3; border-left: 4px solid var(--coral); border-radius:10px; padding: 1.25rem 1.4rem;">
+                <h3 style="color: var(--coral); margin:0 0 .5rem; font: 700 1.1rem Georgia, serif;">LSV (Low Speed Vehicle)</h3>
+                <ul style="padding-left: 1.1rem; margin: 0; font-size: .95rem; color: var(--ink);">
+                  <li>Federal classification under FMVSS 500</li>
+                  <li>17-digit VIN from manufacturer</li>
+                  <li>Titled and registered like a car; standard plates</li>
+                  <li>Allowed on roads posted <b>up to 45 mph</b></li>
+                  <li>Liability insurance <b>required</b> at all times</li>
+                </ul>
+              </div>
+            </div>
+            <p style="background: #fff2d6; border: 1px solid #e8c669; border-radius: 10px; padding: 1rem 1.25rem; color: #8a4a00; font-size: .98rem;"><b>Important:</b> You cannot turn a golf cart into an LSV by adding equipment. The LSV classification comes from the manufacturer at build time with a FMVSS 500 VIN. A modified golf cart with lights and mirrors is still a golf cart under Texas law, bound by the same §551.403 restrictions.</p>
+          </div>
+        </section>
+
+        <section class="rto-section" style="background:#fbf8f3;">
+          <div class="container" style="max-width:980px;">
+            <h2>City-by-city reality — East Texas</h2>
+            <p class="section-lede">We called every city office in our 4-county service area to confirm current ordinance status. Here's where things stand as of 2026:</p>
+            <div style="overflow-x: auto; margin-top: 1.5rem;">
+              <table style="width: 100%; border-collapse: collapse; background: #fff; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; font-size: .95rem;">
+                <thead>
+                  <tr style="background: var(--teal-dk); color: #fff;">
+                    <th style="padding: .9rem 1.1rem; text-align: left;">City</th>
+                    <th style="padding: .9rem 1.1rem; text-align: left;">County</th>
+                    <th style="padding: .9rem 1.1rem; text-align: left;">Ordinance?</th>
+                    <th style="padding: .9rem 1.1rem; text-align: left;">What that means</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {city_rows}
+                </tbody>
+              </table>
+            </div>
+            <p style="color: var(--ink-soft); font-size: .88rem; margin-top: .75rem;">If you drive your cart to a specific city or neighborhood regularly, call that city's secretary to confirm — ordinances change. We update this page quarterly.</p>
+          </div>
+        </section>
+
+        <section class="rto-section">
+          <div class="container" style="max-width:820px;">
+            <h2>County authority</h2>
+            <p>None of our four counties — <b>Polk, San Jacinto, Walker, or Liberty</b> — has authority to authorize golf carts on county roads. Under §551.404(c), only Red River County or Gulf-coast counties can do that. The 2025 Texas Legislature considered miniature-vehicle legislation (SB 1816) but explicitly excluded golf carts from the change.</p>
+            <p>So the practical path for East Texas cart owners who want "street use" is:</p>
+            <ul class="checks">
+              <li>Live in or ride into a <b>master planned community</b> (Cape Royale, Elkins Lake, Waterwood)</li>
+              <li>Use the <b>golf-course exception</b> if your lot is within 5 miles of Livingston Municipal, Point Blank, or another course</li>
+              <li>Buy a <b>factory LSV</b> if you want full road access on 35-45 mph streets</li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="rto-section" style="background:#fbf8f3;">
+          <div class="container" style="max-width:820px;">
+            <h2>Common questions</h2>
+            <p class="section-lede">The things buyers actually ask us at the shop.</p>
+            {faq_items}
+          </div>
+        </section>
+
+        <section class="rto-cta-band" style="background: linear-gradient(135deg, var(--teal-dk) 0%, #164550 100%); color: #fff; padding: 2.5rem 1.5rem; text-align: center; border-radius: 16px; max-width: 1080px; margin: 2rem auto;">
+          <h2 style="color:#fff; margin: 0 0 .75rem; font: 700 clamp(1.5rem, 3vw, 1.9rem) Georgia, serif;">Need the specific legal path for your lot?</h2>
+          <p style="color: #d6ecf0; margin: 0 0 1.5rem; font-size: 1.05rem;">We've walked hundreds of East Texas buyers through this. Tell us your subdivision and we'll tell you exactly what's legal.</p>
+          <a class="btn btn-coral" href="tel:{BIZ['phone_primary'].replace('-','')}" style="font-size:1.05rem; padding:1rem 1.9rem;">📞 Call {BIZ['phone_primary']}</a>
+          <a class="btn btn-outline" href="/carts/" style="margin-left:.5rem; background:transparent; color:#fff; border-color:#fff; padding:1rem 1.6rem;">See our lineup</a>
+        </section>
+
+        <section class="rto-section" style="padding-top:1rem;">
+          <div class="container" style="max-width:820px;">
+            <h2>Statute references</h2>
+            <ul style="color: var(--ink); font-size: .95rem; line-height: 1.7;">
+              <li>Tex. Transp. Code <a href="https://texas.public.law/statutes/tex._transp._code_section_551.402" target="_blank" rel="noopener">§551.402</a> — golf cart equipment requirements</li>
+              <li>Tex. Transp. Code <a href="https://texas.public.law/statutes/tex._transp._code_section_551.403" target="_blank" rel="noopener">§551.403</a> — operation of golf carts on public highways</li>
+              <li>Tex. Transp. Code <a href="https://texas.public.law/statutes/tex._transp._code_section_551.4031" target="_blank" rel="noopener">§551.4031</a> — municipal authority</li>
+              <li>Tex. Transp. Code <a href="https://texas.public.law/statutes/tex._transp._code_section_551.404" target="_blank" rel="noopener">§551.404</a> — county authority (Red River / Gulf coast only)</li>
+              <li>Tex. Transp. Code <a href="https://texas.public.law/statutes/tex._transp._code_section_551.304" target="_blank" rel="noopener">§551.304</a> — Low Speed Vehicles (LSVs)</li>
+              <li>Attorney General Opinion <a href="https://ezel.ai/ag-opinions/tx/kp-0364" target="_blank" rel="noopener">KP-0364 (2021)</a> — driver's license required</li>
+              <li><a href="https://www.txdmv.gov/motorists/buying-or-selling-a-vehicle/unique-vehicles" target="_blank" rel="noopener">TxDMV Unique Vehicles</a> — plate and registration process</li>
+            </ul>
+            <p style="color: var(--ink-soft); font-size: .85rem; margin-top: 1rem;">This page is general information, not legal advice. For specific questions about your subdivision's rules or county's enforcement practice, consult your POA or a Texas attorney.</p>
+          </div>
+        </section>
+        """)
+        + footer()
+    )
+
+
+def page_fleet_service():
+    """
+    /fleet-service/ — targets short-term-rental owners, marinas,
+    resorts, state parks, and HOAs who need recurring maintenance on
+    a fleet of carts. The pitch: fixed annual contract, we handle
+    everything, you keep your rentals booked and your owners happy.
+
+    Keyword fit: "golf cart fleet maintenance", "golf cart rental
+    service contract", "airbnb golf cart" — all low-volume but
+    high-value (one contract = $2k-$10k annual revenue).
+    """
+    return (
+        head(
+            "Golf Cart Fleet Maintenance — STR, Marina & Resort Service",
+            "Annual maintenance contracts for golf cart fleets — Lake Livingston marinas, Cape Royale STRs, resorts, state parks. Fixed per-cart pricing, free pickup within 25 miles of Livingston, 24-hour turnaround on most repairs.",
+            "/fleet-service/",
+            og_slug="services",
+        )
+        + header("/fleet-service/")
+        + dedent(f"""\
+        <style>
+          .fs-hero {{ background: linear-gradient(135deg, #fbf8f3 0%, #e6f1f3 100%); padding: 3rem 0 3.5rem; }}
+          .fs-hero-grid {{ display: grid; grid-template-columns: 1.1fr 1fr; gap: 3rem; align-items: center; max-width: 1120px; margin: 0 auto; padding: 0 1.25rem; }}
+          @media (max-width: 900px) {{ .fs-hero-grid {{ grid-template-columns: 1fr; gap: 2rem; }} }}
+          .fs-hero h1 {{ font: 700 clamp(2rem, 4.5vw, 2.8rem)/1.1 Georgia, serif; color: var(--teal-dk); margin: .75rem 0 1rem; }}
+          .fs-hero .lede {{ color: var(--ink); font-size: 1.1rem; margin: 0 0 1.5rem; }}
+          .fs-hero .eyebrow {{ display:inline-block; font: 700 .82rem/1 system-ui, sans-serif; letter-spacing:.08em; text-transform:uppercase; color: var(--coral); background: #fde9e6; padding: .4rem .85rem; border-radius: 999px; }}
+          .fs-pitch ul {{ list-style:none; padding:0; margin:0 0 1.5rem; display:grid; gap:.5rem; }}
+          .fs-pitch ul li {{ padding:.2rem 0 .2rem 1.8rem; position:relative; color:var(--ink); font-size:1rem; }}
+          .fs-pitch ul li::before {{ content:"✓"; position:absolute; left:0; color:var(--coral); font-weight:900; font-size:1.2rem; }}
+          .fs-card {{ background:#fff; border-radius:16px; padding:1.75rem; box-shadow:0 20px 60px rgba(31,90,104,.12); }}
+          .fs-card h3 {{ font:700 1.15rem Georgia, serif; color: var(--teal-dk); margin:0 0 .75rem; }}
+          .fs-card .row {{ display:flex; justify-content:space-between; padding:.55rem 0; border-bottom:1px solid #ecd9c7; font-size:.95rem; }}
+          .fs-card .row:last-of-type {{ border-bottom:0; }}
+          .fs-card .row b {{ color: var(--teal-dk); }}
+          .fs-section {{ padding:3rem 0; }}
+          .fs-section .container {{ max-width:1080px; margin:0 auto; padding:0 1.25rem; }}
+          .fs-section h2 {{ font:700 clamp(1.6rem, 3.5vw, 2.1rem)/1.2 Georgia, serif; color: var(--teal-dk); text-align:center; margin:0 0 .5rem; }}
+          .fs-section .lede-c {{ text-align:center; color:var(--ink); max-width:640px; margin:0 auto 2rem; font-size:1.05rem; }}
+          .fs-tiers {{ display:grid; grid-template-columns:repeat(3,1fr); gap:1.25rem; }}
+          @media (max-width:820px) {{ .fs-tiers {{ grid-template-columns:1fr; }} }}
+          .fs-tier {{ background:#fff; border:1px solid var(--line); border-radius:14px; padding:1.5rem 1.4rem; display:flex; flex-direction:column; }}
+          .fs-tier.featured {{ border:2px solid var(--coral); position:relative; }}
+          .fs-tier.featured::before {{ content:"Most popular"; position:absolute; top:-10px; right:1rem; background:var(--coral); color:#fff; font:700 .72rem system-ui; padding:.3rem .7rem; border-radius:999px; letter-spacing:.05em; text-transform:uppercase; }}
+          .fs-tier h3 {{ font:700 1.15rem Georgia, serif; color:var(--teal-dk); margin:0 0 .35rem; }}
+          .fs-tier .price {{ font:800 1.6rem/1 Georgia, serif; color:var(--coral); margin:.5rem 0 .35rem; }}
+          .fs-tier .price small {{ font-size:.85rem; color:var(--ink-soft); font-weight:500; }}
+          .fs-tier ul {{ list-style:none; padding:0; margin:.75rem 0 1rem; flex:1; }}
+          .fs-tier ul li {{ padding:.3rem 0 .3rem 1.4rem; position:relative; font-size:.92rem; color:var(--ink); }}
+          .fs-tier ul li::before {{ content:"✓"; position:absolute; left:0; color:var(--coral); font-weight:900; }}
+          .fs-targets {{ display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:1rem; }}
+          .fs-target {{ background:#fbf8f3; border:1px solid var(--line); border-radius:10px; padding:1rem 1.2rem; }}
+          .fs-target h3 {{ font:700 1rem Georgia, serif; color:var(--teal-dk); margin:0 0 .3rem; }}
+          .fs-target p {{ margin:0; color:var(--ink); font-size:.9rem; }}
+        </style>
+
+        <section class="fs-hero">
+          <div class="fs-hero-grid">
+            <div class="fs-pitch">
+              <span class="eyebrow">Fleet &amp; property maintenance</span>
+              <h1>Keep your cart fleet booking. We'll keep them running.</h1>
+              <p class="lede">An annual service contract that covers batteries, chargers, brakes, flat tires, electrical, and the pickup &amp; delivery for repairs. Fixed per-cart pricing. Zero surprise invoices.</p>
+              <ul>
+                <li>Scheduled 20-point service twice a year per cart</li>
+                <li>Priority dispatch — most repairs same-week</li>
+                <li>Free pickup &amp; delivery within 25 miles of Livingston</li>
+                <li>Volume pricing on battery replacements and lithium conversions</li>
+                <li>One invoice per month, one phone number for your property manager</li>
+              </ul>
+              <a class="btn btn-coral" href="tel:{BIZ['phone_primary'].replace('-','')}" style="padding:1rem 1.9rem; font-size:1.05rem;">📞 Get a quote — {BIZ['phone_primary']}</a>
+            </div>
+            <div class="fs-card">
+              <h3>Who we already serve</h3>
+              <div class="row"><span>Lake Livingston STRs</span><b>Multiple</b></div>
+              <div class="row"><span>Resort &amp; marina fleets</span><b>Active</b></div>
+              <div class="row"><span>HOA &amp; POA community fleets</span><b>Available</b></div>
+              <div class="row"><span>Minimum fleet size</span><b>2 carts</b></div>
+              <div class="row"><span>Typical response time</span><b>24-48 hrs</b></div>
+              <p style="margin:1rem 0 0; color:var(--ink-soft); font-size:.82rem;">We're a one-shop family-owned business, so contracts stay personal — you deal with John, not a dispatcher.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="fs-section" style="background:#fff;">
+          <div class="container">
+            <h2>Who this is for</h2>
+            <p class="lede-c">If golf carts are part of what your guests, residents, or members expect — this is your service plan.</p>
+            <div class="fs-targets">
+              <div class="fs-target">
+                <h3>Short-term rental owners</h3>
+                <p>Cape Royale, Onalaska, Waterwood — carts drive 5-star reviews, dead carts get 1-star reviews. We keep yours running between bookings.</p>
+              </div>
+              <div class="fs-target">
+                <h3>Marinas &amp; resorts</h3>
+                <p>Lake Livingston has 25 private marinas. Rental fleets, courtesy carts, employee transport — all serviceable under one contract.</p>
+              </div>
+              <div class="fs-target">
+                <h3>State &amp; TRA parks</h3>
+                <p>Lake Livingston State Park, Wolf Creek Park, Trinity River Authority recreation facilities — park-service and ranger-use fleet maintenance.</p>
+              </div>
+              <div class="fs-target">
+                <h3>HOAs &amp; POAs</h3>
+                <p>Community-maintained carts for events, parks, security — fixed annual budget, no surprise invoices to board meetings.</p>
+              </div>
+              <div class="fs-target">
+                <h3>Churches &amp; schools</h3>
+                <p>Shuttle carts, parking-lot carts, event fleets — recurring service that fits a nonprofit budget.</p>
+              </div>
+              <div class="fs-target">
+                <h3>Private estates</h3>
+                <p>Multiple carts on the same ranch, farm, or compound — one maintenance plan instead of five.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="fs-section" style="background:#fbf8f3;">
+          <div class="container">
+            <h2>Service tiers</h2>
+            <p class="lede-c">Pricing scales with fleet size and service level. Call for a quote tailored to your property.</p>
+            <div class="fs-tiers">
+              <div class="fs-tier">
+                <h3>Essentials</h3>
+                <p style="color:var(--ink-soft); margin:0 0 .5rem;">For 2-4 carts · annual contract</p>
+                <div class="price">Call for quote</div>
+                <ul>
+                  <li>Twice-a-year 20-point service</li>
+                  <li>Free pickup &amp; delivery (25 mi)</li>
+                  <li>24-48 hr response on breakdowns</li>
+                  <li>10% off parts for the contract year</li>
+                  <li>One invoice, monthly or annual</li>
+                </ul>
+                <a class="btn btn-outline" href="tel:{BIZ['phone_primary'].replace('-','')}">Get a quote</a>
+              </div>
+              <div class="fs-tier featured">
+                <h3>Fleet</h3>
+                <p style="color:var(--ink-soft); margin:0 0 .5rem;">For 5-15 carts · STRs, marinas, HOAs</p>
+                <div class="price">Call for quote</div>
+                <ul>
+                  <li>Everything in Essentials, plus:</li>
+                  <li>Quarterly on-site inspections</li>
+                  <li>Priority dispatch (same-week)</li>
+                  <li>15% off parts, 20% off battery packs</li>
+                  <li>Dedicated contact for your property manager</li>
+                  <li>Branded cart decals included (first set)</li>
+                </ul>
+                <a class="btn btn-coral" href="tel:{BIZ['phone_primary'].replace('-','')}">Get a quote</a>
+              </div>
+              <div class="fs-tier">
+                <h3>Enterprise</h3>
+                <p style="color:var(--ink-soft); margin:0 0 .5rem;">For 15+ carts · resorts, parks, campuses</p>
+                <div class="price">Custom</div>
+                <ul>
+                  <li>Everything in Fleet, plus:</li>
+                  <li>Loaner cart during repairs (where feasible)</li>
+                  <li>Monthly on-site visit</li>
+                  <li>Volume pricing on new-cart orders</li>
+                  <li>Lithium-conversion program</li>
+                  <li>Custom invoicing &amp; reporting</li>
+                </ul>
+                <a class="btn btn-outline" href="tel:{BIZ['phone_primary'].replace('-','')}">Get a quote</a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="fs-section">
+          <div class="container" style="max-width:820px;">
+            <h2>How it works</h2>
+            <ol style="counter-reset: step; list-style: none; padding: 0; margin: 1.5rem 0;">
+              <li style="counter-increment: step; padding: .75rem 0 .75rem 3rem; position: relative; border-bottom: 1px solid var(--line); color: var(--ink); font-size: 1rem;">
+                <span style="position:absolute; left:0; top:.75rem; width:2.1rem; height:2.1rem; background: var(--teal-dk); color:#fff; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font:800 1rem Georgia, serif;">1</span>
+                <b style="color:var(--teal-dk);">Call us.</b> Give us the fleet size, where the carts live, and what you want covered. 10-minute conversation.
+              </li>
+              <li style="counter-increment: step; padding: .75rem 0 .75rem 3rem; position: relative; border-bottom: 1px solid var(--line); color: var(--ink); font-size: 1rem;">
+                <span style="position:absolute; left:0; top:.75rem; width:2.1rem; height:2.1rem; background: var(--teal-dk); color:#fff; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font:800 1rem Georgia, serif;">2</span>
+                <b style="color:var(--teal-dk);">On-site inspection.</b> We come out, look at every cart, and quote a fixed annual price.
+              </li>
+              <li style="counter-increment: step; padding: .75rem 0 .75rem 3rem; position: relative; border-bottom: 1px solid var(--line); color: var(--ink); font-size: 1rem;">
+                <span style="position:absolute; left:0; top:.75rem; width:2.1rem; height:2.1rem; background: var(--teal-dk); color:#fff; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font:800 1rem Georgia, serif;">3</span>
+                <b style="color:var(--teal-dk);">Baseline service.</b> We bring every cart up to spec. One trip. You keep running.
+              </li>
+              <li style="counter-increment: step; padding: .75rem 0 .75rem 3rem; position: relative; color: var(--ink); font-size: 1rem;">
+                <span style="position:absolute; left:0; top:.75rem; width:2.1rem; height:2.1rem; background: var(--teal-dk); color:#fff; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font:800 1rem Georgia, serif;">4</span>
+                <b style="color:var(--teal-dk);">Scheduled service &amp; on-call.</b> We handle the calendar. You call when something breaks. We show up.
+              </li>
+            </ol>
+          </div>
+        </section>
+
+        <section class="rto-cta-band" style="background: linear-gradient(135deg, var(--teal-dk) 0%, #164550 100%); color: #fff; padding: 3rem 2rem; text-align: center; border-radius: 16px; max-width: 1080px; margin: 2rem auto 4rem;">
+          <h2 style="color:#fff; margin:0 0 .5rem; font: 700 1.5rem Georgia, serif;">Ready to put your fleet on a plan?</h2>
+          <p style="color: #d6ecf0; margin: 0 0 1.5rem;">Call John directly. He'll walk you through what makes sense for your property — no multi-day proposal process.</p>
+          <a class="btn btn-coral" href="tel:{BIZ['phone_primary'].replace('-','')}" style="font-size:1.05rem; padding:1rem 1.9rem;">📞 {BIZ['phone_primary']}</a>
+          <a class="btn btn-outline" href="/services/#request" style="margin-left:.5rem; background:transparent; color:#fff; border-color:#fff; padding:1rem 1.6rem;">Message us</a>
+        </section>
+        """)
+        + footer()
+    )
+
+
+def page_lake_communities():
+    """
+    /guides/lake-livingston-golf-cart-communities/ — a definitive
+    buyer-side guide to the cart-dense subdivisions around Lake
+    Livingston. Zero competitor publishes this. Pure local-SEO moat.
+    """
+    communities = [
+        {
+            "name": "Cape Royale",
+            "location": "Coldspring, San Jacinto County",
+            "distance_mi": 22,
+            "roads": "POA-maintained private roads inside a master planned community (§551.403 exception applies)",
+            "allows_carts": "Yes — one of the most cart-dense communities on the lake",
+            "size": "1,800 homesites, ~776 homes, ~300 full-time residents, 35+ short-term rentals",
+            "features": "Gated entrance · lakefront access · marina · reopening golf course (fall 2028, TRA-managed)",
+            "fit": "Lifted or street carts both work. Many owners run a 6-seater for family + a lifted 4-seater for lake runs.",
+        },
+        {
+            "name": "Waterwood",
+            "location": "Huntsville side, Walker County (lakefront)",
+            "distance_mi": 35,
+            "roads": "POA-maintained private roads inside a master planned community",
+            "allows_carts": "Yes — longstanding cart culture",
+            "size": "~900 lots, HOA dues ~$900/year",
+            "features": "Lakefront · former Dye-designed golf course (closed 2009) · 15 miles of internal roads",
+            "fit": "Street-stance carts for internal roads, lifted carts for lot-to-lake access.",
+        },
+        {
+            "name": "Elkins Lake",
+            "location": "Huntsville, Walker County",
+            "distance_mi": 30,
+            "roads": "POA-maintained private roads inside a master planned community",
+            "allows_carts": "Yes — one of the oldest cart cultures in the region, origin of Huntsville's 2020 ordinance debate",
+            "size": "2,200 platted sites, ~1,200 homes, 27-hole golf course",
+            "features": "Three lakes · golf course · tennis · pool · community center",
+            "fit": "Street carts dominate here — well-maintained roads, moderate elevation changes.",
+        },
+        {
+            "name": "Yaupon Cove",
+            "location": "Onalaska, Polk County (west shore)",
+            "distance_mi": 18,
+            "roads": "POA-maintained; verify §551.403 applicability with the POA",
+            "allows_carts": "Yes — densely platted lake subdivision",
+            "size": "Several hundred lots on the west shore peninsula",
+            "features": "Lake-adjacent · smaller lots · shared ramps",
+            "fit": "Street or lightly-lifted carts; narrow internal streets reward smaller 4-seaters.",
+        },
+        {
+            "name": "Beacon Bay / Impala Woods",
+            "location": "Onalaska, Polk County",
+            "distance_mi": 19,
+            "roads": "POA-maintained",
+            "allows_carts": "Yes",
+            "size": "Established lake-house subdivisions",
+            "features": "Boat ramps · lake access · older-growth lots",
+            "fit": "Any — pick based on your lot and whether you'll leave the subdivision.",
+        },
+        {
+            "name": "Governor's Point",
+            "location": "Point Blank, San Jacinto County",
+            "distance_mi": 20,
+            "roads": "POA-maintained private roads",
+            "allows_carts": "Yes",
+            "size": "Upscale lakefront subdivision",
+            "features": "Deep-water access · larger lots",
+            "fit": "6-seater carts and lifted builds — the lots are bigger here, the drives longer.",
+        },
+        {
+            "name": "Indian Hill / Kickapoo Village",
+            "location": "Polk County (various)",
+            "distance_mi": 20,
+            "roads": "Private POA roads",
+            "allows_carts": "Yes",
+            "size": "Smaller lake-adjacent communities",
+            "features": "Low HOA dues · older lots · lake access",
+            "fit": "Street carts fit; verify POA rules on lift kits before buying lifted.",
+        },
+    ]
+
+    community_cards = "\n".join(f"""
+        <article class="lc-card">
+          <h3>{c['name']}</h3>
+          <p class="lc-loc">{c['location']} · {c['distance_mi']} mi from our shop</p>
+          <dl>
+            <dt>Size</dt><dd>{c['size']}</dd>
+            <dt>Allows carts?</dt><dd><b style="color:#2f6b3b;">{c['allows_carts']}</b></dd>
+            <dt>Legal basis</dt><dd>{c['roads']}</dd>
+            <dt>Features</dt><dd>{c['features']}</dd>
+            <dt>What fits</dt><dd>{c['fit']}</dd>
+          </dl>
+        </article>""" for c in communities)
+
+    return (
+        head(
+            "Lake Livingston Golf Cart Communities — Where Carts Rule",
+            "A dealer's guide to the cart-dense subdivisions around Lake Livingston: Cape Royale, Waterwood, Elkins Lake, Yaupon Cove, Governor's Point and more. Roads, rules, and what cart fits each.",
+            "/guides/lake-livingston-golf-cart-communities/",
+            og_slug="services",
+        )
+        + header("/guides/lake-livingston-golf-cart-communities/")
+        + dedent(f"""\
+        <style>
+          .lc-hero {{ background: linear-gradient(135deg, #fbf8f3 0%, #e6f1f3 100%); padding: 2.5rem 0 2rem; text-align:center; }}
+          .lc-hero h1 {{ font: 700 clamp(2rem, 4.5vw, 2.6rem)/1.1 Georgia, serif; color: var(--teal-dk); margin:1rem 0; }}
+          .lc-hero .lede {{ color: var(--ink); font-size: 1.1rem; max-width:720px; margin: 0 auto; }}
+          .lc-grid {{ display:grid; grid-template-columns:repeat(2, 1fr); gap:1.5rem; max-width:1080px; margin:2rem auto; padding: 0 1.25rem; }}
+          @media (max-width: 820px) {{ .lc-grid {{ grid-template-columns:1fr; }} }}
+          .lc-card {{ background:#fff; border:1px solid var(--line); border-left:4px solid var(--coral); border-radius:12px; padding:1.5rem 1.6rem; }}
+          .lc-card h3 {{ font: 700 1.3rem Georgia, serif; color: var(--teal-dk); margin:0 0 .3rem; }}
+          .lc-card .lc-loc {{ color: var(--ink-soft); font-size: .9rem; margin: 0 0 .85rem; }}
+          .lc-card dl {{ margin:0; display:grid; grid-template-columns:120px 1fr; column-gap:1rem; row-gap:.45rem; font-size:.93rem; }}
+          .lc-card dt {{ color: var(--ink-soft); font-weight:600; }}
+          .lc-card dd {{ margin:0; color: var(--ink); }}
+        </style>
+
+        <section class="lc-hero">
+          <div class="container">
+            <span style="display:inline-block; font: 700 .82rem/1 system-ui, sans-serif; letter-spacing:.08em; text-transform:uppercase; color: var(--coral); background: #fde9e6; padding: .4rem .85rem; border-radius: 999px;">Guide</span>
+            <h1>Lake Livingston golf cart communities</h1>
+            <p class="lede">The subdivisions where a cart is the second vehicle. We service every one of these — here's how to pick which one your cart actually belongs in.</p>
+          </div>
+        </section>
+
+        <section>
+          <div class="container" style="max-width:820px; padding:0 1.25rem;">
+            <p style="color: var(--ink); font-size: 1.03rem; line-height: 1.6; margin: 1.5rem 0;">Not every lake subdivision is cart-friendly. The ones below <b>are</b>, because they're platted as master planned communities with POA-maintained private roads — which means Texas Transportation Code §551.403 lets residents use carts on internal streets without a city ordinance. (For the legal detail, see our <a href="/street-legal-texas/" style="color:var(--teal-dk); font-weight:600;">street-legal-in-Texas guide</a>.)</p>
+            <p style="color: var(--ink); font-size: 1.03rem; line-height: 1.6;">Each community has its own POA rules on top of the state exception — lift kit limits, speed caps, helmet rules, under-age driver rules. Call your POA before buying a lifted cart or putting a teenager behind the wheel. We'll help you check if you're not sure.</p>
+          </div>
+        </section>
+
+        <section class="lc-grid">
+          {community_cards}
+        </section>
+
+        <section>
+          <div class="container" style="max-width:820px; padding:0 1.25rem;">
+            <h2 style="font: 700 1.5rem Georgia, serif; color: var(--teal-dk); margin-top:2rem;">Didn't see your community?</h2>
+            <p style="color: var(--ink); font-size: 1rem; line-height: 1.6;">There are 80+ platted subdivisions around Lake Livingston. If yours isn't listed, call us — chances are we've been there. We'll tell you honestly whether carts are legal on your streets, what the POA rules are, and what cart fits your lot.</p>
+            <p style="margin-top:1.5rem;">
+              <a class="btn btn-coral" href="tel:{BIZ['phone_primary'].replace('-','')}" style="padding:1rem 1.9rem; font-size:1.05rem;">📞 Call {BIZ['phone_primary']}</a>
+              <a class="btn btn-ghost" href="/carts/" style="margin-left:.5rem; padding:1rem 1.6rem;">See our lineup</a>
+            </p>
+          </div>
+        </section>
+        """)
+        + footer()
+    )
+
+
 # ---------------- Build ---------------- #
 
 PAGES = {
@@ -3820,6 +4469,10 @@ PAGES = {
     # Public review landing page — meant to be linked from post-sale
     # follow-ups and QR codes, NOT hidden.
     "leave-a-review/index.html":     page_reviews,
+    # Growth-plan Wave 1 new pages (2026-10-28)
+    "street-legal-texas/index.html":                      page_street_legal_tx,
+    "fleet-service/index.html":                           page_fleet_service,
+    "guides/lake-livingston-golf-cart-communities/index.html": page_lake_communities,
 }
 for _slug in BREEZY_EV_MODELS:
     PAGES[f"breezy-ev/{_slug}/index.html"] = (lambda s=_slug: page_breezy_model(s))
@@ -3860,7 +4513,7 @@ def main():
         )
     # Public URLs for the sitemap. Phase 1-3 pages (Breezy EV product
     # tree, town service-area pages, pillar guides) added below.
-    urls = ["/", "/carts/", "/services/", "/rentals/", "/financing/", "/rent-to-own/", "/about-us/", "/contact/", "/privacy/", "/leave-a-review/"]
+    urls = ["/", "/carts/", "/services/", "/rentals/", "/financing/", "/rent-to-own/", "/street-legal-texas/", "/fleet-service/", "/about-us/", "/contact/", "/privacy/", "/leave-a-review/"]
     urls += [
         "/breezy-ev/",
         "/breezy-ev/compare/",
@@ -3870,6 +4523,7 @@ def main():
     ]
     urls += [f"/breezy-ev/{s}/" for s in BREEZY_EV_MODELS]
     urls += ["/guides/"] + [f"/guides/{s}/" for s in GUIDES]
+    urls += ["/guides/lake-livingston-golf-cart-communities/"]
     urls += ["/golf-carts/"] + [f"/golf-carts/{s}/" for s in TOWN_PAGES]
     sm = ['<?xml version="1.0" encoding="UTF-8"?>',
           '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
