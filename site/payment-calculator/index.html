@@ -5,211 +5,204 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex,nofollow">
   <title>Payment Calculator · Polk County Golf Carts</title>
-  <meta name="description" content="Estimate rent-to-own monthly payments on any cart. Final terms set by HCI AppXpress at application.">
+  <meta name="description" content="See your monthly rent-to-own payment in 10 seconds. Final terms set by HCI AppXpress at application.">
   <link rel="canonical" href="https://polkcountygolfcarts.com/payment-calculator/">
   <meta name="theme-color" content="#e85a4f">
   <link rel="icon" type="image/png" href="/assets/logos/favicon.png">
   <link rel="stylesheet" href="/assets/site.css">
   <style>
-    body { background:#fbf8f3; color:#222; font-family: system-ui,-apple-system,Segoe UI,sans-serif; }
-    .pc-wrap { max-width: 920px; margin: 0 auto; padding: 1.5rem 1.25rem 4rem; }
+    :root { --ok:#2f6b3b; }
 
-    .pc-head { text-align: center; margin-bottom: 1.5rem; }
-    .pc-head .eyebrow { display:inline-block; font: 700 .82rem/1 system-ui, sans-serif; letter-spacing:.08em; text-transform:uppercase; color: var(--coral); background: #fde9e6; padding: .4rem .85rem; border-radius: 999px; }
-    .pc-head h1 { font: 700 clamp(1.8rem, 4vw, 2.4rem)/1.15 Georgia, serif; color: var(--teal-dk); margin: .75rem 0 .5rem; }
-    .pc-head p { color: var(--ink-soft); margin: 0; }
+    .pc-hero { background: linear-gradient(170deg, #fdf3f1 0%, #fbf8f3 60%); padding: 2.5rem 1rem 1.25rem; text-align:center; }
+    .pc-eyebrow { display:inline-block; font: 700 .78rem/1 system-ui, sans-serif; letter-spacing:.1em; text-transform:uppercase; color: var(--coral); background:#fde9e6; padding:.5rem 1rem; border-radius:999px; }
+    .pc-hero h1 { font: 800 clamp(1.9rem, 4.2vw, 2.6rem)/1.1 Georgia, serif; color: var(--teal-dk); margin: .9rem auto .35rem; max-width: 740px; }
+    .pc-hero .sub { color: var(--ink-soft); margin: 0 auto 0; max-width: 620px; font-size: 1rem; }
 
-    .pc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
-    @media (max-width: 820px) { .pc-grid { grid-template-columns: 1fr; } }
+    .pc-wrap { max-width: 820px; margin: 0 auto; padding: 1.5rem 1rem 4rem; }
 
-    .pc-card { background:#fff; border:1px solid var(--line); border-radius:14px; padding:1.5rem 1.4rem; box-shadow: 0 1px 3px rgba(0,0,0,.04); }
-    .pc-card h2 { font: 700 1.15rem Georgia, serif; color: var(--teal-dk); margin: 0 0 .9rem; }
-
-    .pc-field { display:flex; flex-direction:column; gap:.3rem; margin-top:.85rem; }
-    .pc-field:first-of-type { margin-top: 0; }
-    .pc-field > span { font: 600 .9rem inherit; color: var(--ink); }
-    .pc-field em { font-style:normal; color: var(--ink-soft); font-weight:400; }
-    .pc-field input, .pc-field select, .pc-field textarea {
-      font: 16px/1.4 inherit; color: var(--ink);
-      border: 1px solid var(--line); border-radius: 10px;
-      padding: .65rem .8rem; background: var(--bg); width: 100%;
-      box-sizing: border-box;
+    .pc-input-card { background:#fff; border:1px solid var(--line); border-radius:16px; padding:1.5rem 1.5rem 1.25rem; box-shadow:0 2px 10px rgba(0,0,0,.04); margin-top: -1rem; position: relative; z-index: 2; }
+    .pc-input-card label { display:block; font: 700 .9rem system-ui, sans-serif; color: var(--ink); margin-bottom:.5rem; }
+    .pc-input-card .input-wrap { position: relative; }
+    .pc-input-card .dollar { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); font: 800 1.6rem Georgia, serif; color: var(--teal-dk); pointer-events: none; }
+    .pc-input-card input[type=number] {
+      width: 100%; box-sizing: border-box;
+      font: 800 1.9rem Georgia, serif; color: var(--teal-dk);
+      border: 2px solid var(--line); border-radius: 12px;
+      padding: .9rem 1rem .9rem 2.5rem; background: var(--bg);
+      -moz-appearance: textfield;
     }
-    .pc-field select { appearance: none; -webkit-appearance: none;
-      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path fill='%231f5a68' d='M0 0h12L6 8z'/></svg>");
-      background-repeat: no-repeat; background-position: right .9rem center; background-size: 10px 7px; padding-right: 2.2rem; }
-    .pc-field input:focus, .pc-field select:focus, .pc-field textarea:focus {
-      outline: none; border-color: var(--coral); background: #fff;
-    }
-    .pc-row { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+    .pc-input-card input::-webkit-outer-spin-button,
+    .pc-input-card input::-webkit-inner-spin-button { -webkit-appearance:none; margin:0; }
+    .pc-input-card input:focus { outline:none; border-color: var(--coral); background:#fff; box-shadow: 0 0 0 4px rgba(232,90,79,.15); }
+    .pc-presets { display:flex; gap:.5rem; margin-top:.75rem; flex-wrap: wrap; }
+    .pc-preset-btn { background:#fff; border:1.5px solid var(--line); color: var(--teal-dk); border-radius:999px; padding:.45rem .9rem; font: 600 .85rem system-ui, sans-serif; cursor:pointer; transition: all .15s; }
+    .pc-preset-btn:hover { border-color: var(--coral); color: var(--coral); }
+    .pc-preset-btn.active { background: var(--coral); border-color: var(--coral); color:#fff; }
 
-    /* Results table */
-    .pc-results { background:#fff; border:1px solid var(--line); border-radius:14px; padding: 1.25rem; margin-top:1.5rem; box-shadow:0 1px 3px rgba(0,0,0,.04); }
-    .pc-results h2 { font:700 1.15rem Georgia, serif; color:var(--teal-dk); margin:0 0 .9rem; }
-    .pc-table-wrap { overflow-x: auto; }
-    .pc-table { width: 100%; border-collapse: collapse; font-size: .95rem; min-width: 540px; }
-    .pc-table th { background: #fbf8f3; color: var(--teal-dk); padding: .75rem .65rem; text-align: center; font-size: .78rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; border-bottom: 2px solid var(--coral); }
-    .pc-table td { padding: 1rem .65rem; text-align: center; border-bottom: 1px solid var(--line); }
-    .pc-table tr:last-child td { border-bottom: 0; }
-    .pc-table tr.selected { background: #e6f1f3; }
-    .pc-table .term { font: 700 1rem Georgia, serif; color: var(--teal-dk); text-align: left; padding-left: 1rem; }
-    .pc-table .monthly { font: 800 1.1rem Georgia, serif; color: var(--coral); }
-    .pc-table input[type=radio] { transform: scale(1.25); cursor: pointer; }
-    .pc-table .ldw-col { background: #fff8f6; }
-    .pc-note { color: var(--ink-soft); font-size: .82rem; margin-top: .75rem; text-align: center; }
+    .pc-payment-hero { background: linear-gradient(135deg, var(--teal-dk) 0%, #164550 100%); color:#fff; border-radius:16px; padding:2rem 1.5rem 1.75rem; margin-top:1.25rem; text-align:center; box-shadow: 0 6px 24px rgba(31,90,104,.18); }
+    .pc-payment-hero .label { font: 700 .78rem/1 system-ui, sans-serif; letter-spacing:.14em; text-transform:uppercase; color:#ffd9d4; margin-bottom:.5rem; }
+    .pc-payment-hero .big { font: 900 clamp(3.5rem, 10vw, 5rem)/1 Georgia, serif; color:#fff; letter-spacing:-.02em; margin:.35rem 0 .15rem; display:flex; justify-content:center; align-items:baseline; gap:.1rem; }
+    .pc-payment-hero .big .dollar-sm { font-size:.55em; color:#ffd9d4; font-weight:800; }
+    .pc-payment-hero .big .cents { font-size:.4em; color:#ffd9d4; font-weight:800; margin-left:.1em; }
+    .pc-payment-hero .per { color:#ffd9d4; font: 700 1.1rem system-ui, sans-serif; }
+    .pc-payment-hero .term-note { color:#d6ecf0; margin:.9rem 0 0; font-size:.95rem; }
+    .pc-payment-hero .term-note b { color:#fff; }
 
-    /* Lead form */
-    .pc-lead { background: linear-gradient(135deg, var(--teal-dk) 0%, #164550 100%); color:#fff; border-radius:14px; padding:1.5rem 1.6rem; margin-top:1.5rem; }
-    .pc-lead h2 { color:#fff; font: 700 1.2rem Georgia, serif; margin: 0 0 .4rem; }
-    .pc-lead .sub { color:#d6ecf0; margin: 0 0 1rem; font-size:.95rem; }
-    .pc-lead .pc-field > span { color: #d6ecf0; }
-    .pc-lead .pc-field input, .pc-lead .pc-field textarea { background: rgba(255,255,255,.95); border-color: transparent; color: var(--ink); }
+    .pc-terms { display:grid; grid-template-columns: repeat(3, 1fr); gap:.65rem; margin-top:1.1rem; }
+    @media (max-width: 560px) { .pc-terms { grid-template-columns: 1fr; } }
+    .pc-term { background:#fff; border:2px solid var(--line); border-radius:12px; padding:1rem .85rem; text-align:center; cursor:pointer; transition: all .15s; position:relative; font-family: inherit; }
+    .pc-term:hover { border-color: var(--coral); }
+    .pc-term.selected { border-color: var(--coral); background:#fdf3f1; box-shadow: 0 2px 10px rgba(232,90,79,.12); }
+    .pc-term .t-term { font: 700 .78rem system-ui, sans-serif; letter-spacing:.08em; text-transform:uppercase; color: var(--ink-soft); margin-bottom:.25rem; }
+    .pc-term .t-amt { font: 800 1.55rem Georgia, serif; color: var(--teal-dk); line-height:1.1; }
+    .pc-term.selected .t-amt { color: var(--coral); }
+    .pc-term .t-sub { font: 500 .78rem system-ui, sans-serif; color: var(--ink-soft); margin-top:.2rem; }
+    .pc-term .badge { position:absolute; top:-.55rem; right:.5rem; background: var(--coral); color:#fff; font: 700 .62rem system-ui, sans-serif; letter-spacing:.06em; text-transform:uppercase; padding:.22rem .5rem; border-radius:999px; }
 
-    .pc-cta-btn { background: var(--coral); color:#fff; border:0; border-radius:10px; padding: 1rem 1.6rem; font-weight: 700; font-size: 1rem; cursor: pointer; width: 100%; margin-top: 1rem; }
-    .pc-cta-btn:hover { background: var(--coral-dk); }
-    .pc-cta-btn:disabled { opacity: .6; cursor: not-allowed; }
+    .pc-trust { display:grid; grid-template-columns: repeat(3, 1fr); gap:.5rem; margin-top:1.1rem; }
+    @media (max-width: 560px) { .pc-trust { grid-template-columns: 1fr; } }
+    .pc-trust-item { background:#fff; border:1px solid var(--line); border-radius:10px; padding:.75rem .85rem; display:flex; gap:.6rem; align-items:center; font: 600 .85rem system-ui, sans-serif; color: var(--ink); }
+    .pc-trust-item .icon { font-size:1.3rem; }
 
-    .pc-msg { margin-top: .85rem; padding: .65rem .85rem; border-radius: 8px; font-size:.9rem; }
+    .pc-lead { background:#fff; border:2px solid var(--coral); border-radius:16px; padding:1.5rem 1.5rem 1.6rem; margin-top:1.5rem; box-shadow:0 6px 20px rgba(232,90,79,.14); }
+    .pc-lead h2 { font: 800 1.3rem Georgia, serif; color: var(--teal-dk); margin:0 0 .25rem; text-align:center; }
+    .pc-lead .lead-sub { text-align:center; color: var(--ink-soft); margin:0 0 1.1rem; font-size:.95rem; }
+    .pc-field { display:flex; flex-direction:column; gap:.35rem; margin-top:.7rem; }
+    .pc-field:first-of-type { margin-top:0; }
+    .pc-field > span { font: 600 .85rem system-ui, sans-serif; color: var(--ink); }
+    .pc-field input { font: 16px/1.4 system-ui, sans-serif; color: var(--ink); border:1.5px solid var(--line); border-radius:10px; padding:.8rem .95rem; background: var(--bg); width:100%; box-sizing:border-box; }
+    .pc-field input:focus { outline:none; border-color: var(--coral); background:#fff; box-shadow: 0 0 0 3px rgba(232,90,79,.12); }
+    .pc-row { display:grid; grid-template-columns: 1fr 1fr; gap:.7rem; }
+    @media (max-width: 500px) { .pc-row { grid-template-columns: 1fr; } }
+
+    .pc-cta-btn { background: var(--coral); color:#fff; border:0; border-radius:12px; padding:1.15rem 1.6rem; font: 800 1.1rem system-ui, sans-serif; cursor:pointer; width:100%; margin-top:1rem; transition: all .15s; }
+    .pc-cta-btn:hover { background: var(--coral-dk); transform: translateY(-1px); box-shadow: 0 4px 14px rgba(232,90,79,.3); }
+    .pc-cta-btn:disabled { opacity:.6; cursor:not-allowed; transform:none; }
+    .pc-cta-sub { text-align:center; color: var(--ink-soft); font-size:.78rem; margin-top:.55rem; }
+    .pc-cta-sub b { color: var(--ok); }
+
+    .pc-msg { margin-top:.85rem; padding:.7rem .95rem; border-radius:8px; font-size:.9rem; }
     .pc-msg.error { background:#fde9e6; border:1px solid #f3c3bc; color:#8a2a20; }
 
-    .pc-success { background: #dff0e1; border: 1px solid #a7d4ad; border-left: 5px solid #2f6b3b; color: var(--ink); border-radius: 14px; padding: 1.5rem 1.75rem; margin-top: 1.5rem; }
-    .pc-success h2 { color: #2f6b3b; font: 700 1.2rem Georgia, serif; margin: 0 0 .5rem; }
-    .pc-success code { background:#fff; padding:.1rem .5rem; border-radius:4px; font: 700 .95rem ui-monospace, monospace; color: var(--teal-dk); }
+    .pc-success { background:#fff; border:2px solid var(--ok); border-radius:16px; padding:2rem 1.75rem; margin-top:1.5rem; text-align:center; box-shadow:0 6px 20px rgba(47,107,59,.12); }
+    .pc-success .check { width:54px; height:54px; margin:0 auto .75rem; background: var(--ok); color:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:2rem; }
+    .pc-success h2 { color: var(--ok); font: 800 1.4rem Georgia, serif; margin:0 0 .5rem; }
+    .pc-success p { margin:.5rem 0; color: var(--ink); }
+    .pc-success code { background: var(--bg); padding:.15rem .55rem; border-radius:4px; font: 700 .95rem ui-monospace, monospace; color: var(--teal-dk); }
 
-    .pc-footer-note { color: var(--ink-soft); font-size: .78rem; margin-top: 1.25rem; text-align: center; font-style: italic; }
+    .pc-footer-note { color: var(--ink-soft); font-size:.78rem; margin-top:1.5rem; text-align:center; font-style:italic; max-width:620px; margin-left:auto; margin-right:auto; line-height:1.5; }
   </style>
 </head>
 <body>
 <header class="site-header">
-  <div class="container header-inner">
+  <div class="container">
     <a class="brand" href="/">
-      <img src="/assets/logos/logo-color.png" alt="Polk County Golf Carts" width="60" height="60">
-      <span class="brand-word">Polk County Golf Carts<small>Livingston, TX</small></span>
+      <img class="brand-mark" src="/assets/logos/logo-color.svg" alt="" width="144" height="112" aria-hidden="true">
+      <span class="brand-text">Polk County Golf Carts<small>Livingston, Texas</small></span>
     </a>
-    <a class="btn btn-coral" href="tel:9362231182">📞 936-223-1182</a>
+    <nav class="primary">
+      <a href="/">Home</a>
+      <a href="/carts/">Carts</a>
+      <a href="/rentals/">Rentals</a>
+      <a href="/services/">Service</a>
+      <a href="/financing/">Financing</a>
+      <a href="/about-us/">About</a>
+      <a href="/contact/">Contact</a>
+      <a class="cta" href="tel:9362231182">📞 936-223-1182</a>
+    </nav>
   </div>
 </header>
 
+<section class="pc-hero">
+  <span class="pc-eyebrow">Rent-to-Own · No credit score needed</span>
+  <h1>What would your golf cart cost per month?</h1>
+  <p class="sub">Enter the cart price. See your monthly payment in 10 seconds. No credit pull to see your number.</p>
+</section>
+
 <main class="pc-wrap">
-  <div class="pc-head">
-    <span class="eyebrow">Rent-to-Own payment calculator</span>
-    <h1>Estimate your payment in 30 seconds.</h1>
-    <p>Enter the cart price and we'll show you three payment plans. Final terms set by HCI AppXpress at application.</p>
-  </div>
-
   <div id="main-view">
-    <div class="pc-grid">
-      <div class="pc-card">
-        <h2>Your inputs</h2>
-        <div class="pc-row">
-          <label class="pc-field">
-            <span>State</span>
-            <select id="pc-state">
-              <option value="TX" selected>Texas</option>
-              <option value="LA">Louisiana</option>
-              <option value="OK">Oklahoma</option>
-              <option value="AR">Arkansas</option>
-              <option value="other">Other</option>
-            </select>
-          </label>
-          <label class="pc-field">
-            <span>Product type</span>
-            <select id="pc-product">
-              <option>Golf Cart</option>
-              <option>Lithium Battery Pack</option>
-              <option>Lift Kit / Accessories</option>
-              <option>Other</option>
-            </select>
-          </label>
-        </div>
-        <label class="pc-field">
-          <span>Cash price <em>(what the cart costs)</em></span>
-          <input type="number" id="pc-cash" min="0" step="1" placeholder="5000" value="5000">
-        </label>
-        <div class="pc-row">
-          <label class="pc-field">
-            <span>Tax rate <em>(%)</em></span>
-            <input type="number" id="pc-tax" min="0" max="20" step="0.01" placeholder="8.25" value="8.25">
-          </label>
-          <label class="pc-field">
-            <span>Add LDW?</span>
-            <select id="pc-ldw">
-              <option value="no" selected>No</option>
-              <option value="yes">Yes (loss damage waiver)</option>
-            </select>
-          </label>
-        </div>
-        <div class="pc-row">
-          <label class="pc-field">
-            <span>Promo code <em>(optional)</em></span>
-            <input type="text" id="pc-promo" placeholder="">
-          </label>
-          <label class="pc-field">
-            <span>Purchase reserve <em>(optional)</em></span>
-            <input type="number" id="pc-reserve" min="0" step="1" placeholder="0">
-          </label>
-        </div>
-        <p style="color:var(--ink-soft); font-size:.78rem; margin:.75rem 0 0;">Reserve subtracts from cash price when calculating payment.</p>
-      </div>
 
-      <div class="pc-card">
-        <h2>Your payment plans</h2>
-        <div class="pc-table-wrap">
-          <table class="pc-table" id="pc-results">
-            <thead>
-              <tr>
-                <th style="text-align:left; padding-left:1rem;">Pick</th>
-                <th>Term</th>
-                <th>Monthly</th>
-                <th class="ldw-col">LDW</th>
-                <th>Deposit</th>
-                <th>Due today</th>
-              </tr>
-            </thead>
-            <tbody id="pc-rows">
-              <!-- rows injected by JS -->
-            </tbody>
-          </table>
-        </div>
-        <p class="pc-note">Pick a term above, then fill the form below to send John your payment plan.</p>
+    <div class="pc-input-card">
+      <label for="pc-cash">Cart price</label>
+      <div class="input-wrap">
+        <span class="dollar">$</span>
+        <input type="number" id="pc-cash" min="500" max="25000" step="100" value="5000" inputmode="numeric">
+      </div>
+      <div class="pc-presets" role="group" aria-label="Quick price picks">
+        <button type="button" class="pc-preset-btn" data-val="3000">$3,000</button>
+        <button type="button" class="pc-preset-btn active" data-val="5000">$5,000</button>
+        <button type="button" class="pc-preset-btn" data-val="6500">$6,500</button>
+        <button type="button" class="pc-preset-btn" data-val="8000">$8,000</button>
       </div>
     </div>
 
+    <div class="pc-payment-hero">
+      <div class="label">Your payment, as low as</div>
+      <div class="big">
+        <span class="dollar-sm">$</span><span id="pc-big-dollars">250</span><span class="cents">.<span id="pc-big-cents">58</span></span>
+      </div>
+      <div class="per">/ month</div>
+      <p class="term-note">on a <b id="pc-term-label">48-month</b> plan · ownership path with no credit score requirement</p>
+    </div>
+
+    <div class="pc-terms" id="pc-terms">
+      <button type="button" class="pc-term" data-term="24">
+        <div class="t-term">24 months</div>
+        <div class="t-amt" data-amt-24>$375.88</div>
+        <div class="t-sub">Pay off fastest</div>
+      </button>
+      <button type="button" class="pc-term" data-term="36">
+        <div class="t-term">36 months</div>
+        <div class="t-amt" data-amt-36>$273.35</div>
+        <div class="t-sub">Balanced middle</div>
+      </button>
+      <button type="button" class="pc-term selected" data-term="48">
+        <span class="badge">Most picked</span>
+        <div class="t-term">48 months</div>
+        <div class="t-amt" data-amt-48>$250.58</div>
+        <div class="t-sub">Lowest monthly</div>
+      </button>
+    </div>
+
+    <div class="pc-trust">
+      <div class="pc-trust-item"><span class="icon">✅</span>No credit score needed</div>
+      <div class="pc-trust-item"><span class="icon">⚡</span>Approved in minutes</div>
+      <div class="pc-trust-item"><span class="icon">🚚</span>Free Polk County delivery</div>
+    </div>
+
     <div class="pc-lead">
-      <h2>Get this plan in your inbox</h2>
-      <p class="sub">We'll email you the selected plan and call within 24-48 hours. No application yet — this is just a payment inquiry.</p>
+      <h2>Lock in this payment →</h2>
+      <p class="lead-sub">We'll text or email you the written quote within 24 hours. No application, no credit pull yet.</p>
       <form id="pc-form">
+        <label class="pc-field">
+          <span>Your name</span>
+          <input type="text" id="pc-name" required autocomplete="name" placeholder="John Smith">
+        </label>
         <div class="pc-row">
-          <label class="pc-field">
-            <span>Your name</span>
-            <input type="text" id="pc-name" required autocomplete="name">
-          </label>
           <label class="pc-field">
             <span>Phone</span>
             <input type="tel" id="pc-phone" required autocomplete="tel" placeholder="(936) 555-1234">
           </label>
+          <label class="pc-field">
+            <span>Email</span>
+            <input type="email" id="pc-email" required autocomplete="email" placeholder="you@email.com">
+          </label>
         </div>
-        <label class="pc-field">
-          <span>Email</span>
-          <input type="email" id="pc-email" required autocomplete="email" inputmode="email">
-        </label>
-        <label class="pc-field">
-          <span>Which cart or anything else we should know? <em>(optional)</em></span>
-          <textarea id="pc-notes" rows="3" placeholder="e.g. 'The tan 4-seater on your /carts/ page' or 'Trade-in a 2015 Yamaha'"></textarea>
-        </label>
-        <button type="submit" class="pc-cta-btn" id="pc-submit">Send me this payment plan →</button>
+        <button type="submit" class="pc-cta-btn" id="pc-submit">Send me this payment →</button>
+        <p class="pc-cta-sub"><b>✓</b> No credit check · <b>✓</b> No obligation · <b>✓</b> Reply within 24 hours</p>
         <div id="pc-msg" class="pc-msg" hidden></div>
       </form>
     </div>
 
-    <p class="pc-footer-note">This calculator is for estimation only. Final rent-to-own terms, approvals, down payment, and fees are set by HCI AppXpress at application time.</p>
+    <p class="pc-footer-note">Payments shown are an estimate based on Heartland Capital Investments' published rent-to-own rate card for Texas (8.25% tax). Final terms, approvals, and fees are set by HCI AppXpress at application time.</p>
   </div>
 
   <div id="success-view" class="pc-success" hidden>
-    <h2>Got it — thanks!</h2>
-    <p>Your payment plan has landed in the shop. We'll reach out within <b>24-48 hours</b> by email or phone. Need it faster? Call <a href="tel:9362231182" style="color:var(--teal-dk); font-weight:700;">936-223-1182</a>.</p>
-    <p>Reference: <code id="pc-ref">PCGC-PMT-—</code></p>
-    <p style="margin-top:1.25rem;"><a class="btn btn-coral" href="/rent-to-own/">← Rent-to-own details</a></p>
+    <div class="check">✓</div>
+    <h2>Got it — payment is locked.</h2>
+    <p>We'll reach out within <b>24 hours</b> with your written quote. Need it faster? Call <a href="tel:9362231182" style="color:var(--coral); font-weight:700;">936-223-1182</a>.</p>
+    <p style="color:var(--ink-soft); font-size:.85rem;">Reference: <code id="pc-ref">PCGC-PMT-—</code></p>
+    <p style="margin-top:1.25rem;"><a class="btn btn-coral" href="/carts/">Browse carts →</a></p>
   </div>
 </main>
 
@@ -219,116 +212,87 @@
 
 <script>
 (() => {
-  // ---------- Payment math ----------
-  // Markups reverse-engineered from HCI's published example quote
-  // (Cash $5,000, 8.25% TX, no LDW): 24mo $375.87, 36mo $273.36,
-  // 48mo $250.58. Markup = (monthly × term) / cash / (1 + tax).
-  // Final terms set by HCI at underwriting; this is a planning tool.
+  const TAX_RATE = 0.0825;
   const TERMS = [
     { months: 24, markup: 1.6667 },
     { months: 36, markup: 1.8181 },
     { months: 48, markup: 2.2222 },
   ];
-  const SECURITY_DEPOSIT = 500;
-  const LDW_RATE = 0.10;  // ~10% of monthly, matches HCI example
-
   const $ = (id) => document.getElementById(id);
-  const fmt$ = (n) => "$" + Number(n).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  const fmt2 = (n) => Number(n).toFixed(2);
+  const fmtComma = (s) => s.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  let selectedTerm = 48;
 
-  function compute() {
-    const cashRaw = parseFloat($("pc-cash").value) || 0;
-    const taxRaw = (parseFloat($("pc-tax").value) || 0) / 100;
-    const addLdw = $("pc-ldw").value === "yes";
-    const reserve = parseFloat($("pc-reserve").value) || 0;
-    const basePrice = Math.max(0, cashRaw - reserve);
-
-    const prevChecked = document.querySelector('input[name="pc-term"]:checked')?.value;
-    const rowsHtml = TERMS.map((t) => {
-      const totalBeforeTax = basePrice * t.markup;
-      const monthlyBeforeTax = totalBeforeTax / t.months;
-      const monthlyWithTax = monthlyBeforeTax * (1 + taxRaw);
-      const ldwCost = monthlyWithTax * LDW_RATE;
-      const effectiveMonthly = addLdw ? (monthlyWithTax + ldwCost) : monthlyWithTax;
-      const totalDueToday = effectiveMonthly + SECURITY_DEPOSIT;
-      const isChecked = prevChecked == t.months || (!prevChecked && t.months === 36);
-      return `
-        <tr data-term="${t.months}" data-monthly="${effectiveMonthly.toFixed(2)}" data-total="${totalDueToday.toFixed(2)}" class="${isChecked ? "selected" : ""}">
-          <td style="padding-left:1rem;"><input type="radio" name="pc-term" value="${t.months}" ${isChecked ? "checked" : ""}></td>
-          <td class="term">${t.months} mo</td>
-          <td class="monthly">${fmt$(monthlyWithTax)}</td>
-          <td class="ldw-col">${fmt$(ldwCost)}</td>
-          <td>${fmt$(SECURITY_DEPOSIT)}</td>
-          <td><b>${fmt$(totalDueToday)}</b></td>
-        </tr>`;
-    }).join("");
-    $("pc-rows").innerHTML = rowsHtml;
+  function monthlyFor(cash, months) {
+    const t = TERMS.find(x => x.months === months);
+    return (cash * t.markup / months) * (1 + TAX_RATE);
   }
 
-  ["pc-cash","pc-tax","pc-ldw","pc-reserve","pc-state","pc-product","pc-promo"].forEach(id => {
-    $(id).addEventListener("input", compute);
-    $(id).addEventListener("change", compute);
+  function render() {
+    let cash = parseFloat($("pc-cash").value) || 0;
+    if (cash < 0) cash = 0;
+    TERMS.forEach(t => {
+      const m = monthlyFor(cash, t.months);
+      const el = document.querySelector(`[data-amt-${t.months}]`);
+      if (el) el.textContent = "$" + fmtComma(fmt2(m));
+    });
+    const heroM = monthlyFor(cash, selectedTerm);
+    const [dollars, cents] = fmt2(heroM).split(".");
+    $("pc-big-dollars").textContent = fmtComma(dollars);
+    $("pc-big-cents").textContent = cents;
+    $("pc-term-label").textContent = selectedTerm + "-month";
+    document.querySelectorAll(".pc-preset-btn").forEach(b => {
+      b.classList.toggle("active", Number(b.dataset.val) === cash);
+    });
+  }
+
+  $("pc-cash").addEventListener("input", render);
+  document.querySelectorAll(".pc-preset-btn").forEach(b => {
+    b.addEventListener("click", () => { $("pc-cash").value = b.dataset.val; render(); });
   });
-  $("pc-rows").addEventListener("change", () => {
-    document.querySelectorAll("#pc-rows tr").forEach(r => r.classList.remove("selected"));
-    const r = document.querySelector('input[name="pc-term"]:checked')?.closest("tr");
-    if (r) r.classList.add("selected");
+  document.querySelectorAll(".pc-term").forEach(tile => {
+    tile.addEventListener("click", () => {
+      selectedTerm = Number(tile.dataset.term);
+      document.querySelectorAll(".pc-term").forEach(t => t.classList.remove("selected"));
+      tile.classList.add("selected");
+      render();
+    });
   });
+  render();
 
-  compute();
-
-  // ---------- Lead form ----------
-  const form = $("pc-form");
-  const submit = $("pc-submit");
-  const msg = $("pc-msg");
-
+  const form = $("pc-form"), submit = $("pc-submit"), msg = $("pc-msg");
   form.addEventListener("submit", async (ev) => {
     ev.preventDefault();
     msg.hidden = true; msg.className = "pc-msg";
-
     const name = $("pc-name").value.trim();
     const phone = $("pc-phone").value.trim();
     const email = $("pc-email").value.trim();
     const cash = parseFloat($("pc-cash").value) || 0;
-    if (!name || !phone || !email) {
-      msg.textContent = "Name, phone, and email are required.";
-      msg.classList.add("error"); msg.hidden = false; return;
-    }
-    if (!/^\S+@\S+\.\S+$/.test(email)) {
-      msg.textContent = "That email doesn't look right.";
-      msg.classList.add("error"); msg.hidden = false; return;
-    }
-    if (cash <= 0) {
-      msg.textContent = "Enter a cart price above and pick a term.";
-      msg.classList.add("error"); msg.hidden = false; return;
-    }
-    const row = document.querySelector('input[name="pc-term"]:checked')?.closest("tr");
-    const preferredTerm = row ? Number(row.dataset.term) : null;
-    const monthlyChosen = row ? Number(row.dataset.monthly) : null;
-    const totalDueToday = row ? Number(row.dataset.total) : null;
+    if (!name || !phone || !email) { msg.textContent = "Name, phone, and email are required."; msg.classList.add("error"); msg.hidden=false; return; }
+    if (!/^\S+@\S+\.\S+$/.test(email)) { msg.textContent = "That email doesn't look right."; msg.classList.add("error"); msg.hidden=false; return; }
+    if (cash <= 0) { msg.textContent = "Enter a cart price above."; msg.classList.add("error"); msg.hidden=false; return; }
+
+    const monthly = monthlyFor(cash, selectedTerm);
+    const totalDueToday = monthly + 500;
 
     submit.disabled = true;
     const prev = submit.textContent;
     submit.textContent = "Sending…";
     try {
       const res = await fetch("/api/payment-lead", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
+        method: "POST", headers: { "content-type": "application/json" },
         body: JSON.stringify({
           name, phone, email,
-          state: $("pc-state").value,
-          productType: $("pc-product").value,
-          cashPrice: cash,
-          taxRate: parseFloat($("pc-tax").value) || 0,
-          addLdw: $("pc-ldw").value === "yes",
-          promo: $("pc-promo").value.trim(),
-          purchaseReserve: parseFloat($("pc-reserve").value) || 0,
-          preferredTerm, monthlyChosen, totalDueToday,
-          notes: $("pc-notes").value.trim(),
+          state: "TX", productType: "Golf Cart",
+          cashPrice: cash, taxRate: 8.25, addLdw: false,
+          preferredTerm: selectedTerm,
+          monthlyChosen: Number(monthly.toFixed(2)),
+          totalDueToday: Number(totalDueToday.toFixed(2)),
         }),
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        msg.textContent = data.error || "Something went wrong (HTTP " + res.status + "). Please try again or call 936-223-1182.";
+        msg.textContent = data.error || "Something went wrong. Please try again or call 936-223-1182.";
         msg.classList.add("error"); msg.hidden = false;
         submit.disabled = false; submit.textContent = prev; return;
       }
