@@ -1671,6 +1671,7 @@ def page_financing():
                 <ul class="checks">
                   <li>Soft pull &mdash; <b>no credit minimum</b></li>
                   <li>Approvals in minutes</li>
+                  <li>Down payment required &mdash; <b>based on loan amount</b></li>
                   <li>Terms typically 36&ndash;48 months</li>
                   <li>Early buyout, no penalty</li>
                   <li><b>Return anytime</b> during the term</li>
