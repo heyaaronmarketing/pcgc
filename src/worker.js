@@ -56,6 +56,9 @@ export default {
     if (url.pathname === "/api/service-request" && request.method === "POST") {
       return submitServiceRequest(request, env);
     }
+    if (url.pathname === "/api/payment-lead" && request.method === "POST") {
+      return submitPaymentLead(request, env);
+    }
     if (url.pathname === "/api/agreements" && request.method === "GET") {
       return listAgreements(request, env);
     }
@@ -1394,6 +1397,149 @@ async function sendServiceRequestEmail(record, env) {
 }
 
 // Admin listing of service requests, newest first.
+// -------- Payment calculator leads (/payment-calculator/) --------
+// Mirrors Heartland Capital Investments' RTO payment calculator, but
+// hands the lead straight to the shop email on submit. Record lands
+// in KV under `payment-lead:<ts>:<id>` and the owner gets a Resend
+// email with every input + the computed terms.
+async function submitPaymentLead(request, env) {
+  if (!env.FEEDBACK_KV) return json({ error: "storage not configured" }, 503);
+  let payload;
+  try { payload = await request.json(); }
+  catch { return json({ error: "invalid JSON" }, 400); }
+
+  const clean = (v, cap) => String(v ?? "").slice(0, cap).trim();
+  const num = (v) => {
+    const n = Number(v);
+    return Number.isFinite(n) ? n : null;
+  };
+  const rec = {
+    name:   clean(payload.name, 200),
+    email:  clean(payload.email, 200),
+    phone:  clean(payload.phone, 40),
+    state:  clean(payload.state, 4) || "TX",
+    productType: clean(payload.productType, 60) || "Golf Cart",
+    cashPrice:   num(payload.cashPrice),
+    taxRate:     num(payload.taxRate),
+    addLdw:      !!payload.addLdw,
+    promo:       clean(payload.promo, 60),
+    purchaseReserve: num(payload.purchaseReserve) || 0,
+    preferredTerm:   num(payload.preferredTerm) || null,
+    monthlyChosen:   num(payload.monthlyChosen) || null,
+    totalDueToday:   num(payload.totalDueToday) || null,
+    notes:  clean(payload.notes, 2000),
+  };
+
+  const missing = [];
+  if (!rec.name) missing.push("name");
+  if (!rec.email) missing.push("email");
+  if (!rec.phone) missing.push("phone");
+  if (rec.cashPrice == null || rec.cashPrice <= 0) missing.push("cash price");
+  if (missing.length) return json({ error: `Missing: ${missing.join(", ")}` }, 400);
+  if (!/^\S+@\S+\.\S+$/.test(rec.email)) return json({ error: "invalid email" }, 400);
+
+  const ts = new Date().toISOString();
+  const idSuffix = crypto.randomUUID().slice(0, 6).toUpperCase();
+  const id = "PCGC-PMT-" + idSuffix;
+
+  const record = {
+    ...rec,
+    id, ts,
+    ua: (request.headers.get("user-agent") || "").slice(0, 500),
+    ip: request.headers.get("cf-connecting-ip") || "",
+  };
+  await env.FEEDBACK_KV.put(`payment-lead:${ts}:${idSuffix}`, JSON.stringify(record));
+
+  let ownerEmailResult = null;
+  if (env.RESEND_API_KEY) {
+    try {
+      await sendPaymentLeadEmail(record, env);
+      ownerEmailResult = "sent";
+    } catch (e) {
+      ownerEmailResult = "failed: " + (e?.message || String(e));
+      console.error("payment-lead email failed:", ownerEmailResult);
+    }
+  } else {
+    ownerEmailResult = "skipped (no RESEND_API_KEY)";
+  }
+
+  return json({ ok: true, id, ownerEmail: ownerEmailResult });
+}
+
+async function sendPaymentLeadEmail(record, env) {
+  const from = env.BOOKING_FROM_EMAIL || "bookings@polkcountygolfcarts.com";
+  const to = env.BOOKING_TO_EMAIL || "polkcountygolfcarts@yahoo.com";
+  const subject = `Rent-to-Own payment inquiry · ${record.name} · $${record.cashPrice} cart`;
+
+  const fmt$ = (n) => n == null ? "—" : "$" + Number(n).toFixed(2);
+  const termLine = record.preferredTerm
+    ? `${record.preferredTerm} months · ${fmt$(record.monthlyChosen)}/mo · ${fmt$(record.totalDueToday)} due today`
+    : "(no term selected)";
+
+  const html = `<!doctype html><html><body style="font-family:system-ui,Arial,sans-serif; max-width:560px; margin:0 auto; padding:1rem; color:#222;">
+    <h2 style="color:#1f5a68; margin:0 0 .5rem;">New rent-to-own payment inquiry</h2>
+    <p style="margin:0 0 1rem; color:#666;">Reference: <b>${escHtml(record.id)}</b></p>
+    <table style="width:100%; border-collapse:collapse; font-size:14px;">
+      <tr><td style="width:150px; color:#888; padding:6px 0;">Name</td><td style="padding:6px 0;"><b>${escHtml(record.name)}</b></td></tr>
+      <tr><td style="color:#888; padding:6px 0;">Phone</td><td style="padding:6px 0;"><a href="tel:${escHtml(record.phone)}">${escHtml(record.phone)}</a></td></tr>
+      <tr><td style="color:#888; padding:6px 0;">Email</td><td style="padding:6px 0;"><a href="mailto:${escHtml(record.email)}">${escHtml(record.email)}</a></td></tr>
+    </table>
+    <h3 style="margin:1.2rem 0 .35rem; color:#1f5a68; font-size:15px;">Calculator inputs</h3>
+    <table style="width:100%; border-collapse:collapse; font-size:14px;">
+      <tr><td style="width:150px; color:#888; padding:4px 0;">Cash price</td><td style="padding:4px 0;"><b>${fmt$(record.cashPrice)}</b></td></tr>
+      <tr><td style="color:#888; padding:4px 0;">State</td><td style="padding:4px 0;">${escHtml(record.state)}</td></tr>
+      <tr><td style="color:#888; padding:4px 0;">Tax rate</td><td style="padding:4px 0;">${record.taxRate != null ? record.taxRate + "%" : "—"}</td></tr>
+      <tr><td style="color:#888; padding:4px 0;">LDW?</td><td style="padding:4px 0;">${record.addLdw ? "Yes" : "No"}</td></tr>
+      <tr><td style="color:#888; padding:4px 0;">Purchase reserve</td><td style="padding:4px 0;">${fmt$(record.purchaseReserve)}</td></tr>
+      <tr><td style="color:#888; padding:4px 0;">Promo</td><td style="padding:4px 0;">${escHtml(record.promo) || "—"}</td></tr>
+    </table>
+    <h3 style="margin:1.2rem 0 .35rem; color:#1f5a68; font-size:15px;">Customer selected</h3>
+    <div style="background:#e6f1f3; border:1px solid #9fcfd7; border-radius:8px; padding:.85rem 1rem; font-size:14px; color:#1f5a68;"><b>${escHtml(termLine)}</b></div>
+    ${record.notes ? `<h3 style="margin:1.2rem 0 .35rem; color:#1f5a68; font-size:15px;">Notes</h3><div style="background:#fbf8f3; border:1px solid #ecd9c7; border-radius:8px; padding:.85rem 1rem; font-size:14px; white-space:pre-wrap;">${escHtml(record.notes)}</div>` : ""}
+    <p style="margin:1.5rem 0 .25rem; font-size:13px; color:#888;">Reply to this email to message ${escHtml(record.name)} directly, or call <a href="tel:${escHtml(record.phone)}">${escHtml(record.phone)}</a>. Final terms are set by HCI AppXpress at application time.</p>
+    <p style="margin:.25rem 0; font-size:12px; color:#aaa;">Received ${escHtml(record.ts)} · ${escHtml(record.ip || "?")}</p>
+  </body></html>`;
+
+  const text = [
+    `New rent-to-own payment inquiry — ${record.id}`,
+    ``,
+    `Name:        ${record.name}`,
+    `Phone:       ${record.phone}`,
+    `Email:       ${record.email}`,
+    ``,
+    `Cash price:  ${fmt$(record.cashPrice)}`,
+    `State:       ${record.state}`,
+    `Tax rate:    ${record.taxRate != null ? record.taxRate + "%" : "—"}`,
+    `LDW?:        ${record.addLdw ? "Yes" : "No"}`,
+    `Reserve:     ${fmt$(record.purchaseReserve)}`,
+    record.promo ? `Promo:       ${record.promo}` : null,
+    ``,
+    `Selected:    ${termLine}`,
+    record.notes ? `\nNotes:\n${record.notes}\n` : null,
+    `Final terms set by HCI AppXpress at application time.`,
+    `Received ${record.ts}`,
+  ].filter(Boolean).join("\n");
+
+  const body = {
+    from: `Online Cart Rentals <${from}>`,
+    to: [to],
+    subject,
+    html,
+    text,
+  };
+  if (record.email) body.reply_to = `${record.name} <${record.email}>`;
+
+  const res = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: { "authorization": `Bearer ${env.RESEND_API_KEY}`, "content-type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) {
+    const t = await res.text();
+    throw new Error(`resend ${res.status}: ${t}`);
+  }
+}
+
 async function listServiceRequests(request, env) {
   if (!env.FEEDBACK_KV) return json({ error: "kv not configured" }, 503);
   const auth = await checkAdminAuth(request, env);
