@@ -4491,24 +4491,32 @@ def main():
         print(f"  wrote {rel}")
     # robots + sitemap
     with open(os.path.join(ROOT, "robots.txt"), "w") as f:
+        # Default: allow everything, deny the admin surface + API.
+        # Explicit AI-bot allowlist follows — many AI crawlers honor
+        # a bare "Allow" under their own User-agent as a trust signal
+        # that the site intentionally welcomes them for citation.
+        ai_bots = [
+            "GPTBot", "ChatGPT-User", "OAI-SearchBot",
+            "ClaudeBot", "Claude-Web", "anthropic-ai",
+            "PerplexityBot", "Perplexity-User",
+            "Google-Extended", "GoogleOther",
+            "Applebot-Extended", "meta-externalagent", "FacebookBot",
+            "Amazonbot", "cohere-ai", "CCBot", "Bytespider",
+            "MistralAI-User", "Diffbot",
+        ]
         f.write(
             "User-agent: *\n"
             "Allow: /\n"
             "Disallow: /admin/\n"
             "Disallow: /api/\n"
-            # /rentals/ is left CRAWLABLE on purpose: the page itself
-            # carries <meta name="robots" content="noindex, nofollow">,
-            # and search engines need to be allowed to crawl the page
-            # to see that directive and drop the URL from the index.
-            # Blocking via robots.txt prevents the crawl, which is
-            # exactly what causes Google to index the URL anyway when
-            # it finds it via external links.
-            #
-            # Phase 1 (/breezy-ev/), Phase 2 (/golf-carts/), and
-            # Phase 3 (/guides/) trees are now PUBLIC — the
-            # `Disallow: /breezy-ev/`, `/golf-carts/`, `/guides/`
-            # lines that used to live here were removed during the
-            # SEO Priority 1 launch.
+            "\n"
+            "# AI crawlers — explicit allowlist (trust signal for bots\n"
+            "# that check for a named Allow rule before citing).\n"
+        )
+        for bot in ai_bots:
+            f.write(f"\nUser-agent: {bot}\nAllow: /\nDisallow: /admin/\nDisallow: /api/\n")
+        f.write(
+            "\n"
             "Sitemap: https://polkcountygolfcarts.com/sitemap.xml\n"
         )
     # Public URLs for the sitemap. Phase 1-3 pages (Breezy EV product

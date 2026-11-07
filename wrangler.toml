@@ -27,3 +27,15 @@ not_found_handling = "404-page"
 [[kv_namespaces]]
 binding = "FEEDBACK_KV"
 id = "be6aa9b721f34655b1596c8d8660097f"
+
+# D1 database for case-study pipeline (GSC/Bing stats, AI Overview CSVs,
+# IndexNow run log, traffic log). Binding kept as `DB` to match the
+# midwestcnc reference implementation.
+[[d1_databases]]
+binding = "DB"
+database_name = "pcgc-case-study"
+database_id = "baecd3cc-0312-4487-a7c7-98ff1d45a8ab"
+
+# Weekly case-study refresh — Mondays 13:00 UTC (early-morning CST)
+[triggers]
+crons = ["0 13 * * 1"]

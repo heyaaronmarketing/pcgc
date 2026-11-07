@@ -19,9 +19,64 @@ const KV_LIST_LIMIT = 200;
 const ADMIN_SESSION_TTL_SEC = 60 * 60 * 8;
 const ADMIN_COOKIE = "pcgc_admin";
 
+// Case-study pipeline module (GSC + Bing + IndexNow + AI-bot traffic log,
+// feeding /api/case-study.json for heyaaronmarketing.com case study pages).
+// Lives in its own file so this worker stays focused on booking/service
+// logic; the module is self-contained.
+import {
+  ensureCaseStudySchema,
+  handleCaseStudyJson,
+  handleCaseStudyAdminPage,
+  handleCaseStudyUpload,
+  runCaseStudyRefresh,
+  maybeLogTraffic,
+  handleTrafficAdminPage,
+} from "./case_study.js";
+
 export default {
+  async scheduled(controller, env, ctx) {
+    // Weekly cron fires the GSC + Bing pulls and pings IndexNow.
+    // Wrangler schedule is set in wrangler.toml (0 13 * * 1 — Mondays 13:00 UTC).
+    ctx.waitUntil(
+      runCaseStudyRefresh(env, { source: "cron", cron: controller.cron })
+        .catch((e) => console.error("case-study cron failed:", e?.message || e)),
+    );
+  },
+
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
+
+    // Log AI-bot and AI-engine-referral traffic to D1 (GA4 doesn't see this).
+    // Fire-and-forget — must not block the response.
+    try { maybeLogTraffic(request, env, ctx, url); } catch {}
+
+    // ---- Case-study pipeline routes ----
+    if (url.pathname === "/api/case-study.json" && request.method === "GET") {
+      return handleCaseStudyJson(env);
+    }
+    if (url.pathname === "/admin/case-study" && request.method === "GET") {
+      const auth = await checkAdminAuth(request, env);
+      if (auth) return auth;
+      return handleCaseStudyAdminPage(env);
+    }
+    if (url.pathname === "/admin/case-study/upload" && request.method === "POST") {
+      const auth = await checkAdminAuth(request, env);
+      if (auth) return auth;
+      return handleCaseStudyUpload(request, env, url);
+    }
+    if (url.pathname === "/admin/case-study/refresh" && request.method === "POST") {
+      const auth = await checkAdminAuth(request, env);
+      if (auth) return auth;
+      const r = await runCaseStudyRefresh(env, { source: "manual" });
+      return new Response(JSON.stringify(r, null, 2), {
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+    if (url.pathname === "/admin/traffic" && request.method === "GET") {
+      const auth = await checkAdminAuth(request, env);
+      if (auth) return auth;
+      return handleTrafficAdminPage(env);
+    }
 
     // Force everything onto the canonical apex hostname. Google (and
     // some directory backfills) had www.polkcountygolfcarts.com in
