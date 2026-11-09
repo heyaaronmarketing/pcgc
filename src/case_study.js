@@ -165,6 +165,14 @@ async function handleCaseStudyJson(env) {
   if (!env.DB) return jsonResponse({ error: "database not configured" }, 503);
   await ensureCaseStudySchema(env);
 
+  // Lazy import so case_study.js stays self-contained if the rank module
+  // isn't present yet during an upgrade.
+  let rankings = null;
+  try {
+    const { getRankingsForFeed } = await import("./rank_tracker.js");
+    rankings = await getRankingsForFeed(env);
+  } catch (e) { rankings = null; }
+
   const [daily, queries, pages, ai, metaRows, leads, traffic] = await Promise.all([
     env.DB.prepare("SELECT date, clicks, impressions, position FROM cs_gsc_daily ORDER BY date").all(),
     env.DB.prepare("SELECT query, clicks, position FROM cs_gsc_queries WHERE clicks > 0 ORDER BY clicks DESC LIMIT 25").all(),
@@ -255,6 +263,7 @@ async function handleCaseStudyJson(env) {
       by_type: leads.breakdown,
       source: "Cloudflare KV",
     },
+    rankings: rankings,
     traffic_signals: traffic,
     site_structure: {
       pages: 40,

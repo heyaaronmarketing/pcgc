@@ -32,14 +32,20 @@ import {
   maybeLogTraffic,
   handleTrafficAdminPage,
 } from "./case_study.js";
+import { handleRankSync, scheduledRankSync } from "./rank_tracker.js";
 
 export default {
   async scheduled(controller, env, ctx) {
-    // Weekly cron fires the GSC + Bing pulls and pings IndexNow.
-    // Wrangler schedule is set in wrangler.toml (0 13 * * 1 — Mondays 13:00 UTC).
+    // Weekly cron fires the GSC + Bing pulls, pings IndexNow, and walks a
+    // chunk of the DataForSEO rank sweep (chunked across weeks so a single
+    // invocation never runs out of time). Schedule set in wrangler.toml.
     ctx.waitUntil(
       runCaseStudyRefresh(env, { source: "cron", cron: controller.cron })
         .catch((e) => console.error("case-study cron failed:", e?.message || e)),
+    );
+    ctx.waitUntil(
+      scheduledRankSync(env, "https://polkcountygolfcarts.com")
+        .catch((e) => console.error("rank-sync cron failed:", e?.message || e)),
     );
   },
 
@@ -76,6 +82,11 @@ export default {
       const auth = await checkAdminAuth(request, env);
       if (auth) return auth;
       return handleTrafficAdminPage(env);
+    }
+    // Rank-sync is token-gated inside the handler (shared secret in env.RANK_TOKEN),
+    // so cron can hit it directly and so can curl from Aaron's machine.
+    if (url.pathname === "/api/rank-sync") {
+      return handleRankSync(request, url, env);
     }
 
     // Force everything onto the canonical apex hostname. Google (and

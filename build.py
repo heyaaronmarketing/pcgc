@@ -93,6 +93,12 @@ def head(title, desc, path="/", og_slug=None, noindex=False, structured_data=Non
             f'\n  <script defer src="https://static.cloudflareinsights.com/beacon.min.js" '
             f"data-cf-beacon='{{\"token\": \"{CLOUDFLARE_ANALYTICS_TOKEN}\"}}'></script>"
         )
+    if GA4_MEASUREMENT_ID:
+        analytics += (
+            f'\n  <script async src="https://www.googletagmanager.com/gtag/js?id={GA4_MEASUREMENT_ID}"></script>'
+            f'\n  <script>window.dataLayer=window.dataLayer||[];function gtag(){{dataLayer.push(arguments);}}'
+            f'gtag("js",new Date());gtag("config","{GA4_MEASUREMENT_ID}",{{anonymize_ip:true}});</script>'
+        )
     return dedent(f"""\
         <!doctype html>
         <html lang="en">
@@ -260,9 +266,17 @@ DEALER_DIRECT_APPLY_URL = "https://dealerdirect.apptraker.com/my/guest?dealer=11
 #     Add a site -> polkcountygolfcarts.com. Cloudflare gives a
 #     <script> tag with data-cf-beacon='{"token":"XXXX"}'. Paste the
 #     token below. Free, no cookies, no perf hit, zero PII.
+#
+#   GA4_MEASUREMENT_ID
+#     analytics.google.com -> Create property -> accept defaults ->
+#     pick "Web" data stream for https://polkcountygolfcarts.com ->
+#     copy the Measurement ID (starts with "G-"). Paste below.
+#     Fires gtag.js from googletagmanager.com, adds a $0 cookie banner
+#     dependency, pairs with the CF Analytics for source attribution.
 GOOGLE_SITE_VERIFICATION = ""
 BING_SITE_VERIFICATION = ""
 CLOUDFLARE_ANALYTICS_TOKEN = "fd4f94c888f9437ba7a7b44e9dd051fa"
+GA4_MEASUREMENT_ID = ""
 
 import json as _json
 
