@@ -1,13 +1,276 @@
-# Polk County Golf Carts — Full Q&A Index
+# Polk County Golf Carts — Full Content Index
 
 Last updated: 2026-11-09
 
-Every Q&A visible on polkcountygolfcarts.com, grouped by source page.
-Primary source for AI engine citations (llms.txt spec).
+> Serving our community as a family owned business since 2020 in Livingston, Texas.
+> Authorized Breezy EV golf cart dealer for East Texas — sales, service, custom builds, and rentals.
+
+This file is the comprehensive AI-engine source for polkcountygolfcarts.com.
+It carries the business profile, product catalog, service catalog, town coverage,
+guide catalog, and every Q&A visible on the site — all in plain text with source URLs.
+
+Index files:
+- Brief:  https://polkcountygolfcarts.com/llms.txt
+- Full:   https://polkcountygolfcarts.com/llms-full.txt (this file)
+- Feed:   https://polkcountygolfcarts.com/api/case-study.json (CORS-enabled, machine-readable stats)
 
 ---
 
-## /about-us/
+## Business profile
+
+- Name: Polk County Golf Carts
+- Short name: PCGC
+- Founded: 2020 · Family-owned
+- Owner: John
+- BBB Accredited: Yes (A+ rating) · https://www.bbb.org/us/tx/livingston/profile/recreational-vehicles/polk-county-golf-carts-0825-1000223827
+- Address: 1732 FM 3277, Livingston, TX 77351
+- Phone (primary): 936-223-1182 · tel:9362231182
+- Phone (secondary): 936-566-5069 · tel:9365665069
+- Email: polkcountygolfcarts@yahoo.com
+- Hours: Tue-Fri 9am-4pm, Saturday 9am-2pm, Closed Sunday-Monday and holidays
+- Emergency service calls can be arranged at an additional rate — call to schedule
+- Service area: San Jacinto, Polk, Walker, Trinity & Angelina counties
+- Free delivery radius: 25 miles of Livingston TX
+- Extended paid service radius: up to 75 miles
+- Tagline: Serving our community as a family owned business since 2020
+- Inventory: We sell brand-new Breezy EV carts, refurbished carts, and used carts — electric and gas.
+- Warranty: 2-year bumper-to-bumper on new carts, 8-year Lithium battery warranty
+
+## Pricing reference
+
+- New Breezy EV carts: Prices start at $12,500 and up depending on the model chosen — call for current pricing.
+  (Floor: $12,500; call for current pricing — configurations vary)
+- Used / refurbished carts: $3,000 - $8,000 range
+- Golf cart rentals: day rates from $100, week rates from $500
+- Repair tickets: $250-$450 typical, $110/hr diagnostic
+- Lead-acid pack replacement: $1,400-$1,850 installed
+- Lithium battery conversion: $2,900-$4,500 installed
+- Rent-to-own: No credit score needed, income-based approval via HCI AppXpress
+  (24/36/48-month terms, security deposit $500; see /payment-calculator/)
+- Financing: Soft credit pull via Lendmark Financial (traditional path) or HCI AppXpress (no-credit RTO path)
+
+## Services offered
+
+- New golf cart sales (Authorized Breezy EV dealer — Breeze 4, Breeze 4L, Breeze 6L, Terrain 6)
+- Used / refurbished golf cart sales (3-6 units typically in stock)
+- Rent-to-own used carts ($3k-$8k range, income-based approval)
+- Golf cart rentals (Lake Livingston area, 4/6/8-seater options)
+- Golf cart repair (all brands: Breezy EV, Club Car, E-Z-GO, Yamaha, ICON, Evolution, etc.)
+- Battery service: diagnostics, replacement (lead-acid or lithium)
+- Lithium battery conversions (highest-margin service line)
+- Controller + solenoid + motor diagnostics and repair
+- Street-legal LSV conversion (Texas-compliant lights, turn signals, seat belts, mirrors, VIN, title)
+- Custom builds (paint, lift kits, sound systems, seats, wheels)
+- Fleet / STR maintenance contracts (Lake Livingston rentals, marinas, resorts, HOAs)
+- E-signed rental agreements (replaces DocuSign subscription for the shop)
+- Free pickup and delivery within 25 miles of Livingston
+
+## Product catalog — Breezy EV lineup
+
+### Breezy EV Breeze 4
+Source: https://polkcountygolfcarts.com/breezy-ev/breeze-4/
+
+- Tagline: The everyday 4-seater. Street-cruiser stance, family-cruiser comfort.
+- Summary: Our entry into the Breezy EV lineup. Four passengers, low-profile street stance, all the modern touches (Lithium battery, CarPlay, Bluetooth sound bar) without the lift kit. Perfect for the neighborhood, the cul-de-sac, and the front-nine path.
+- Seats: 4
+- Configuration: Street stance
+- Ground clearance: 5.0 inches
+- Tire: 215/35 R14 DOT
+- Range: 45–55 miles
+- Dry weight: 1,102 lbs
+- Length × Width × Height: 116.7" × 48.8" × 78.0"
+- Best for: Neighborhood cruising · golf course paths · low-speed in-town runs · first-time golf cart owners
+- Common specs (every Breezy EV):
+  - Motor: 5 kW AC induction (Navitas 600A controller)
+  - Battery: 48V · 125Ah Lithium
+  - Charger: Smart on-board (120V / 220V AC)
+  - Drive: Rear-wheel drive
+  - Brakes: 4-wheel disc + electronic parking brake
+  - Warranty: 2-year bumper-to-bumper · 8-year Lithium battery
+  - Tech: Wireless CarPlay/Android Auto display · Bluetooth sound bar · LED lighting
+  - Storage: 39-gallon rear trunk with drain holes
+  - Speed Lsv: Programmable up to 25 mph (Texas LSV limit)
+- Price: Prices start at $12,500 and up depending on the model chosen — call for current pricing.
+
+### Breezy EV Breeze 4L
+Source: https://polkcountygolfcarts.com/breezy-ev/breeze-4l/
+
+- Tagline: The 4-seater, lifted. Off-road tires, lake-life attitude.
+- Summary: Same Breeze 4 platform with a lift kit and aggressive 23x10-14 DOT tires. Ride higher, see further, hit gravel roads and grass and the trail to the deer lease without thinking twice. Same Lithium powertrain, same warranty, more capability.
+- Seats: 4
+- Configuration: Lifted off-road
+- Ground clearance: 6.85 inches
+- Tire: 23x10-14 DOT off-road
+- Range: 35–50 miles
+- Dry weight: 1,213 lbs
+- Length × Width × Height: 119.3" × 51.6" × 82.5"
+- Best for: Lake Livingston · ranch & deer-lease · gravel-road cruising · weekends at the cabin
+- Common specs (every Breezy EV):
+  - Motor: 5 kW AC induction (Navitas 600A controller)
+  - Battery: 48V · 125Ah Lithium
+  - Charger: Smart on-board (120V / 220V AC)
+  - Drive: Rear-wheel drive
+  - Brakes: 4-wheel disc + electronic parking brake
+  - Warranty: 2-year bumper-to-bumper · 8-year Lithium battery
+  - Tech: Wireless CarPlay/Android Auto display · Bluetooth sound bar · LED lighting
+  - Storage: 39-gallon rear trunk with drain holes
+  - Speed Lsv: Programmable up to 25 mph (Texas LSV limit)
+- Price: Prices start at $12,500 and up depending on the model chosen — call for current pricing.
+
+### Breezy EV Breeze 6L
+Source: https://polkcountygolfcarts.com/breezy-ev/breeze-6l/
+
+- Tagline: Six seats. Lifted. Built for the whole family.
+- Summary: The family flagship. Six forward-facing seats with quilted upholstery, the same lift and tire package as the Breeze 4L, and the room to load up the kids, the cousins, and a cooler. Our best-selling rental fleet model and our most-asked-for new cart.
+- Seats: 6
+- Configuration: Lifted off-road
+- Ground clearance: 6.85 inches
+- Tire: 23x10-14 DOT off-road
+- Range: 45–55 miles
+- Dry weight: 1,389 lbs
+- Length × Width × Height: 149.0" × 51.6" × 82.2"
+- Best for: Family lake days · resort & event fleets · group hauling · rental income properties
+- Common specs (every Breezy EV):
+  - Motor: 5 kW AC induction (Navitas 600A controller)
+  - Battery: 48V · 125Ah Lithium
+  - Charger: Smart on-board (120V / 220V AC)
+  - Drive: Rear-wheel drive
+  - Brakes: 4-wheel disc + electronic parking brake
+  - Warranty: 2-year bumper-to-bumper · 8-year Lithium battery
+  - Tech: Wireless CarPlay/Android Auto display · Bluetooth sound bar · LED lighting
+  - Storage: 39-gallon rear trunk with drain holes
+  - Speed Lsv: Programmable up to 25 mph (Texas LSV limit)
+- Price: Prices start at $12,500 and up depending on the model chosen — call for current pricing.
+
+### Breezy EV Terrain 6
+Source: https://polkcountygolfcarts.com/breezy-ev/terrain-6/
+
+- Tagline: When you need to go places golf carts don't go.
+- Summary: Six seats and the highest ground clearance in the Breezy EV lineup. Built for the customer who wants the lift, the room, and the toughest stance we sell. Ranches, deer leases, beach houses, sand — the Terrain 6 is the cart that gets there.
+- Seats: 6
+- Configuration: Lifted off-road
+- Ground clearance: 7.1 inches
+- Tire: 23x10-14 DOT off-road (heavy-duty)
+- Range: 35–50 miles
+- Dry weight: 1,299 lbs
+- Length × Width × Height: 146.0" × 51.8" × 80.4"
+- Best for: Ranch & ag use · sand & beach · trail riding · the most demanding terrain
+- Common specs (every Breezy EV):
+  - Motor: 5 kW AC induction (Navitas 600A controller)
+  - Battery: 48V · 125Ah Lithium
+  - Charger: Smart on-board (120V / 220V AC)
+  - Drive: Rear-wheel drive
+  - Brakes: 4-wheel disc + electronic parking brake
+  - Warranty: 2-year bumper-to-bumper · 8-year Lithium battery
+  - Tech: Wireless CarPlay/Android Auto display · Bluetooth sound bar · LED lighting
+  - Storage: 39-gallon rear trunk with drain holes
+  - Speed Lsv: Programmable up to 25 mph (Texas LSV limit)
+- Price: Prices start at $12,500 and up depending on the model chosen — call for current pricing.
+
+## Towns we serve (geo landing pages)
+
+- **Livingston, TX** (Polk County, 0 mi from Livingston) — Free delivery
+  - URL: https://polkcountygolfcarts.com/golf-carts/livingston-tx/
+  - Positioning: We're right here. Our shop is on FM 3277 — the showroom you can be at in five minutes.
+  - Nearby landmarks: Lake Livingston State Park · Polk County Courthouse · US-59 corridor · Naskila Casino
+
+- **Onalaska, TX** (Polk County, 16 mi from Livingston) — Free delivery
+  - URL: https://polkcountygolfcarts.com/golf-carts/onalaska-tx/
+  - Positioning: Lake Livingston cart life starts in Onalaska. We deliver free across the lake's west and south shores.
+  - Nearby landmarks: Lake Livingston west shore · Lake Livingston Resort · Yaupon Cove · Beacon Bay
+
+- **Coldspring, TX** (San Jacinto County, 22 mi from Livingston) — Free delivery
+  - URL: https://polkcountygolfcarts.com/golf-carts/coldspring-tx/
+  - Positioning: Coldspring ranches and acreage. The kind of property where a lifted cart is the truck before the truck.
+  - Nearby landmarks: Sam Houston National Forest · Trinity River · Lake Livingston south shore
+
+- **Huntsville, TX** (Walker County, 30 mi from Livingston) — Extended delivery (extended)
+  - URL: https://polkcountygolfcarts.com/golf-carts/huntsville-tx/
+  - Positioning: Sam Houston State, tailgating, and the rolling hills outside town. Just inside our extended service area.
+  - Nearby landmarks: Sam Houston State University · Huntsville State Park · Sam Houston statue · I-45 corridor
+
+- **Lufkin, TX** (Angelina County, 50 mi from Livingston) — Extended delivery (extended)
+  - URL: https://polkcountygolfcarts.com/golf-carts/lufkin-tx/
+  - Positioning: Deep East Texas. We deliver to Lufkin — flat $75 extended fee, no surprise charges.
+  - Nearby landmarks: Angelina College · Ellen Trout Zoo · US-59 corridor · Sam Rayburn Reservoir
+
+- **Woodville, TX** (Tyler County, 45 mi from Livingston) — Extended delivery (extended)
+  - URL: https://polkcountygolfcarts.com/golf-carts/woodville-tx/
+  - Positioning: Dogwood Trails country. The lake-and-pines life that an electric cart was built for.
+  - Nearby landmarks: B.A. Steinhagen Lake · Lake Tejas · Big Thicket National Preserve · Dogwood Trails
+
+- **Shepherd, TX** (San Jacinto County, 22 mi from Livingston) — Free delivery
+  - URL: https://polkcountygolfcarts.com/golf-carts/shepherd-tx/
+  - Positioning: US-59 corridor. Shepherd sits inside our free delivery zone — we drop off, show you how it runs, and leave the paperwork in the console.
+  - Nearby landmarks: Lake Livingston south shore · US-59 corridor · Sam Houston National Forest · Big Creek Scenic Area
+
+- **Point Blank, TX** (San Jacinto County, 17 mi from Livingston) — Free delivery
+  - URL: https://polkcountygolfcarts.com/golf-carts/point-blank-tx/
+  - Positioning: Lake Livingston west shore. Point Blank and Cape Royale are the most cart-dense communities on the lake — and we're inside the free delivery zone.
+  - Nearby landmarks: Cape Royale · Lake Livingston west shore · Point Blank Marina · Governor's Point
+
+- **Cleveland, TX** (Liberty County, 45 mi from Livingston) — Extended delivery (extended)
+  - URL: https://polkcountygolfcarts.com/golf-carts/cleveland-tx/
+  - Positioning: Gateway to Colony Ridge. Cleveland is Liberty County's fastest-growing town — and nobody up here has a cart dealer of record. We deliver on a flat $75 extended fee.
+  - Nearby landmarks: Colony Ridge · Trinity River · US-59 corridor · Big Thicket preserve edge
+
+- **Liberty, TX** (Liberty County, 65 mi from Livingston) — Extended delivery (extended)
+  - URL: https://polkcountygolfcarts.com/golf-carts/liberty-tx/
+  - Positioning: The Liberty County seat and the Trinity-adjacent small-town market. We deliver to Liberty on the extended service plan — flat $75 anywhere inside our 75-mile reach.
+  - Nearby landmarks: Trinity River · Grand Ave historic district · Liberty Municipal Golf Course · Dayton & Mont Belvieu
+
+- **Dayton, TX** (Liberty County, 70 mi from Livingston) — Extended delivery (extended)
+  - URL: https://polkcountygolfcarts.com/golf-carts/dayton-tx/
+  - Positioning: Dayton is one of Liberty County's two anchors and the Houston-commute belt's eastern edge. Flat $75 delivery to anywhere inside Dayton city limits and the surrounding acreage.
+  - Nearby landmarks: Trinity River · US-90 corridor · Liberty & Mont Belvieu · Grand Parkway (99)
+
+- **New Waverly, TX** (Walker County, 45 mi from Livingston) — Extended delivery (extended)
+  - URL: https://polkcountygolfcarts.com/golf-carts/new-waverly-tx/
+  - Positioning: New Waverly sits where Sam Houston National Forest meets I-45. We deliver flat-rate $75 through our extended service plan.
+  - Nearby landmarks: Sam Houston National Forest · Riverside · Lake Conroe north rim · I-45 corridor
+
+## Guide catalog (pillar content)
+
+### What does it actually cost to own a golf cart?
+Source: https://polkcountygolfcarts.com/guides/cost-of-owning-a-golf-cart/
+
+- Lede: Sticker price is one number. Total cost of ownership is another. Here's the real math — purchase, financing, insurance, batteries, maintenance, depreciation — from a Texas dealer who's been running the numbers since 2020.
+- Sections: The number most people miss, Purchase price (year 1), Financing cost over 5 years, Insurance: cheaper than people expect, Battery replacement (the big one), Maintenance and tires
+- FAQ count: 5
+
+### 4-seater vs 6-seater golf cart: how to pick the right one
+Source: https://polkcountygolfcarts.com/guides/4-seater-vs-6-seater/
+
+- Lede: Two passengers and a cooler, or six kids and a dog? Here's how to choose between a 4-seater and a 6-seater golf cart without buyer's remorse.
+- Sections: The honest answer, When the 4-seater wins, When the 6-seater wins, Three things that change when you go bigger, Resale and rental value, Lifted vs. street: a different question
+- FAQ count: 5
+
+### Buying a used golf cart: 8 things to check first
+Source: https://polkcountygolfcarts.com/guides/buying-a-used-golf-cart/
+
+- Lede: A good used cart is a great value. A bad used cart is a $5,000 lawn ornament with a dead battery. Here's how to tell the difference before you pay.
+- Sections: Why used can be a great deal — or a disaster, 1. Ask for the battery's age, 2. Run a load test, 3. Check for water damage, 4. Inspect the frame for corrosion, 5. Listen to the controller and motor
+- FAQ count: 5
+
+### Lake Livingston Golf Cart Life — Where to Ride
+Source: https://polkcountygolfcarts.com/guides/lake-livingston-golf-cart-life/
+
+- Lede: Lake Livingston is a 90,000-acre lake with a thousand reasons to own a golf cart. Here's the local guide to riding, parking, and not getting stuck.
+- Sections: Why Lake Livingston is golf-cart country, The west shore: Onalaska and Yaupon Cove, The south shore: Coldspring and Point Blank, Charging at the lake house, Dock-to-house runs, Tournament weekends and the marina shuttle
+- FAQ count: 5
+
+### Lake Livingston Golf Cart Communities
+Source: https://polkcountygolfcarts.com/guides/lake-livingston-golf-cart-communities/
+
+- Lake-subdivision guide (Cape Royale, Waterwood, Onalaska peninsula, Elkins Lake)
+
+## Full Q&A index
+
+Every Q&A visible on the site, grouped by source page. Source of truth
+is the FAQPage JSON-LD; the visible <details> blocks render from the
+same data dict so the schema and the on-page copy never diverge.
+
+### /about-us/
 Source: https://polkcountygolfcarts.com/about-us/
 
 Q: How long has Polk County Golf Carts been in business?
@@ -22,8 +285,7 @@ A: Our primary service area is Polk, San Jacinto, Walker, Trinity, and Angelina 
 Q: Can I visit the showroom?
 A: Yes. The showroom is at 1732 FM 3277, Livingston TX 77351. Open Tuesday-Friday 9am-4pm and Saturday 9am-2pm. Closed Sunday and Monday.
 
-
-## /breezy-ev/breeze-4/
+### /breezy-ev/breeze-4/
 Source: https://polkcountygolfcarts.com/breezy-ev/breeze-4/
 
 Q: How fast does the Breeze 4 go?
@@ -41,8 +303,7 @@ A: Every new Breezy EV comes with a 2-year bumper-to-bumper warranty on the cart
 Q: Can I take the Breeze 4 off-road?
 A: The Breeze 4 is the non-lifted street model with 5.0 inches of ground clearance, which is plenty for paved roads and golf paths but not the right cart for ranch or trail use. If you need a lift, look at the Breeze 4L, Breeze 6L, or Terrain 6.
 
-
-## /breezy-ev/breeze-4l/
+### /breezy-ev/breeze-4l/
 Source: https://polkcountygolfcarts.com/breezy-ev/breeze-4l/
 
 Q: How fast does the Breeze 4L go?
@@ -60,8 +321,7 @@ A: Every new Breezy EV comes with a 2-year bumper-to-bumper warranty on the cart
 Q: Is the Breeze 4L good for off-road and ranch use?
 A: Yes — the Breeze 4L ships lifted from the factory with 6.85 inches of ground clearance and 23x10-14 DOT-rated off-road tires. It's the right fit for gravel roads, pasture, and the trail to the dock or the deer blind.
 
-
-## /breezy-ev/breeze-6l/
+### /breezy-ev/breeze-6l/
 Source: https://polkcountygolfcarts.com/breezy-ev/breeze-6l/
 
 Q: How fast does the Breeze 6L go?
@@ -79,8 +339,7 @@ A: Every new Breezy EV comes with a 2-year bumper-to-bumper warranty on the cart
 Q: Is the Breeze 6L good for off-road and ranch use?
 A: Yes — the Breeze 6L ships lifted from the factory with 6.85 inches of ground clearance and 23x10-14 DOT-rated off-road tires. It's the right fit for gravel roads, pasture, and the trail to the dock or the deer blind.
 
-
-## /breezy-ev/financing/
+### /breezy-ev/financing/
 Source: https://polkcountygolfcarts.com/breezy-ev/financing/
 
 Q: How long does the application take?
@@ -101,8 +360,7 @@ A: Lendmark and Dealer Direct both offer terms from 24 to 84 months. The longer 
 Q: Can I pay it off early?
 A: Yes. Both lenders allow early payoff with no prepayment penalty. Some customers refinance after 12-18 months once the cart is broken in and they know they're keeping it.
 
-
-## /breezy-ev/
+### /breezy-ev/
 Source: https://polkcountygolfcarts.com/breezy-ev/
 
 Q: Who sells Breezy EV golf carts in Texas?
@@ -117,8 +375,7 @@ A: Breezy EV carts start at $12,500 and go up depending on the model and options
 Q: What's the difference between Breezy EV lithium and lead-acid?
 A: Lithium packs last 8-10 years versus 3-5 for lead-acid, charge faster, are lighter, and don't lose range in hot weather. The upfront price difference pays back around year 4. See /breezy-ev/lithium-vs-lead-acid/ for a full cost breakdown.
 
-
-## /breezy-ev/lithium-vs-lead-acid/
+### /breezy-ev/lithium-vs-lead-acid/
 Source: https://polkcountygolfcarts.com/breezy-ev/lithium-vs-lead-acid/
 
 Q: Which is cheaper, lithium or lead-acid?
@@ -139,8 +396,7 @@ A: Yes. We pull the lead-acid pack, install the Lithium pack and a compatible ch
 Q: What about charging — does Lithium charge faster?
 A: Yes. A flat-to-full charge on Lithium takes 4-6 hours vs. 8-10 hours for lead-acid. Lithium also accepts partial charges without damage — you can top up for 30 minutes between trips without shortening the battery life, which lead-acid hates.
 
-
-## /breezy-ev/street-legal/
+### /breezy-ev/street-legal/
 Source: https://polkcountygolfcarts.com/breezy-ev/street-legal/
 
 Q: Are golf carts street legal in Texas?
@@ -161,8 +417,7 @@ A: Yes if you use it on any public road under one of the §551.403 exceptions �
 Q: Can kids drive a cart?
 A: Only with a valid driver's license — same as a car — if the cart is on a public road. On private roads inside a master planned community the POA sets the rules, and many allow under-16 drivers on internal streets. On your own private property, no license needed.
 
-
-## /breezy-ev/terrain-6/
+### /breezy-ev/terrain-6/
 Source: https://polkcountygolfcarts.com/breezy-ev/terrain-6/
 
 Q: How fast does the Terrain 6 go?
@@ -180,8 +435,7 @@ A: Every new Breezy EV comes with a 2-year bumper-to-bumper warranty on the cart
 Q: Is the Terrain 6 good for off-road and ranch use?
 A: Yes — the Terrain 6 ships lifted from the factory with 7.1 inches of ground clearance and 23x10-14 DOT-rated off-road tires. It's the right fit for gravel roads, pasture, and the trail to the dock or the deer blind.
 
-
-## /carts/
+### /carts/
 Source: https://polkcountygolfcarts.com/carts/
 
 Q: What golf carts for sale do you have in Livingston, TX?
@@ -196,8 +450,7 @@ A: Yes. Our used lot generally has 3-6 refurbished and used carts in the $3,000-
 Q: Can I finance a golf cart with bad credit?
 A: Yes. Our HCI AppXpress rent-to-own program is based on income, not FICO score, and does not require a traditional credit pull. Terms run 24-48 months with a $500 security deposit. See the payment calculator at /payment-calculator/ for a monthly estimate in 10 seconds.
 
-
-## /financing/
+### /financing/
 Source: https://polkcountygolfcarts.com/financing/
 
 Q: How do I apply for golf cart financing?
@@ -230,8 +483,7 @@ A: Yes. Both lenders cover new <b>and</b> used carts, including refurbished unit
 Q: How quickly can I take delivery after I'm approved?
 A: Often <b>same week</b>. Once the loan funds (usually one business day after you accept the offer), we coordinate pickup at our Livingston shop or free delivery within 25 miles. Extended delivery up to 100 miles is also available.
 
-
-## /fleet-service/
+### /fleet-service/
 Source: https://polkcountygolfcarts.com/fleet-service/
 
 Q: Do you service golf cart fleets for short-term rentals or resorts?
@@ -246,8 +498,7 @@ A: Yes. Our mobile service dispatches across Polk and San Jacinto counties. On-s
 Q: Do you handle emergency fleet calls during peak season?
 A: Yes — fleet contract customers get priority dispatch, including weekend calls during the lake season (April-September). Standard emergency rate applies outside normal business hours.
 
-
-## /guides/4-seater-vs-6-seater/
+### /guides/4-seater-vs-6-seater/
 Source: https://polkcountygolfcarts.com/guides/4-seater-vs-6-seater/
 
 Q: Is a 6-seater really worth the extra money?
@@ -265,8 +516,7 @@ A: Yes — Breezy EV rates the 6-seater for six adults. Range and acceleration d
 Q: Do 6-seaters need a stronger motor?
 A: No — the standard 5 kW AC motor and 48V/125Ah lithium pack are the same across the entire Breezy EV lineup. The 6-seater just gives up about 5-8 miles of range due to the extra weight.
 
-
-## /guides/buying-a-used-golf-cart/
+### /guides/buying-a-used-golf-cart/
 Source: https://polkcountygolfcarts.com/guides/buying-a-used-golf-cart/
 
 Q: How can I tell how old a used golf cart is?
@@ -284,8 +534,7 @@ A: Yes — Lendmark Financial finances used and refurbished carts the same way t
 Q: What's the most common thing wrong with a used cart?
 A: Tired batteries, by a wide margin. About 60% of the used carts we evaluate need a battery service or replacement to be road-worthy. Second most common: corroded electrical connections from sitting outside without a charger plugged in for months.
 
-
-## /guides/cost-of-owning-a-golf-cart/
+### /guides/cost-of-owning-a-golf-cart/
 Source: https://polkcountygolfcarts.com/guides/cost-of-owning-a-golf-cart/
 
 Q: How much does a new golf cart cost in Texas?
@@ -303,8 +552,7 @@ A: If you register your cart as a Texas Low Speed Vehicle (LSV) and add it to an
 Q: What's the biggest hidden cost?
 A: Battery replacement on lead-acid carts. A new lead-acid pack runs $1,200-$1,800 and needs replacement every 3-5 years — so over a 10-year ownership window you'll likely spend more on batteries than on the original cart's purchase price. This is the math that makes lithium worth the upfront premium for long-term owners.
 
-
-## /guides/
+### /guides/
 Source: https://polkcountygolfcarts.com/guides/
 
 Q: What should I know before buying a golf cart in Texas?
@@ -319,8 +567,7 @@ A: A standard golf cart is legal on private property, in some neighborhoods with
 Q: What's the best golf cart for Lake Livingston?
 A: For lake-community use the sweet spot is a 6-seat lithium cart with a lift kit — enough capacity for the family plus coolers, lithium for range through the summer, and lift for gravel driveways and ramps. The Breezy EV Terrain 6 is the closest off-the-shelf match. See /guides/lake-livingston-golf-cart-communities/ for neighborhood-specific guidance.
 
-
-## /guides/lake-livingston-golf-cart-life/
+### /guides/lake-livingston-golf-cart-life/
 Source: https://polkcountygolfcarts.com/guides/lake-livingston-golf-cart-life/
 
 Q: Can I drive a golf cart on Lake Livingston roads?
@@ -338,8 +585,7 @@ A: A typical Lake Livingston weekend (dock runs, marina trips, neighborhood crui
 Q: Can I tow a golf cart from town to the lake?
 A: Yes, on a standard 14-16 ft trailer (a 6-seater is 12.4 ft long; a 4-seater is 9.7 ft). PCGC's rig and trailer can deliver any cart to anywhere on Lake Livingston for free (within 25 mi) or $75 flat (25-75 mi).
 
-
-## /
+### /
 Source: https://polkcountygolfcarts.com/
 
 Q: Where is Polk County Golf Carts located?
@@ -357,8 +603,7 @@ A: Yes. Our shop services electric and gas golf carts from every major brand, in
 Q: What are your hours?
 A: Tuesday through Friday 9am to 4pm, Saturday 9am to 2pm. Closed Sunday and Monday. Emergency service calls can be arranged at an additional rate — call 936-223-1182.
 
-
-## /rent-to-own/
+### /rent-to-own/
 Source: https://polkcountygolfcarts.com/rent-to-own/
 
 Q: How does rent to own a golf cart work?
@@ -391,8 +636,22 @@ A: Terms typically run 36 to 48 months, depending on the cart and your approval.
 Q: What if I decide I don't want it anymore?
 A: You can return the cart during the rental period without an early-termination penalty — it's one of the biggest reasons buyers pick RTO over a loan. You lose the payments you've already made (same as any rental), but you don't owe a lump sum like you would on a repossessed loan.
 
+### /rentals/
+Source: https://polkcountygolfcarts.com/rentals/
 
-## /services/
+Q: Where can I find golf cart rentals near Lake Livingston?
+A: Polk County Golf Carts rents 4-seater, 6-seater, and 8-seater carts across Lake Livingston and the surrounding towns (Onalaska, Point Blank, Cape Royale, Coldspring, Livingston). Free pickup and delivery within 25 miles. Book online at /rentals/ or call 936-223-1182.
+
+Q: How much does a golf cart rental cost?
+A: Day rates start at $100, week rates start at $500. Pricing scales by cart size and rental length. The booking tool at /rentals/ shows the exact price for your dates after you pick a cart.
+
+Q: Are PCGC rental carts street legal?
+A: Rental carts are not titled as LSVs by default. They're legal on private roads, in neighborhoods with golf-cart ordinances, and on designated parts of Lake Livingston communities. Check your subdivision's rules before taking one on a public road.
+
+Q: Do you deliver rental carts to lake houses?
+A: Yes. Free delivery and pickup is included in every Lake Livingston area rental within 25 miles of our Livingston shop — Onalaska peninsula, Point Blank, Cape Royale, and the north shore. Longer-range delivery is available for a per-mile fee; ask when you book.
+
+### /services/
 Source: https://polkcountygolfcarts.com/services/
 
 Q: Where can I find golf cart repair near me in East Texas?
@@ -407,8 +666,7 @@ A: Yes. A full lead-acid pack replacement is $1,400-$1,850 installed (six 8V bat
 Q: Can you fix a golf cart that won't start?
 A: Yes — it's one of the most common tickets we see. The cause is usually one of: dead batteries, a failed solenoid, a bad micro-switch in the accelerator, a tripped controller, or a loose battery cable. Bring it in or request pickup and we'll diagnose it on the bench.
 
-
-## /street-legal-texas/
+### /street-legal-texas/
 Source: https://polkcountygolfcarts.com/street-legal-texas/
 
 Q: Are golf carts street legal in Texas?
@@ -441,3 +699,15 @@ A: Yes — a Texas Golf Cart plate from TxDMV. It's a one-time, non-expiring pla
 Q: What about Cape Royale, Elkins Lake, or Waterwood — can I drive my cart there?
 A: Yes. All three qualify as master planned communities with POA-maintained private roads under the §551.403 exception. Each has its own POA rules about equipment and speed, but Texas statute itself allows cart use on those internal streets. That's why these subdivisions have some of the highest cart ownership densities in East Texas.
 
+---
+
+## File metadata
+
+- File: llms-full.txt
+- Generated: 2026-11-09
+- Total pages indexed: 44
+- Total Q&A pairs: 121
+- Breezy EV models documented: 4
+- Guides documented: 5
+- Towns served: 12
+- Spec version: llmstxt.org 2024 (long-form variant)

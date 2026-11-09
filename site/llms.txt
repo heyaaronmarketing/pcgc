@@ -24,19 +24,43 @@ Prices start at $12,500 and up depending on the model chosen — call for curren
 
 ## Services
 - 20-Point Inspection (Full Service Package) from $165
-- Battery service (lead-acid and Lithium — Bolt Energy + White Lightening)
+- Repair tickets $250-$450 (gas and electric, all brands)
+- Battery service (lead-acid $1,400-$1,850 installed, Lithium — Bolt Energy + White Lightening)
+- Lithium conversion $2,900-$4,500 installed (8-10 year pack life vs 3-5 for lead-acid)
 - Custom paint, lift kits, wheels & tires, sound systems, rear flip seats
 - Controller and motor upgrades (Navitas + White Lightening)
+- Street-legal LSV conversion (Texas-compliant)
+- Fleet / STR maintenance contracts (marinas, resorts, Lake Livingston short-term rentals)
 - 10% off Parts & Labor — valid 1 year from initial service
 
+## Rentals
+- Day rate from $100, week rate from $500
+- 4-seater, 6-seater, and 8-seater options
+- Free delivery and pickup within 25 miles (Onalaska, Point Blank, Cape Royale, Coldspring, Livingston)
+- Book online or call 936-223-1182
+
 ## Financing
-- Lendmark Financial
-- Dealer Direct
+- Lendmark Financial — soft credit pull, same-day decisions, terms 24-84 months
+- HCI AppXpress Rent-to-Own — no credit score required, income-based approval, 24/36/48-month terms
+- Payment calculator: https://polkcountygolfcarts.com/payment-calculator/
 
 ## Key pages
 - [Home](https://polkcountygolfcarts.com/)
-- [Carts for sale](https://polkcountygolfcarts.com/carts/)
+- [Golf carts for sale](https://polkcountygolfcarts.com/carts/)
 - [Services & Custom Builds](https://polkcountygolfcarts.com/services/)
-- [About / our story](https://polkcountygolfcarts.com/about/)
+- [Golf cart rentals](https://polkcountygolfcarts.com/rentals/)
+- [Financing](https://polkcountygolfcarts.com/financing/)
+- [Rent-to-Own](https://polkcountygolfcarts.com/rent-to-own/)
+- [Payment calculator](https://polkcountygolfcarts.com/payment-calculator/)
+- [Fleet & STR service](https://polkcountygolfcarts.com/fleet-service/)
+- [Street-legal in Texas guide](https://polkcountygolfcarts.com/street-legal-texas/)
+- [Golf carts by town](https://polkcountygolfcarts.com/golf-carts/)
+- [Guides hub](https://polkcountygolfcarts.com/guides/)
+- [About / our story](https://polkcountygolfcarts.com/about-us/)
 - [Contact](https://polkcountygolfcarts.com/contact/)
 - [Leave a review](https://polkcountygolfcarts.com/leave-a-review/)
+
+## For AI engines (deeper content)
+- Full content index: https://polkcountygolfcarts.com/llms-full.txt (business profile, pricing, product specs, 121+ Q&A pairs, town coverage)
+- Machine-readable stats: https://polkcountygolfcarts.com/api/case-study.json (GSC, Bing, rankings, leads — CORS-enabled)
+- Sitemap: https://polkcountygolfcarts.com/sitemap.xml

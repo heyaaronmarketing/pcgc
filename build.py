@@ -4894,51 +4894,211 @@ Prices start at $12,500 and up depending on the model chosen — call for curren
 
 ## Services
 - 20-Point Inspection (Full Service Package) from $165
-- Battery service (lead-acid and Lithium — Bolt Energy + White Lightening)
+- Repair tickets $250-$450 (gas and electric, all brands)
+- Battery service (lead-acid $1,400-$1,850 installed, Lithium — Bolt Energy + White Lightening)
+- Lithium conversion $2,900-$4,500 installed (8-10 year pack life vs 3-5 for lead-acid)
 - Custom paint, lift kits, wheels & tires, sound systems, rear flip seats
 - Controller and motor upgrades (Navitas + White Lightening)
+- Street-legal LSV conversion (Texas-compliant)
+- Fleet / STR maintenance contracts (marinas, resorts, Lake Livingston short-term rentals)
 - 10% off Parts & Labor — valid 1 year from initial service
 
+## Rentals
+- Day rate from $100, week rate from $500
+- 4-seater, 6-seater, and 8-seater options
+- Free delivery and pickup within 25 miles (Onalaska, Point Blank, Cape Royale, Coldspring, Livingston)
+- Book online or call {BIZ['phone_primary']}
+
 ## Financing
-- Lendmark Financial
-- Dealer Direct
+- Lendmark Financial — soft credit pull, same-day decisions, terms 24-84 months
+- HCI AppXpress Rent-to-Own — no credit score required, income-based approval, 24/36/48-month terms
+- Payment calculator: https://polkcountygolfcarts.com/payment-calculator/
 
 ## Key pages
 - [Home](https://polkcountygolfcarts.com/)
-- [Carts for sale](https://polkcountygolfcarts.com/carts/)
+- [Golf carts for sale](https://polkcountygolfcarts.com/carts/)
 - [Services & Custom Builds](https://polkcountygolfcarts.com/services/)
-- [About / our story](https://polkcountygolfcarts.com/about/)
+- [Golf cart rentals](https://polkcountygolfcarts.com/rentals/)
+- [Financing](https://polkcountygolfcarts.com/financing/)
+- [Rent-to-Own](https://polkcountygolfcarts.com/rent-to-own/)
+- [Payment calculator](https://polkcountygolfcarts.com/payment-calculator/)
+- [Fleet & STR service](https://polkcountygolfcarts.com/fleet-service/)
+- [Street-legal in Texas guide](https://polkcountygolfcarts.com/street-legal-texas/)
+- [Golf carts by town](https://polkcountygolfcarts.com/golf-carts/)
+- [Guides hub](https://polkcountygolfcarts.com/guides/)
+- [About / our story](https://polkcountygolfcarts.com/about-us/)
 - [Contact](https://polkcountygolfcarts.com/contact/)
 - [Leave a review](https://polkcountygolfcarts.com/leave-a-review/)
+
+## For AI engines (deeper content)
+- Full content index: https://polkcountygolfcarts.com/llms-full.txt (business profile, pricing, product specs, 121+ Q&A pairs, town coverage)
+- Machine-readable stats: https://polkcountygolfcarts.com/api/case-study.json (GSC, Bing, rankings, leads — CORS-enabled)
+- Sitemap: https://polkcountygolfcarts.com/sitemap.xml
 """
     with open(os.path.join(ROOT, "llms.txt"), "w") as f:
         f.write(llms)
 
-    # ---- llms-full.txt — long-form Q&A index for AI engines ----
-    # Walks every HTML file we just wrote, extracts <details><summary> pairs
-    # (both FAQ schema entries and plain-HTML FAQ blocks produce this shape)
-    # plus FAQPage JSON-LD mainEntity lists, de-dupes, and emits plain text
-    # grouped by source page. AI engines (ChatGPT, Claude, Perplexity, Google
-    # AI Overviews) ingest llms-full.txt specifically and quote from it.
+    # ---- llms-full.txt — comprehensive content index for AI engines ----
+    # Beyond Q&A: business profile, pricing, product specs, services, town
+    # coverage, guide catalog, then FAQ pairs grouped by source page.
+    # Walks EVERY HTML file (not just PAGES.keys()) so hand-written static
+    # pages like /rentals/ get picked up.
     import re as _re
     import json as __json
-    lines = ["# Polk County Golf Carts — Full Q&A Index", "",
-             f"Last updated: {__import__('datetime').date.today().isoformat()}", "",
-             "Every Q&A visible on polkcountygolfcarts.com, grouped by source page.",
-             "Primary source for AI engine citations (llms.txt spec).",
-             "", "---", ""]
-    # Source of truth is FAQPage JSON-LD only; the visible <details>
-    # block is rendered from the same FAQS dict so there's no divergence.
-    # Earlier attempts parsed <summary>...<p>...</p> directly from the HTML
-    # but that picked up the first unrelated <p> when the FAQ answer had
-    # inline formatting (e.g. <b>), producing garbage answers.
-    jsonld_pat = _re.compile(
-        r'<script type="application/ld\+json">(.*?)</script>', _re.S
+    import glob as __glob
+
+    today = __import__('datetime').date.today().isoformat()
+    lines = [
+        "# Polk County Golf Carts — Full Content Index",
+        "",
+        f"Last updated: {today}",
+        "",
+        "> Serving our community as a family owned business since 2020 in Livingston, Texas.",
+        "> Authorized Breezy EV golf cart dealer for East Texas — sales, service, custom builds, and rentals.",
+        "",
+        "This file is the comprehensive AI-engine source for polkcountygolfcarts.com.",
+        "It carries the business profile, product catalog, service catalog, town coverage,",
+        "guide catalog, and every Q&A visible on the site — all in plain text with source URLs.",
+        "",
+        "Index files:",
+        "- Brief:  https://polkcountygolfcarts.com/llms.txt",
+        "- Full:   https://polkcountygolfcarts.com/llms-full.txt (this file)",
+        "- Feed:   https://polkcountygolfcarts.com/api/case-study.json (CORS-enabled, machine-readable stats)",
+        "",
+        "---",
+        "",
+        "## Business profile",
+        "",
+        f"- Name: {BIZ['name']}",
+        f"- Short name: {BIZ.get('short', 'PCGC')}",
+        f"- Founded: {BIZ['founded']} · Family-owned",
+        f"- Owner: {BIZ['owner']}",
+        f"- BBB Accredited: Yes (A+ rating) · {BIZ['bbb_url']}",
+        f"- Address: {BIZ['addr']}",
+        f"- Phone (primary): {BIZ['phone_primary']} · tel:{BIZ['phone_primary'].replace('-','')}",
+        f"- Phone (secondary): {BIZ['phone_secondary']} · tel:{BIZ['phone_secondary'].replace('-','')}",
+        f"- Email: {BIZ['email']}",
+        "- Hours: Tue-Fri 9am-4pm, Saturday 9am-2pm, Closed Sunday-Monday and holidays",
+        "- Emergency service calls can be arranged at an additional rate — call to schedule",
+        f"- Service area: {BIZ['service_area']}",
+        f"- Free delivery radius: {BIZ['delivery_radius']} miles of Livingston TX",
+        f"- Extended paid service radius: up to {BIZ['extended_radius']} miles",
+        f"- Tagline: {BIZ['tagline']}",
+        f"- Inventory: {BIZ['inventory_line']}",
+        "- Warranty: 2-year bumper-to-bumper on new carts, 8-year Lithium battery warranty",
+        "",
+        "## Pricing reference",
+        "",
+        f"- New Breezy EV carts: {PRICE_TEXT}",
+        f"  (Floor: ${PRICE_FROM:,}; call for current pricing — configurations vary)",
+        "- Used / refurbished carts: $3,000 - $8,000 range",
+        "- Golf cart rentals: day rates from $100, week rates from $500",
+        "- Repair tickets: $250-$450 typical, $110/hr diagnostic",
+        "- Lead-acid pack replacement: $1,400-$1,850 installed",
+        "- Lithium battery conversion: $2,900-$4,500 installed",
+        "- Rent-to-own: No credit score needed, income-based approval via HCI AppXpress",
+        "  (24/36/48-month terms, security deposit $500; see /payment-calculator/)",
+        "- Financing: Soft credit pull via Lendmark Financial (traditional path) or HCI AppXpress (no-credit RTO path)",
+        "",
+        "## Services offered",
+        "",
+        "- New golf cart sales (Authorized Breezy EV dealer — Breeze 4, Breeze 4L, Breeze 6L, Terrain 6)",
+        "- Used / refurbished golf cart sales (3-6 units typically in stock)",
+        "- Rent-to-own used carts ($3k-$8k range, income-based approval)",
+        "- Golf cart rentals (Lake Livingston area, 4/6/8-seater options)",
+        "- Golf cart repair (all brands: Breezy EV, Club Car, E-Z-GO, Yamaha, ICON, Evolution, etc.)",
+        "- Battery service: diagnostics, replacement (lead-acid or lithium)",
+        "- Lithium battery conversions (highest-margin service line)",
+        "- Controller + solenoid + motor diagnostics and repair",
+        "- Street-legal LSV conversion (Texas-compliant lights, turn signals, seat belts, mirrors, VIN, title)",
+        "- Custom builds (paint, lift kits, sound systems, seats, wheels)",
+        "- Fleet / STR maintenance contracts (Lake Livingston rentals, marinas, resorts, HOAs)",
+        "- E-signed rental agreements (replaces DocuSign subscription for the shop)",
+        "- Free pickup and delivery within 25 miles of Livingston",
+        "",
+        "## Product catalog — Breezy EV lineup",
+        "",
+    ]
+    # Products — all specs from BREEZY_EV_MODELS + BREEZY_EV_COMMON
+    for slug, m in BREEZY_EV_MODELS.items():
+        lines += [
+            f"### Breezy EV {m['name']}",
+            f"Source: https://polkcountygolfcarts.com/breezy-ev/{slug}/",
+            "",
+            f"- Tagline: {m['tagline']}",
+            f"- Summary: {m['summary']}",
+            f"- Seats: {m['seats']}",
+            f"- Configuration: {'Lifted off-road' if m['lifted'] else 'Street stance'}",
+            f"- Ground clearance: {m['ground_clearance_in']} inches",
+            f"- Tire: {m['tire']}",
+            f"- Range: {m['range_mi']} miles",
+            f"- Dry weight: {m['weight_lbs']:,} lbs",
+            f"- Length × Width × Height: {m['length_in']}\" × {m['width_in']}\" × {m['height_in']}\"",
+            f"- Best for: {m['best_for']}",
+            "- Common specs (every Breezy EV):",
+        ]
+        for k, v in BREEZY_EV_COMMON.items():
+            lines.append(f"  - {k.replace('_',' ').title()}: {v}")
+        lines += [f"- Price: {PRICE_TEXT}", ""]
+
+    # Town coverage
+    lines += [
+        "## Towns we serve (geo landing pages)",
+        "",
+    ]
+    for slug, t in TOWN_PAGES.items():
+        delivery = "Free delivery" if t.get("delivery") == "free" else f"Extended delivery ({t.get('delivery','paid')})"
+        dist = f"{t.get('distance_mi','?')} mi from Livingston"
+        lines += [
+            f"- **{t['name']}** ({t.get('county','East Texas')}, {dist}) — {delivery}",
+            f"  - URL: https://polkcountygolfcarts.com/golf-carts/{slug}/",
+            f"  - Positioning: {t.get('hook','').strip() or t.get('lifestyle_angle','service area town')}",
+            f"  - Nearby landmarks: {t.get('nearby','') or '—'}",
+            "",
+        ]
+
+    # Guide catalog
+    lines += [
+        "## Guide catalog (pillar content)",
+        "",
+    ]
+    for slug, g in GUIDES.items():
+        lines += [
+            f"### {g['title']}",
+            f"Source: https://polkcountygolfcarts.com/guides/{slug}/",
+            "",
+            f"- Lede: {_strip_tags(g.get('lede','') or '').strip()[:400]}",
+            f"- Sections: {', '.join(title for title, _ in g.get('sections', [])[:6])}",
+            f"- FAQ count: {len(g.get('faqs', []))}",
+            "",
+        ]
+    # Add the two freestanding guides that aren't in GUIDES dict
+    lines += [
+        "### Lake Livingston Golf Cart Communities",
+        "Source: https://polkcountygolfcarts.com/guides/lake-livingston-golf-cart-communities/",
+        "",
+        "- Lake-subdivision guide (Cape Royale, Waterwood, Onalaska peninsula, Elkins Lake)",
+        "",
+    ]
+
+    # ---- FAQ Q&A section (walk EVERY HTML file, not just PAGES.keys) ----
+    lines += [
+        "## Full Q&A index",
+        "",
+        "Every Q&A visible on the site, grouped by source page. Source of truth",
+        "is the FAQPage JSON-LD; the visible <details> blocks render from the",
+        "same data dict so the schema and the on-page copy never diverge.",
+        "",
+    ]
+    jsonld_pat = _re.compile(r'<script type="application/ld\+json">(.*?)</script>', _re.S)
+    html_files = sorted(
+        f for f in __glob.glob(os.path.join(ROOT, "**", "*.html"), recursive=True)
+        if "/admin/" not in f and "/agreements/" not in f
     )
-    for rel in sorted(PAGES.keys()):
-        full = os.path.join(ROOT, rel)
-        if not os.path.exists(full): continue
-        html = open(full, encoding="utf-8").read()
+    total_qa = 0
+    for full in html_files:
+        rel = os.path.relpath(full, ROOT)
+        html = open(full, encoding="utf-8", errors="ignore").read()
         if 'name="robots" content="noindex' in html: continue
         page_qa = []
         for m in jsonld_pat.finditer(html):
@@ -4947,28 +5107,52 @@ Prices start at $12,500 and up depending on the model chosen — call for curren
                 queue = obj if isinstance(obj, list) else [obj]
                 for node in queue:
                     if not isinstance(node, dict): continue
+                    # Direct FAQPage
                     if node.get("@type") == "FAQPage":
                         for e in (node.get("mainEntity") or []):
                             q = (e.get("name") or "").strip()
                             a = ((e.get("acceptedAnswer") or {}).get("text") or "").strip()
                             if q and a: page_qa.append((q, a))
+                    # @graph-wrapped nodes
+                    for inner in (node.get("@graph") or []):
+                        if isinstance(inner, dict) and inner.get("@type") == "FAQPage":
+                            for e in (inner.get("mainEntity") or []):
+                                q = (e.get("name") or "").strip()
+                                a = ((e.get("acceptedAnswer") or {}).get("text") or "").strip()
+                                if q and a: page_qa.append((q, a))
             except Exception:
                 pass
         if not page_qa: continue
-        # De-dupe by question
         seen, deduped = set(), []
         for q, a in page_qa:
             if q.lower() in seen: continue
             seen.add(q.lower()); deduped.append((q, a))
-        page_url = "/" if rel == "index.html" else "/" + rel.replace("index.html", "")
-        lines.append(f"## {page_url}")
+        page_url = "/" if rel == "index.html" else "/" + rel.replace("index.html", "").replace("\\", "/")
+        lines.append(f"### {page_url}")
         lines.append(f"Source: https://polkcountygolfcarts.com{page_url}")
         lines.append("")
         for q, a in deduped:
             lines.append(f"Q: {q}")
             lines.append(f"A: {a}")
             lines.append("")
-        lines.append("")
+            total_qa += 1
+
+    # Footer: machine-readable summary block for AI engines that need counts.
+    lines += [
+        "---",
+        "",
+        "## File metadata",
+        "",
+        f"- File: llms-full.txt",
+        f"- Generated: {today}",
+        f"- Total pages indexed: {len([f for f in html_files])}",
+        f"- Total Q&A pairs: {total_qa}",
+        f"- Breezy EV models documented: {len(BREEZY_EV_MODELS)}",
+        f"- Guides documented: {len(GUIDES) + 1}",  # +1 for lake-communities
+        f"- Towns served: {len(TOWN_PAGES)}",
+        "- Spec version: llmstxt.org 2024 (long-form variant)",
+        "",
+    ]
     with open(os.path.join(ROOT, "llms-full.txt"), "w") as f:
         f.write("\n".join(lines))
 
