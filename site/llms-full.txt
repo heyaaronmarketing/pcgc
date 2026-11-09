@@ -567,6 +567,24 @@ A: A standard golf cart is legal on private property, in some neighborhoods with
 Q: What's the best golf cart for Lake Livingston?
 A: For lake-community use the sweet spot is a 6-seat lithium cart with a lift kit — enough capacity for the family plus coolers, lithium for range through the summer, and lift for gravel driveways and ramps. The Breezy EV Terrain 6 is the closest off-the-shelf match. See /guides/lake-livingston-golf-cart-communities/ for neighborhood-specific guidance.
 
+### /guides/lake-livingston-golf-cart-communities/
+Source: https://polkcountygolfcarts.com/guides/lake-livingston-golf-cart-communities/
+
+Q: Which Lake Livingston communities allow golf carts on private roads?
+A: Cape Royale, Waterwood, Elkins Lake, Yaupon Cove, Governor's Point, and a few smaller subdivisions all qualify as master planned communities under Texas Transportation Code §551.403. Their POA-maintained private roads allow golf-cart use subject to each community's own rules on equipment, speed, and operator age.
+
+Q: Is Cape Royale a good place to own a golf cart?
+A: Yes — Cape Royale is one of the most cart-dense communities on Lake Livingston. About 1,800 homesites, 776 homes, 35+ short-term rentals, gated entrance, lakefront access, and a reopening golf course (fall 2028, TRA-managed). Lifted and street carts both work well.
+
+Q: Can I drive a golf cart on roads inside Waterwood?
+A: Yes. Waterwood is a master planned community on the Huntsville/Walker County side of Lake Livingston with POA-maintained private roads. It has longstanding cart culture, ~900 lots, and HOA dues around $900/year.
+
+Q: What's the best golf cart for Lake Livingston living?
+A: The sweet spot is a 6-seat lithium cart with a lift kit — enough capacity for family plus coolers, lithium for range through hot East Texas summers, and lift for gravel driveways and boat ramps. The Breezy EV Terrain 6 is the closest off-the-shelf match; see /breezy-ev/terrain-6/ for specs.
+
+Q: Does PCGC deliver to lake subdivisions?
+A: Yes — free delivery and pickup within 25 miles of our Livingston shop, which covers Cape Royale, Point Blank, Onalaska, Yaupon Cove, and Governor's Point. Longer-range delivery is available for a per-mile fee.
+
 ### /guides/lake-livingston-golf-cart-life/
 Source: https://polkcountygolfcarts.com/guides/lake-livingston-golf-cart-life/
 
@@ -706,7 +724,7 @@ A: Yes. All three qualify as master planned communities with POA-maintained priv
 - File: llms-full.txt
 - Generated: 2026-11-09
 - Total pages indexed: 44
-- Total Q&A pairs: 121
+- Total Q&A pairs: 126
 - Breezy EV models documented: 4
 - Guides documented: 5
 - Towns served: 12

@@ -841,6 +841,9 @@ def product_schema(slug, model):
             "url": f"https://polkcountygolfcarts.com/breezy-ev/{slug}/",
             "priceCurrency": "USD",
             "lowPrice": str(PRICE_FROM),
+            # Upper band — configurations with lift kit + lithium + accessories
+            # typically land $4-6k above the floor. Owner-stated ceiling.
+            "highPrice": str(PRICE_FROM + 6500),
             "offerCount": 1,
             "availability": "https://schema.org/InStock",
             "seller": {"@id": ENTITY_BUSINESS},
@@ -987,6 +990,18 @@ def site_entity_schemas():
                 "name": BIZ["name"],
                 "publisher": {"@id": ENTITY_ORG},
                 "inLanguage": "en-US",
+                # Google uses potentialAction to show a site-search box
+                # directly in the SERP under the brand result. Points at a
+                # Google-site: query since PCGC doesn't run its own site
+                # search engine — still enables the SERP feature.
+                "potentialAction": {
+                    "@type": "SearchAction",
+                    "target": {
+                        "@type": "EntryPoint",
+                        "urlTemplate": "https://www.google.com/search?q=site%3Apolkcountygolfcarts.com+{search_term_string}",
+                    },
+                    "query-input": "required name=search_term_string",
+                },
             },
         ],
     }
@@ -1280,13 +1295,40 @@ def page_carts():
 
 
 def page_services():
+    services_graph = [
+        breadcrumb_schema([("Home", "/"), ("Services", "/services/")]),
+        {
+            "@context": "https://schema.org",
+            "@type": "Service",
+            "name": "Golf Cart Service, Custom Builds & Repairs",
+            "serviceType": "Golf cart repair, maintenance, custom builds, battery replacement, lithium conversion",
+            "provider": {"@id": ENTITY_BUSINESS},
+            "areaServed": {
+                "@type": "GeoCircle",
+                "geoMidpoint": {"@type": "GeoCoordinates", "latitude": 30.7128, "longitude": -94.9319},
+                "geoRadius": "40000",  # 40 km ≈ 25 miles
+            },
+            "offers": {
+                "@type": "AggregateOffer",
+                "priceCurrency": "USD",
+                "lowPrice": "165",
+                "highPrice": "4500",
+                "offerCount": 6,
+                "availability": "https://schema.org/InStock",
+                "seller": {"@id": ENTITY_BUSINESS},
+            },
+            "description": "Full-service golf cart maintenance and custom builds: 20-point inspection from $165, battery replacement ($1,400-$1,850), lithium conversion ($2,900-$4,500), controller/motor repair, custom paint, lift kits, sound systems. All brands.",
+            "url": "https://polkcountygolfcarts.com/services/",
+        },
+        faq_schema_for('services'),
+    ]
     return (
         head(
             "Golf Cart Service, Custom Builds & Repairs",
             "Full-service golf cart maintenance and custom builds in Livingston, TX. Batteries, brakes, motors, controllers, lift kits, custom paint, wheels & tires. Service package from $165.",
             "/services/",
             og_slug="services",
-            structured_data=_json.dumps(faq_schema_for('services'))
+            structured_data=_json.dumps(services_graph),
         )
         + header("/services/")
         + dedent(f"""\
@@ -1768,12 +1810,47 @@ def page_about():
 
 
 def page_contact():
+    # /contact/ references the main AutoDealer entity (defined on homepage
+    # with @id=#business) rather than re-defining it. This avoids an @id
+    # conflict with different @types (AutoDealer vs LocalBusiness).
+    # ContactPage + ContactPoint pair is enough for Google's contact rich
+    # result when combined with the referenced main entity.
+    contact_graph = [
+        breadcrumb_schema([("Home", "/"), ("Contact", "/contact/")]),
+        {
+            "@context": "https://schema.org",
+            "@type": "ContactPage",
+            "name": "Contact Polk County Golf Carts",
+            "url": "https://polkcountygolfcarts.com/contact/",
+            "mainEntity": {"@id": ENTITY_BUSINESS},
+        },
+        {
+            "@context": "https://schema.org",
+            "@type": "ContactPoint",
+            "contactType": "sales",
+            "telephone": BIZ["phone_primary"],
+            "email": BIZ["email"],
+            "areaServed": "US-TX",
+            "availableLanguage": "English",
+            "parentOrganization": {"@id": ENTITY_BUSINESS},
+        },
+        {
+            "@context": "https://schema.org",
+            "@type": "ContactPoint",
+            "contactType": "customer service",
+            "telephone": BIZ["phone_secondary"],
+            "areaServed": "US-TX",
+            "availableLanguage": "English",
+            "parentOrganization": {"@id": ENTITY_BUSINESS},
+        },
+    ]
     return (
         head(
             "Contact Polk County Golf Carts",
             f"Reach Polk County Golf Carts in Livingston, TX. Call {BIZ['phone_primary']}, email {BIZ['email']}, or visit us at {BIZ['addr']}.",
             "/contact/",
             og_slug="contact",
+            structured_data=_json.dumps(contact_graph),
         )
         + header("/contact/")
         + dedent(f"""\
@@ -1858,6 +1935,9 @@ def page_privacy():
             "Privacy policy for Polk County Golf Carts.",
             "/privacy/",
             og_slug="privacy",
+            structured_data=_json.dumps([
+                breadcrumb_schema([("Home", "/"), ("Privacy", "/privacy/")]),
+            ]),
         )
         + header("/privacy/")
         + dedent(f"""\
@@ -2209,10 +2289,15 @@ def page_rent_to_own():
             "@type": "Offer",
             "url": "https://polkcountygolfcarts.com/rent-to-own/",
             "availability": "https://schema.org/InStock",
+            "price": "150.00",
+            "priceCurrency": "USD",
+            "seller": {"@id": ENTITY_BUSINESS},
             "priceSpecification": {
-                "@type": "PriceSpecification",
+                "@type": "UnitPriceSpecification",
                 "priceCurrency": "USD",
                 "price": "150.00",
+                "unitCode": "MON",
+                "referenceQuantity": {"@type": "QuantitativeValue", "value": 1, "unitCode": "MON"},
                 "description": "Monthly payment starting from (varies by cart + term + credit).",
             },
         },
@@ -2486,7 +2571,22 @@ def page_breezy_lineup():
               </div>
             </a>"""))
     cards_html = "\n".join(cards)
-    sd = breadcrumb_schema([("Home", "/"), ("Breezy EV", "/breezy-ev/")])
+    # Breezy EV hub: include an Organization entity for the brand itself
+    # so Google's knowledge graph links PCGC → the Breezy EV brand with
+    # proper attribution rather than treating "Breezy EV" as an orphan
+    # string.
+    sd = [
+        breadcrumb_schema([("Home", "/"), ("Breezy EV", "/breezy-ev/")]),
+        {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "name": "Breezy EV",
+            "url": "https://breezyev.com/",
+            "logo": "https://polkcountygolfcarts.com/assets/logos/breezy-ev-logo.png",
+            "sameAs": ["https://breezyev.com/"],
+            "description": "Breezy EV golf cart manufacturer. Polk County Golf Carts is the authorized East Texas dealer.",
+        },
+    ]
     return (
         head(
             "Breezy EV Golf Carts — The Lineup",
@@ -3863,11 +3963,101 @@ def page_town(slug):
         f'</a>'
         for m_slug, m in BREEZY_EV_MODELS.items()
     )
-    sd = breadcrumb_schema([
-        ("Home", "/"),
-        ("Golf carts by town", "/golf-carts/"),
-        (t["name"], f"/golf-carts/{slug}/"),
-    ])
+    # Build a page-scoped LocalBusiness + Service graph for this town.
+    # Google treats a LocalBusiness with explicit areaServed as a strong
+    # signal that PCGC is the dealer for THIS town specifically — more
+    # useful on a geo landing page than a generic AutoDealer reference.
+    town_lat = {
+        "livingston-tx": (30.7108, -94.9336), "onalaska-tx": (30.8085, -95.1127),
+        "coldspring-tx": (30.5929, -95.1261), "point-blank-tx": (30.7563, -95.2197),
+        "shepherd-tx": (30.4916, -94.9955), "cleveland-tx": (30.3410, -95.0855),
+        "liberty-tx": (30.0577, -94.7955), "dayton-tx": (30.0471, -94.8902),
+        "huntsville-tx": (30.7235, -95.5508), "new-waverly-tx": (30.5349, -95.4805),
+        "lufkin-tx": (31.3382, -94.7291), "woodville-tx": (30.7752, -94.4155),
+    }.get(slug, (30.7108, -94.9336))
+    is_free = t.get("delivery") == "free"
+    sd_list = [
+        breadcrumb_schema([
+            ("Home", "/"),
+            ("Golf carts by town", "/golf-carts/"),
+            (t["name"], f"/golf-carts/{slug}/"),
+        ]),
+        {
+            "@context": "https://schema.org",
+            "@type": "LocalBusiness",
+            "name": f"Polk County Golf Carts — serving {t['short_name']}",
+            "parentOrganization": {"@id": ENTITY_BUSINESS},
+            "url": f"https://polkcountygolfcarts.com/golf-carts/{slug}/",
+            "telephone": BIZ["phone_primary"],
+            "email": BIZ["email"],
+            "image": "https://polkcountygolfcarts.com/assets/logos/logo-color.png",
+            "address": {
+                "@type": "PostalAddress",
+                "streetAddress": "1732 FM 3277",
+                "addressLocality": "Livingston",
+                "addressRegion": "TX",
+                "postalCode": "77351",
+                "addressCountry": "US",
+            },
+            "geo": {"@type": "GeoCoordinates", "latitude": 30.7128, "longitude": -94.9319},
+            "areaServed": {
+                "@type": "Place",
+                "name": t["name"],
+                "address": {
+                    "@type": "PostalAddress",
+                    "addressLocality": t["short_name"],
+                    "addressRegion": "TX",
+                    "addressCountry": "US",
+                },
+                "geo": {"@type": "GeoCoordinates",
+                        "latitude": town_lat[0], "longitude": town_lat[1]},
+            },
+            "priceRange": "$$",
+            "openingHoursSpecification": [
+                {"@type": "OpeningHoursSpecification",
+                 "dayOfWeek": ["Tuesday","Wednesday","Thursday","Friday"],
+                 "opens": "09:00", "closes": "16:00"},
+                {"@type": "OpeningHoursSpecification",
+                 "dayOfWeek": "Saturday", "opens": "09:00", "closes": "14:00"},
+            ],
+        },
+        {
+            "@context": "https://schema.org",
+            "@type": "Service",
+            "name": f"Golf Cart Sales, Service & Delivery in {t['name']}",
+            "serviceType": "Golf cart sales, repair, and delivery",
+            "provider": {"@id": ENTITY_BUSINESS},
+            "areaServed": {
+                "@type": "Place",
+                "name": t["name"],
+                "address": {
+                    "@type": "PostalAddress",
+                    "addressLocality": t["short_name"],
+                    "addressRegion": "TX",
+                    "addressCountry": "US",
+                },
+                "geo": {"@type": "GeoCoordinates",
+                        "latitude": town_lat[0], "longitude": town_lat[1]},
+            },
+            "description": (
+                f"Brand-new Breezy EV, refurbished, and used golf carts delivered to {t['name']} "
+                f"({t.get('distance_mi', '?')} miles from our Livingston shop). "
+                f"{'Free' if is_free else 'Extended'} pickup & delivery. "
+                "Full service and custom builds for all brands."
+            ),
+            "offers": {
+                "@type": "AggregateOffer",
+                "priceCurrency": "USD",
+                "lowPrice": "3000",
+                "highPrice": "18000",
+                "offerCount": 4,
+                "availability": "https://schema.org/InStock",
+                "seller": {"@id": ENTITY_BUSINESS},
+                "url": f"https://polkcountygolfcarts.com/golf-carts/{slug}/",
+            },
+        },
+    ]
+    sd = sd_list
     return (
         head(
             f"Golf Carts in {t['name']} — Sales, Service & Delivery",
@@ -4072,6 +4262,9 @@ def page_reviews():
             "/leave-a-review/",
             og_slug="contact",
             noindex=False,
+            structured_data=_json.dumps([
+                breadcrumb_schema([("Home", "/"), ("Leave a Review", "/leave-a-review/")]),
+            ]),
         )
         + header("/leave-a-review/")
         + dedent(f"""\
@@ -4255,7 +4448,19 @@ def page_street_legal_tx():
             {"@type": "ListItem", "position": 2, "name": "Street Legal in Texas", "item": "https://polkcountygolfcarts.com/street-legal-texas/"},
         ],
     }
-    sd = json.dumps([faq_schema, breadcrumb_schema])
+    article_schema = {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "headline": "Are Golf Carts Street Legal in Texas? County-by-County Guide",
+        "description": "Authoritative guide to Texas Transportation Code §551.401-404: when a golf cart is street-legal, the LSV distinction, city/county authority, and equipment requirements. Citations to statute and AG opinion KP-0364.",
+        "image": "https://polkcountygolfcarts.com/assets/og/home.png",
+        "datePublished": "2026-06-01",
+        "dateModified": "2026-11-09",
+        "author": {"@type": "Organization", "name": BIZ["name"]},
+        "publisher": {"@id": ENTITY_ORG},
+        "mainEntityOfPage": "https://polkcountygolfcarts.com/street-legal-texas/",
+    }
+    sd = json.dumps([faq_schema, breadcrumb_schema, article_schema])
 
     faq_items = "".join(
         f"""<details class="rto-faq"><summary>{q}</summary><div class="rto-faq-body"><p>{a}</p></div></details>"""
@@ -4425,13 +4630,41 @@ def page_fleet_service():
     service contract", "airbnb golf cart" — all low-volume but
     high-value (one contract = $2k-$10k annual revenue).
     """
+    fleet_graph = [
+        breadcrumb_schema([("Home", "/"), ("Fleet & STR Service", "/fleet-service/")]),
+        {
+            "@context": "https://schema.org",
+            "@type": "Service",
+            "name": "Golf Cart Fleet Maintenance — STR, Marina & Resort",
+            "serviceType": "Fleet maintenance contracts for golf carts",
+            "provider": {"@id": ENTITY_BUSINESS},
+            "areaServed": {
+                "@type": "GeoCircle",
+                "geoMidpoint": {"@type": "GeoCoordinates", "latitude": 30.7128, "longitude": -94.9319},
+                "geoRadius": "40000",
+            },
+            "offers": {
+                "@type": "AggregateOffer",
+                "priceCurrency": "USD",
+                "lowPrice": "100",
+                "highPrice": "2000",
+                "offerCount": 4,
+                "availability": "https://schema.org/InStock",
+                "seller": {"@id": ENTITY_BUSINESS},
+                "url": "https://polkcountygolfcarts.com/fleet-service/",
+            },
+            "description": "Annual maintenance contracts for golf cart fleets — Lake Livingston marinas, Cape Royale and Onalaska STRs, resorts, state parks, HOAs. Fixed per-cart pricing scales with fleet size: STR owner (2-3 carts) typically $100-$200/mo, larger fleets priced per-cart.",
+            "url": "https://polkcountygolfcarts.com/fleet-service/",
+        },
+        faq_schema_for('fleet_service'),
+    ]
     return (
         head(
             "Golf Cart Fleet Maintenance — STR, Marina & Resort Service",
             "Annual maintenance contracts for golf cart fleets — Lake Livingston marinas, Cape Royale STRs, resorts, state parks. Fixed per-cart pricing, free pickup within 25 miles of Livingston, 24-hour turnaround on most repairs.",
             "/fleet-service/",
             og_slug="services",
-            structured_data=_json.dumps(faq_schema_for('fleet_service'))
+            structured_data=_json.dumps(fleet_graph),
         )
         + header("/fleet-service/")
         + dedent(f"""\
@@ -4709,12 +4942,52 @@ def page_lake_communities():
           </dl>
         </article>""" for c in communities)
 
+    lake_faqs = [
+        ("Which Lake Livingston communities allow golf carts on private roads?",
+         "Cape Royale, Waterwood, Elkins Lake, Yaupon Cove, Governor's Point, and a few smaller subdivisions all qualify as master planned communities under Texas Transportation Code §551.403. Their POA-maintained private roads allow golf-cart use subject to each community's own rules on equipment, speed, and operator age."),
+        ("Is Cape Royale a good place to own a golf cart?",
+         "Yes — Cape Royale is one of the most cart-dense communities on Lake Livingston. About 1,800 homesites, 776 homes, 35+ short-term rentals, gated entrance, lakefront access, and a reopening golf course (fall 2028, TRA-managed). Lifted and street carts both work well."),
+        ("Can I drive a golf cart on roads inside Waterwood?",
+         "Yes. Waterwood is a master planned community on the Huntsville/Walker County side of Lake Livingston with POA-maintained private roads. It has longstanding cart culture, ~900 lots, and HOA dues around $900/year."),
+        ("What's the best golf cart for Lake Livingston living?",
+         "The sweet spot is a 6-seat lithium cart with a lift kit — enough capacity for family plus coolers, lithium for range through hot East Texas summers, and lift for gravel driveways and boat ramps. The Breezy EV Terrain 6 is the closest off-the-shelf match; see /breezy-ev/terrain-6/ for specs."),
+        ("Does PCGC deliver to lake subdivisions?",
+         "Yes — free delivery and pickup within 25 miles of our Livingston shop, which covers Cape Royale, Point Blank, Onalaska, Yaupon Cove, and Governor's Point. Longer-range delivery is available for a per-mile fee."),
+    ]
+    lake_sd = [
+        breadcrumb_schema([
+            ("Home", "/"),
+            ("Guides", "/guides/"),
+            ("Lake Livingston Communities", "/guides/lake-livingston-golf-cart-communities/"),
+        ]),
+        {
+            "@context": "https://schema.org",
+            "@type": "Article",
+            "headline": "Lake Livingston Golf Cart Communities — Where Carts Rule",
+            "description": "A dealer's guide to the cart-dense subdivisions around Lake Livingston — Cape Royale, Waterwood, Elkins Lake, Yaupon Cove, Governor's Point — covering roads, POA rules, and cart fit.",
+            "image": "https://polkcountygolfcarts.com/assets/og/home.png",
+            "datePublished": "2026-07-01",
+            "dateModified": "2026-11-09",
+            "author": {"@type": "Organization", "name": BIZ["name"]},
+            "publisher": {"@id": ENTITY_ORG},
+            "mainEntityOfPage": "https://polkcountygolfcarts.com/guides/lake-livingston-golf-cart-communities/",
+        },
+        {
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": [
+                {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}}
+                for q, a in lake_faqs
+            ],
+        },
+    ]
     return (
         head(
             "Lake Livingston Golf Cart Communities — Where Carts Rule",
             "A dealer's guide to the cart-dense subdivisions around Lake Livingston: Cape Royale, Waterwood, Elkins Lake, Yaupon Cove, Governor's Point and more. Roads, rules, and what cart fits each.",
             "/guides/lake-livingston-golf-cart-communities/",
             og_slug="services",
+            structured_data=_json.dumps(lake_sd),
         )
         + header("/guides/lake-livingston-golf-cart-communities/")
         + dedent(f"""\
