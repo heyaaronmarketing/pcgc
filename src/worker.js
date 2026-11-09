@@ -89,6 +89,24 @@ export default {
       return handleRankSync(request, url, env);
     }
 
+    // Force HTTPS. Google had ~72% of all clicks landing on http:// URLs
+    // (196 + 152 vs 92 for https://) because the legacy GoDaddy site
+    // was indexed on HTTP and the three variants were ranking separately
+    // instead of consolidating signals on the canonical https:// URL.
+    // CF puts the original scheme in cf-visitor; when missing, x-forwarded-
+    // proto is the fallback; treat http as the default-deny.
+    const xfp = request.headers.get("x-forwarded-proto") || "";
+    const cfv = request.headers.get("cf-visitor") || "";
+    const schemeIsHttp =
+      xfp === "http" ||
+      (cfv && cfv.includes('"scheme":"http"') && !cfv.includes('"scheme":"https"'));
+    if (schemeIsHttp && url.protocol === "http:") {
+      const httpsUrl = new URL(url);
+      httpsUrl.protocol = "https:";
+      httpsUrl.hostname = "polkcountygolfcarts.com";
+      return Response.redirect(httpsUrl.toString(), 301);
+    }
+
     // Force everything onto the canonical apex hostname. Google (and
     // some directory backfills) had www.polkcountygolfcarts.com in
     // the index against a hostname that wasn't bound to the Worker;
@@ -210,6 +228,12 @@ export default {
     // so search engines (and bookmarks) move with us.
     if (url.pathname === "/about" || url.pathname === "/about/") {
       return Response.redirect(`${url.origin}/about-us/`, 301);
+    }
+    // /carts2/ was an abandoned duplicate of /carts/ that showed up as an
+    // orphan in the SEO audit. Delete + 301 so any lingering inbound link
+    // consolidates to the real page instead of 404ing.
+    if (url.pathname === "/carts2" || url.pathname === "/carts2/") {
+      return Response.redirect(`${url.origin}/carts/`, 301);
     }
 
     // Everything else flows to the static assets bound at env.ASSETS.

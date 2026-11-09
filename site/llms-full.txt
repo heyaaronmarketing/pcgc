@@ -1,0 +1,443 @@
+# Polk County Golf Carts — Full Q&A Index
+
+Last updated: 2026-11-09
+
+Every Q&A visible on polkcountygolfcarts.com, grouped by source page.
+Primary source for AI engine citations (llms.txt spec).
+
+---
+
+## /about-us/
+Source: https://polkcountygolfcarts.com/about-us/
+
+Q: How long has Polk County Golf Carts been in business?
+A: Polk County Golf Carts has been serving the Lake Livingston region since 2020 as a family-owned, BBB Accredited dealer. Founded by John Long with office manager Callie Long.
+
+Q: Is Polk County Golf Carts BBB accredited?
+A: Yes — PCGC is BBB Accredited with an A+ rating. Accreditation details are available on the PCGC BBB profile linked from the footer.
+
+Q: What areas do you serve?
+A: Our primary service area is Polk, San Jacinto, Walker, Trinity, and Angelina counties. We deliver and service free within 25 miles of Livingston (lake communities included). Extended delivery and service up to 75 miles is available for an additional charge.
+
+Q: Can I visit the showroom?
+A: Yes. The showroom is at 1732 FM 3277, Livingston TX 77351. Open Tuesday-Friday 9am-4pm and Saturday 9am-2pm. Closed Sunday and Monday.
+
+
+## /breezy-ev/breeze-4/
+Source: https://polkcountygolfcarts.com/breezy-ev/breeze-4/
+
+Q: How fast does the Breeze 4 go?
+A: The Breeze 4 is programmable up to 25 mph, which is the maximum allowed for a Low Speed Vehicle (LSV) on Texas streets. We program every cart at delivery to match how you plan to drive it — slower for kid-driving, faster for property use.
+
+Q: What's the range on a single charge?
+A: Breezy EV rates the Breeze 4 at 45–55 miles per charge on the standard 48V 125Ah Lithium pack. Real-world range depends on terrain, payload, and speed — Lake Livingston customers typically get a full weekend of cruising without needing to plug in.
+
+Q: Is it street legal in Texas?
+A: The Breeze 4 is sold as a golf cart, not a factory LSV — so public-road use in Texas is limited to specific exceptions under Transportation Code §551.403 (master planned communities like Cape Royale, Elkins Lake, and Waterwood; roads under 35 mph within 5 miles of a golf course during daytime; or city-authorized streets). Our street equipment package (headlights, taillights, mirrors, SMV emblem) gets the cart compliant with §551.402 and plated through TxDMV. For full street access on 35-45 mph roads you'd need a factory-manufactured LSV. See our street-legal Texas guide for the full breakdown.
+
+Q: What's the warranty?
+A: Every new Breezy EV comes with a 2-year bumper-to-bumper warranty on the cart and an 8-year warranty on the Lithium battery pack. PCGC backs the warranty locally — call us, we pick the cart up, we fix it, we bring it back.
+
+Q: Can I take the Breeze 4 off-road?
+A: The Breeze 4 is the non-lifted street model with 5.0 inches of ground clearance, which is plenty for paved roads and golf paths but not the right cart for ranch or trail use. If you need a lift, look at the Breeze 4L, Breeze 6L, or Terrain 6.
+
+
+## /breezy-ev/breeze-4l/
+Source: https://polkcountygolfcarts.com/breezy-ev/breeze-4l/
+
+Q: How fast does the Breeze 4L go?
+A: The Breeze 4L is programmable up to 25 mph, which is the maximum allowed for a Low Speed Vehicle (LSV) on Texas streets. We program every cart at delivery to match how you plan to drive it — slower for kid-driving, faster for property use.
+
+Q: What's the range on a single charge?
+A: Breezy EV rates the Breeze 4L at 35–50 miles per charge on the standard 48V 125Ah Lithium pack. Real-world range depends on terrain, payload, and speed — Lake Livingston customers typically get a full weekend of cruising without needing to plug in.
+
+Q: Is it street legal in Texas?
+A: The Breeze 4L is sold as a golf cart, not a factory LSV — so public-road use in Texas is limited to specific exceptions under Transportation Code §551.403 (master planned communities like Cape Royale, Elkins Lake, and Waterwood; roads under 35 mph within 5 miles of a golf course during daytime; or city-authorized streets). Our street equipment package (headlights, taillights, mirrors, SMV emblem) gets the cart compliant with §551.402 and plated through TxDMV. For full street access on 35-45 mph roads you'd need a factory-manufactured LSV. See our street-legal Texas guide for the full breakdown.
+
+Q: What's the warranty?
+A: Every new Breezy EV comes with a 2-year bumper-to-bumper warranty on the cart and an 8-year warranty on the Lithium battery pack. PCGC backs the warranty locally — call us, we pick the cart up, we fix it, we bring it back.
+
+Q: Is the Breeze 4L good for off-road and ranch use?
+A: Yes — the Breeze 4L ships lifted from the factory with 6.85 inches of ground clearance and 23x10-14 DOT-rated off-road tires. It's the right fit for gravel roads, pasture, and the trail to the dock or the deer blind.
+
+
+## /breezy-ev/breeze-6l/
+Source: https://polkcountygolfcarts.com/breezy-ev/breeze-6l/
+
+Q: How fast does the Breeze 6L go?
+A: The Breeze 6L is programmable up to 25 mph, which is the maximum allowed for a Low Speed Vehicle (LSV) on Texas streets. We program every cart at delivery to match how you plan to drive it — slower for kid-driving, faster for property use.
+
+Q: What's the range on a single charge?
+A: Breezy EV rates the Breeze 6L at 45–55 miles per charge on the standard 48V 125Ah Lithium pack. Real-world range depends on terrain, payload, and speed — Lake Livingston customers typically get a full weekend of cruising without needing to plug in.
+
+Q: Is it street legal in Texas?
+A: The Breeze 6L is sold as a golf cart, not a factory LSV — so public-road use in Texas is limited to specific exceptions under Transportation Code §551.403 (master planned communities like Cape Royale, Elkins Lake, and Waterwood; roads under 35 mph within 5 miles of a golf course during daytime; or city-authorized streets). Our street equipment package (headlights, taillights, mirrors, SMV emblem) gets the cart compliant with §551.402 and plated through TxDMV. For full street access on 35-45 mph roads you'd need a factory-manufactured LSV. See our street-legal Texas guide for the full breakdown.
+
+Q: What's the warranty?
+A: Every new Breezy EV comes with a 2-year bumper-to-bumper warranty on the cart and an 8-year warranty on the Lithium battery pack. PCGC backs the warranty locally — call us, we pick the cart up, we fix it, we bring it back.
+
+Q: Is the Breeze 6L good for off-road and ranch use?
+A: Yes — the Breeze 6L ships lifted from the factory with 6.85 inches of ground clearance and 23x10-14 DOT-rated off-road tires. It's the right fit for gravel roads, pasture, and the trail to the dock or the deer blind.
+
+
+## /breezy-ev/financing/
+Source: https://polkcountygolfcarts.com/breezy-ev/financing/
+
+Q: How long does the application take?
+A: Online, about five minutes. We submit to Lendmark Financial or Dealer Direct (or both) and most applicants get a soft decision the same business day. Hand us a driver's license, proof of income, and your contact info and we handle the rest.
+
+Q: Will applying hurt my credit?
+A: Lendmark and Dealer Direct both run soft pulls for the initial pre-qualification, which doesn't affect your credit score. A hard pull only happens once you decide to move forward with a specific offer.
+
+Q: What credit score do I need?
+A: We've placed loans across a wide range of credit profiles — there's no single cutoff. Lendmark in particular works with customers who have less-than-perfect credit. We'll always shop the application across both lenders and pick the better offer for you.
+
+Q: How much down payment do I need?
+A: It depends on the lender and the cart, but 10–20% is typical. Cash, trade-in, or a combination — all work. We'll quote the monthly with and without a down payment so you can decide.
+
+Q: What's the term length?
+A: Lendmark and Dealer Direct both offer terms from 24 to 84 months. The longer the term, the lower the monthly — but the more interest paid over the life of the loan. We help you find the sweet spot.
+
+Q: Can I pay it off early?
+A: Yes. Both lenders allow early payoff with no prepayment penalty. Some customers refinance after 12-18 months once the cart is broken in and they know they're keeping it.
+
+
+## /breezy-ev/
+Source: https://polkcountygolfcarts.com/breezy-ev/
+
+Q: Who sells Breezy EV golf carts in Texas?
+A: Polk County Golf Carts is the authorized Breezy EV dealer for East Texas. We stock the full lineup in our Livingston showroom and deliver statewide. Call 936-223-1182.
+
+Q: What Breezy EV models are available?
+A: We carry the Breeze 4 (compact 4-seater, lead-acid), Breeze 4L (same chassis with lithium), Breeze 6L (6-seater lithium family hauler), and Terrain 6 (lifted off-road package with 6 seats).
+
+Q: How much does a Breezy EV golf cart cost?
+A: Breezy EV carts start at $12,500 and go up depending on the model and options chosen. Call for current pricing — we don't publish per-model MSRP because configurations vary.
+
+Q: What's the difference between Breezy EV lithium and lead-acid?
+A: Lithium packs last 8-10 years versus 3-5 for lead-acid, charge faster, are lighter, and don't lose range in hot weather. The upfront price difference pays back around year 4. See /breezy-ev/lithium-vs-lead-acid/ for a full cost breakdown.
+
+
+## /breezy-ev/lithium-vs-lead-acid/
+Source: https://polkcountygolfcarts.com/breezy-ev/lithium-vs-lead-acid/
+
+Q: Which is cheaper, lithium or lead-acid?
+A: Upfront, lead-acid is cheaper — a full lead-acid pack costs roughly $1,200-$1,800, vs. $3,500-$5,500 for an equivalent Lithium pack. Over the cart's lifetime, Lithium wins on total cost of ownership because you don't replace it every 3-5 years like you do with lead-acid.
+
+Q: How much longer does a Lithium battery last?
+A: Lead-acid packs typically last 3-5 years with proper maintenance (watering, equalization charges). Lithium packs last 8-12 years with virtually no maintenance. Over the same 10-year window, you'd replace lead-acid 2-3 times — that math is what makes Lithium cheaper long-term.
+
+Q: Will Lithium really give me more range?
+A: Yes — 30-50% more in real-world conditions. A new Breezy EV with the standard 48V/125Ah Lithium pack delivers 45-55 miles per charge. The same cart with comparable lead-acid would do 25-35 miles before voltage sag becomes noticeable.
+
+Q: Is the Lithium battery safer?
+A: The cells we install — including the Bolt Energy and White Lightening lines — are LiFePO4 (Lithium Iron Phosphate). LiFePO4 is the safest Lithium chemistry on the market, with a much higher thermal-runaway threshold than the Lithium-ion in laptops or EVs. They're more thermally stable than a lead-acid pack actually.
+
+Q: Can I upgrade my existing cart to Lithium?
+A: Yes. We pull the lead-acid pack, install the Lithium pack and a compatible charger, and reprogram the controller for the Lithium voltage curve. Typical conversion: $3,500-$5,500 depending on the pack size. Most customers see the range boost on the first drive.
+
+Q: What about charging — does Lithium charge faster?
+A: Yes. A flat-to-full charge on Lithium takes 4-6 hours vs. 8-10 hours for lead-acid. Lithium also accepts partial charges without damage — you can top up for 30 minutes between trips without shortening the battery life, which lead-acid hates.
+
+
+## /breezy-ev/street-legal/
+Source: https://polkcountygolfcarts.com/breezy-ev/street-legal/
+
+Q: Are golf carts street legal in Texas?
+A: Only in specific places. Under Texas Transportation Code §551.403, a golf cart may use public roads inside a master planned community with uniform restrictive covenants, on roads posted 35 mph or less within 5 miles of a golf course during daytime, or on streets a city has specifically authorized. In our East Texas service area no city has passed a cart ordinance, so the practical path is a cart-friendly subdivision like Cape Royale, Elkins Lake, or Waterwood. For full details see our county-by-county street-legal guide.
+
+Q: Can I turn a golf cart into an LSV by adding equipment?
+A: No. A Low Speed Vehicle (LSV) is a federal classification under FMVSS 500 — it gets a 17-digit VIN at the factory, is titled and plated like a car, and may use roads up to 45 mph. Adding lights and mirrors to a golf cart does not make it an LSV. For full street access on 35-45 mph roads you need a factory-manufactured LSV; we can order one if that's the goal.
+
+Q: What's included in the street-equipment package?
+A: The §551.402 statutory list: headlamps, taillamps, reflectors, parking brake, mirrors, and a slow-moving-vehicle emblem. We install, inspect, and provide the paperwork to get your Texas Golf Cart plate from TxDMV. The plate is a one-time non-expiring plate — statutory cap $10, counties charge about $15 with processing.
+
+Q: Do I need insurance and a driver's license?
+A: Driver's license: yes, under AG Opinion KP-0364 (2021), any public-road use requires a valid Texas driver's license. Insurance: required when operating under a city ordinance (none of our local cities have one); not strictly required for the master-planned-community or golf-course exceptions, but strongly recommended. Most auto insurers will add a cart to your policy for $10-20/month.
+
+Q: Do I need to plate the cart?
+A: Yes if you use it on any public road under one of the §551.403 exceptions — a Texas Golf Cart plate from TxDMV via Form 130-U at your county tax office. The exception: carts used only inside a master planned community (like Cape Royale) don't need to be plated.
+
+Q: Can kids drive a cart?
+A: Only with a valid driver's license — same as a car — if the cart is on a public road. On private roads inside a master planned community the POA sets the rules, and many allow under-16 drivers on internal streets. On your own private property, no license needed.
+
+
+## /breezy-ev/terrain-6/
+Source: https://polkcountygolfcarts.com/breezy-ev/terrain-6/
+
+Q: How fast does the Terrain 6 go?
+A: The Terrain 6 is programmable up to 25 mph, which is the maximum allowed for a Low Speed Vehicle (LSV) on Texas streets. We program every cart at delivery to match how you plan to drive it — slower for kid-driving, faster for property use.
+
+Q: What's the range on a single charge?
+A: Breezy EV rates the Terrain 6 at 35–50 miles per charge on the standard 48V 125Ah Lithium pack. Real-world range depends on terrain, payload, and speed — Lake Livingston customers typically get a full weekend of cruising without needing to plug in.
+
+Q: Is it street legal in Texas?
+A: The Terrain 6 is sold as a golf cart, not a factory LSV — so public-road use in Texas is limited to specific exceptions under Transportation Code §551.403 (master planned communities like Cape Royale, Elkins Lake, and Waterwood; roads under 35 mph within 5 miles of a golf course during daytime; or city-authorized streets). Our street equipment package (headlights, taillights, mirrors, SMV emblem) gets the cart compliant with §551.402 and plated through TxDMV. For full street access on 35-45 mph roads you'd need a factory-manufactured LSV. See our street-legal Texas guide for the full breakdown.
+
+Q: What's the warranty?
+A: Every new Breezy EV comes with a 2-year bumper-to-bumper warranty on the cart and an 8-year warranty on the Lithium battery pack. PCGC backs the warranty locally — call us, we pick the cart up, we fix it, we bring it back.
+
+Q: Is the Terrain 6 good for off-road and ranch use?
+A: Yes — the Terrain 6 ships lifted from the factory with 7.1 inches of ground clearance and 23x10-14 DOT-rated off-road tires. It's the right fit for gravel roads, pasture, and the trail to the dock or the deer blind.
+
+
+## /carts/
+Source: https://polkcountygolfcarts.com/carts/
+
+Q: What golf carts for sale do you have in Livingston, TX?
+A: We stock brand-new Breezy EV carts (Breeze 4, Breeze 4L, Breeze 6L, Terrain 6), refurbished carts, and used carts across electric and gas. Inventory turns over regularly — call 936-223-1182 for what is on the lot today or request pickup from a specific model.
+
+Q: How much does a new golf cart cost at PCGC?
+A: Brand-new Breezy EV carts start at $12,500 and go up depending on the model and options chosen. Used carts typically run $3,000 to $8,000. We finance through HCI AppXpress (rent-to-own, no credit score required) and Lendmark Financial (soft pull, same-day decisions).
+
+Q: Do you have used golf carts for sale?
+A: Yes. Our used lot generally has 3-6 refurbished and used carts in the $3,000-$8,000 range at any time. Every used cart gets a full pre-sale inspection, and most qualify for our rent-to-own program.
+
+Q: Can I finance a golf cart with bad credit?
+A: Yes. Our HCI AppXpress rent-to-own program is based on income, not FICO score, and does not require a traditional credit pull. Terms run 24-48 months with a $500 security deposit. See the payment calculator at /payment-calculator/ for a monthly estimate in 10 seconds.
+
+
+## /financing/
+Source: https://polkcountygolfcarts.com/financing/
+
+Q: How do I apply for golf cart financing?
+A: Click <b>Apply Now</b> at the top of this page — it opens the Lendmark Financial pre-qualification form. It takes about five minutes, runs a <b>soft credit pull</b> (no impact to your score), and most applicants get a decision the same business day. Prefer to apply in person? Call <a href='tel:9362231182'>936-223-1182</a> or stop by 1732 FM 3277 in Livingston.
+
+Q: Will applying hurt my credit score?
+A: No. The initial application runs a <b>soft pull</b>, which doesn't show on your credit report and doesn't affect your score. A hard pull only happens after you've reviewed an offer and decided to move forward.
+
+Q: What credit score do I need to finance a golf cart?
+A: There's no single cutoff. We've placed loans across a wide range of credit profiles. Lendmark in particular works with <b>customers who have less-than-perfect credit</b>, including scores in the 500s and low 600s. Stronger credit usually means a lower APR and a longer term, but we won't know until we look at the application.
+
+Q: Can I finance a golf cart with bad credit?
+A: Often, yes. Lendmark Financial's program is built specifically for credit profiles that conventional banks turn down. We'll shop your application and tell you straight up what you'll qualify for. If we can't get you approved, we'll tell you that too instead of stringing you along.
+
+Q: How much down payment do I need?
+A: <b>10–20% is typical</b>, but it varies by lender, credit profile, and the specific cart. Cash, trade-in, or a combination — all work. We'll quote the monthly with and without a down payment so you can compare.
+
+Q: What's the term length on a golf cart loan?
+A: <b>24 to 84 months</b> depending on the lender, the cart, and your credit. Longer terms mean a lower monthly payment but more total interest. We help you find the right balance for your situation.
+
+Q: Is there a prepayment penalty?
+A: No. Both Lendmark Financial and Dealer Direct allow <b>early payoff with no prepayment penalty</b>. Pay it off whenever you want and you only owe the interest accrued to that date.
+
+Q: What documents do I need to apply?
+A: Lendmark's online application asks for the basics — driver's license, social security number, employer info, and contact details. If you'd like the strongest application, have a recent pay stub or two months of bank statements handy. For in-person applications, bring those plus the driver's license.
+
+Q: Do you finance used golf carts?
+A: Yes. Both lenders cover new <b>and</b> used carts, including refurbished units we've serviced in our shop. Used-cart APRs are usually a touch higher than new, but the lower price often makes the monthly payment <b>lower than financing a brand-new cart</b>.
+
+Q: How quickly can I take delivery after I'm approved?
+A: Often <b>same week</b>. Once the loan funds (usually one business day after you accept the offer), we coordinate pickup at our Livingston shop or free delivery within 25 miles. Extended delivery up to 100 miles is also available.
+
+
+## /fleet-service/
+Source: https://polkcountygolfcarts.com/fleet-service/
+
+Q: Do you service golf cart fleets for short-term rentals or resorts?
+A: Yes. We maintain golf cart fleets for Lake Livingston short-term rentals, marinas, resorts, and community HOAs. Annual service contracts cover scheduled inspections, battery health checks, tire rotations, and priority dispatch when a cart goes down.
+
+Q: How much does a fleet maintenance contract cost?
+A: Pricing scales with fleet size and service level. A small STR owner with 2-3 carts typically runs $100-$200/month. Resorts and marinas with 10+ carts pay per-cart with a volume discount. Call 936-223-1182 to scope your fleet.
+
+Q: Can you service carts on-site at the property?
+A: Yes. Our mobile service dispatches across Polk and San Jacinto counties. On-site diagnostics avoid the need to trailer a cart off the property, which matters during booked rental weeks when a cart being out of service costs the owner revenue.
+
+Q: Do you handle emergency fleet calls during peak season?
+A: Yes — fleet contract customers get priority dispatch, including weekend calls during the lake season (April-September). Standard emergency rate applies outside normal business hours.
+
+
+## /guides/4-seater-vs-6-seater/
+Source: https://polkcountygolfcarts.com/guides/4-seater-vs-6-seater/
+
+Q: Is a 6-seater really worth the extra money?
+A: If you regularly carry more than 4 people — yes, every time. The $1,500-$2,500 premium pays for itself in convenience the first weekend you'd have otherwise had to take two trips. If you rarely carry more than 4, save the money and get a 4-seater.
+
+Q: Can a 6-seater fit in a standard garage?
+A: A typical 6-seater is about 149" (12.4 ft) long. Most single-bay garages are 18-20 ft deep, so it fits. Two-bay garages handle it easily. Measure the depth (not just the door width) before you commit — and account for the windshield, which on some carts extends past the bumper.
+
+Q: How much faster is a 4-seater?
+A: Top speed is identical — both are programmable up to the Texas LSV limit of 25 mph. Acceleration on the 4 is slightly quicker because it's about 200 lbs lighter, but the difference is small. If you're not racing, you won't notice.
+
+Q: Can I put 6 adults in a 6-seater cart?
+A: Yes — Breezy EV rates the 6-seater for six adults. Range and acceleration decrease a bit at full load, and any cart feels different with six full-grown passengers vs. four, but it's designed for it.
+
+Q: Do 6-seaters need a stronger motor?
+A: No — the standard 5 kW AC motor and 48V/125Ah lithium pack are the same across the entire Breezy EV lineup. The 6-seater just gives up about 5-8 miles of range due to the extra weight.
+
+
+## /guides/buying-a-used-golf-cart/
+Source: https://polkcountygolfcarts.com/guides/buying-a-used-golf-cart/
+
+Q: How can I tell how old a used golf cart is?
+A: Look for the manufacturer's date plate (usually under the seat or on the frame near the rear axle). Most Breezy EV, Yamaha, Club Car, and EZGO carts have a build date stamped. For more precise age, look up the serial number in the manufacturer's database — your local dealer can help with this in five minutes.
+
+Q: How much should a used golf cart cost?
+A: A 3-5 year-old quality cart in good shape with healthy batteries runs $5,000-$8,000 at private sale, $6,500-$10,000 from a dealer (with warranty). Carts older than 7-8 years or with sketchy battery history can be had for $3,000-$5,000 — but plan to spend another $1,500-$5,500 to get them road-worthy.
+
+Q: Should I buy a used golf cart from a private seller or a dealer?
+A: Dealer carts cost 10-20% more but come with an inspection, a warranty, and someone to call if it breaks. Private-sale carts can be cheaper but you inherit every problem the seller didn't mention. First-time buyers — start at a dealer. Experienced buyers who can do their own inspection can save with a private deal.
+
+Q: Can I get financing on a used golf cart?
+A: Yes — Lendmark Financial finances used and refurbished carts the same way they finance new ones. Terms are typically a bit shorter (24-60 months vs. 24-84 for new) because the cart has fewer years of life left.
+
+Q: What's the most common thing wrong with a used cart?
+A: Tired batteries, by a wide margin. About 60% of the used carts we evaluate need a battery service or replacement to be road-worthy. Second most common: corroded electrical connections from sitting outside without a charger plugged in for months.
+
+
+## /guides/cost-of-owning-a-golf-cart/
+Source: https://polkcountygolfcarts.com/guides/cost-of-owning-a-golf-cart/
+
+Q: How much does a new golf cart cost in Texas?
+A: New Breezy EV golf carts at Polk County Golf Carts start at $12,500 and run up to about $18,000 depending on options (street-legal kit, lift, color, sound system, etc.). Used and refurbished carts run $4,000-$10,000.
+
+Q: Are golf carts cheaper to own than cars?
+A: Yes, by a wide margin. A new golf cart's total cost of ownership lands around $1,600-$2,400 per year over a 10-year horizon, vs. $7,000-$10,000+ for an equivalent-age compact car. The biggest savings are fuel ($90/year of electricity vs. $1,500+ of gas) and insurance ($10-$25/month vs. $80-$150/month).
+
+Q: How long does a golf cart last?
+A: With basic maintenance, a quality cart from a reputable dealer lasts 15-20 years. The battery is the consumable — lithium packs go 8-12 years before replacement, lead-acid 3-5. Everything else (frame, motor, controller, suspension) outlasts the battery several times over.
+
+Q: How much does insurance cost on a golf cart?
+A: If you register your cart as a Texas Low Speed Vehicle (LSV) and add it to an existing auto policy, expect $10-$25 per month. If you only use the cart on private property, you don't need insurance at all.
+
+Q: What's the biggest hidden cost?
+A: Battery replacement on lead-acid carts. A new lead-acid pack runs $1,200-$1,800 and needs replacement every 3-5 years — so over a 10-year ownership window you'll likely spend more on batteries than on the original cart's purchase price. This is the math that makes lithium worth the upfront premium for long-term owners.
+
+
+## /guides/
+Source: https://polkcountygolfcarts.com/guides/
+
+Q: What should I know before buying a golf cart in Texas?
+A: Start with: new vs refurbished vs used, 4 vs 6 seats, lithium vs lead-acid batteries, and whether you need a street-legal LSV configuration. Our buying guide at /guides/buying-a-used-golf-cart/ walks through each decision, and the /guides/4-seater-vs-6-seater/ page covers the seat-count tradeoff.
+
+Q: How much does owning a golf cart really cost?
+A: Beyond the sticker price, plan for a battery pack replacement every 3-5 years (lead-acid) or 8-10 years (lithium), roughly $150-$300/year in maintenance (brakes, tires, cables), and electricity costs of $30-$60/year for typical use. See /guides/cost-of-owning-a-golf-cart/ for a 5-year total-cost example.
+
+Q: Are golf carts street legal in Texas?
+A: A standard golf cart is legal on private property, in some neighborhoods with golf-cart ordinances, and on public roads with a posted speed limit of 35 mph or less in a county that allows it. Converting a cart to a Low-Speed Vehicle (LSV) requires lights, turn signals, seat belts, mirrors, a VIN, title, insurance, and a plate. See /street-legal-texas/.
+
+Q: What's the best golf cart for Lake Livingston?
+A: For lake-community use the sweet spot is a 6-seat lithium cart with a lift kit — enough capacity for the family plus coolers, lithium for range through the summer, and lift for gravel driveways and ramps. The Breezy EV Terrain 6 is the closest off-the-shelf match. See /guides/lake-livingston-golf-cart-communities/ for neighborhood-specific guidance.
+
+
+## /guides/lake-livingston-golf-cart-life/
+Source: https://polkcountygolfcarts.com/guides/lake-livingston-golf-cart-life/
+
+Q: Can I drive a golf cart on Lake Livingston roads?
+A: Yes, on any road posted 35 mph or less, with the cart registered as a Texas LSV (Low Speed Vehicle). That includes nearly every street in Onalaska, Coldspring, Point Blank, and the lake-house subdivisions. For unregistered carts, you're limited to private property — which is still 90% of where most lake-house owners drive.
+
+Q: Do I need a lifted cart for Lake Livingston?
+A: Depends on your shore. The west shore (Onalaska, Yaupon Cove) is mostly paved and a street-stance Breeze 4 handles fine. The south shore (Coldspring, Point Blank) has more gravel and unpaved access roads — get a lifted cart (4L, 6L, or Terrain 6).
+
+Q: Can I park my golf cart at the boat ramp?
+A: Yes at all the major public ramps (Wolf Creek Park, Pine Island Park, Cedar Point Park) and most private marinas. Check with your specific marina — some require you to park outside the trailer lanes.
+
+Q: How far can I drive on one charge around the lake?
+A: A typical Lake Livingston weekend (dock runs, marina trips, neighborhood cruising) uses 20-35 miles per day. The standard Breezy EV Lithium pack gives 35-55 miles per charge depending on model, so most owners only need to charge every other day or so.
+
+Q: Can I tow a golf cart from town to the lake?
+A: Yes, on a standard 14-16 ft trailer (a 6-seater is 12.4 ft long; a 4-seater is 9.7 ft). PCGC's rig and trailer can deliver any cart to anywhere on Lake Livingston for free (within 25 mi) or $75 flat (25-75 mi).
+
+
+## /
+Source: https://polkcountygolfcarts.com/
+
+Q: Where is Polk County Golf Carts located?
+A: Polk County Golf Carts is at 1732 FM 3277, Livingston, TX 77351. The shop sits about 10 minutes from downtown Livingston and serves Polk, San Jacinto, Walker, Trinity, and Angelina counties.
+
+Q: Do you deliver golf carts?
+A: Yes. Pickup and delivery are free within 25 miles of our Livingston shop. We offer extended service up to 75 miles for an additional charge. Call 936-223-1182 to schedule.
+
+Q: What golf cart brands do you sell?
+A: We are an authorized Breezy EV dealer for East Texas and carry the full lineup (Breeze 4, Breeze 4L, Breeze 6L, Terrain 6). We also stock refurbished and used carts from brands including Club Car, E-Z-GO, and Yamaha.
+
+Q: Do you repair all golf cart brands?
+A: Yes. Our shop services electric and gas golf carts from every major brand, including Club Car, E-Z-GO, Yamaha, ICON, Evolution, and Breezy EV. Battery replacement, controller diagnostics, motor rebuilds, and lithium conversions are all in-house.
+
+Q: What are your hours?
+A: Tuesday through Friday 9am to 4pm, Saturday 9am to 2pm. Closed Sunday and Monday. Emergency service calls can be arranged at an additional rate — call 936-223-1182.
+
+
+## /rent-to-own/
+Source: https://polkcountygolfcarts.com/rent-to-own/
+
+Q: How does rent to own a golf cart work?
+A: Our rent-to-own program is run through HCI AppXpress, a national specialty-finance partner. You pick a cart from our lot, apply online in about 90 seconds, and get an instant pre-qualification. Approved applicants put down the first payment, we deliver the cart, and you make monthly payments until you own it — or buy it out early for a discount. We service it the whole time.
+
+Q: Do you need good credit to qualify?
+A: No. The rent-to-own path exists specifically for buyers who can't get approved through traditional golf-cart loans. HCI AppXpress looks at income and ability to pay more than credit score. Many approvals happen in the 500s and even without a credit history at all.
+
+Q: Is there a credit check?
+A: Yes, but it's a soft check at the pre-qualification step — it won't hurt your score. A hard pull only happens if you decide to move forward with the agreement.
+
+Q: How much is the down payment?
+A: The down payment depends on your approval terms through HCI AppXpress. You'll see the exact amount in the application before you sign anything — call 936-223-1182 if you want us to walk through your specific numbers first.
+
+Q: What are the monthly payments on a rent-to-own golf cart?
+A: Payments depend on the cart you pick and the term length you choose, but most Breezy EV carts land in the $150–$350 per month range. Used carts are lower. You'll see the exact number before you sign anything.
+
+Q: Can I buy the cart out early?
+A: Yes. HCI AppXpress agreements include an early buyout option. Pay off the remaining balance (minus the finance charge) at any point and the cart is yours free and clear. There's no prepayment penalty.
+
+Q: What happens if the cart needs service during rent-to-own?
+A: We service it. Any mechanical issue inside normal wear-and-tear while you're still renting is on us — our 20-point service package, Breezy EV warranty, and the free pickup within 25 miles of Livingston all apply the same as a cash sale. Call 936-223-1182.
+
+Q: Do you deliver rent-to-own carts?
+A: Yes — free delivery within 25 miles of Livingston, TX, extended delivery 25–50 miles ($50) and 50–100 miles ($75). We handle every delivery personally, show you how to operate and charge the cart, and leave you with the paperwork and support numbers.
+
+Q: What's the term length — how long until I own it?
+A: Terms typically run 36 to 48 months, depending on the cart and your approval. Shorter terms = larger monthly payment but faster ownership. Longer terms = smaller monthly, more total cost. You pick what fits your budget.
+
+Q: What if I decide I don't want it anymore?
+A: You can return the cart during the rental period without an early-termination penalty — it's one of the biggest reasons buyers pick RTO over a loan. You lose the payments you've already made (same as any rental), but you don't owe a lump sum like you would on a repossessed loan.
+
+
+## /services/
+Source: https://polkcountygolfcarts.com/services/
+
+Q: Where can I find golf cart repair near me in East Texas?
+A: Polk County Golf Carts is based in Livingston, TX and services every major brand of electric and gas golf cart. We cover Polk, San Jacinto, Walker, Trinity, and Angelina counties with free pickup and delivery within 25 miles. Call 936-223-1182 to book a service ticket.
+
+Q: How much does a golf cart repair cost?
+A: Most repair tickets run $250-$450. Diagnostic time is $110/hr. Common jobs: solenoid replacement, controller testing, motor brush service, battery charger diagnostics, tire mounting, and brake work. Lithium conversions start at $2,900 installed.
+
+Q: Do you replace golf cart batteries?
+A: Yes. A full lead-acid pack replacement is $1,400-$1,850 installed (six 8V batteries plus labor). Lithium conversions run $2,900-$4,500 installed and last 8-10 years versus 3-5 for lead-acid, so most owners break even by year 4.
+
+Q: Can you fix a golf cart that won't start?
+A: Yes — it's one of the most common tickets we see. The cause is usually one of: dead batteries, a failed solenoid, a bad micro-switch in the accelerator, a tripped controller, or a loose battery cable. Bring it in or request pickup and we'll diagnose it on the bench.
+
+
+## /street-legal-texas/
+Source: https://polkcountygolfcarts.com/street-legal-texas/
+
+Q: Are golf carts street legal in Texas?
+A: Only in specific places. Under Texas Transportation Code §551.403, a golf cart may use public roads in just four situations: (1) inside a platted master planned community with uniform restrictive covenants (think Cape Royale, Elkins Lake); (2) on beaches open to vehicles; (3) on roads posted 35 mph or less, during daytime, within 5 miles of where the cart is parked, going to or from a golf course; (4) on streets a city has specifically authorized by ordinance. If none of those apply, the cart is not street legal on that road.
+
+Q: What's the difference between a golf cart and an LSV?
+A: They're two different vehicle classes under federal and Texas law. A golf cart is defined as a vehicle designed to carry a golfer and golf equipment, speed-limited, and governed by §551.401-404. A Low Speed Vehicle (LSV) is a federal class under FMVSS 500 — it has a 17-digit VIN, is titled and registered like a car, carries standard license plates, requires liability insurance, and may use roads posted up to 45 mph. A modified golf cart never becomes an LSV — the LSV classification comes from the manufacturer at build time.
+
+Q: Can I add a street-legal kit to make my golf cart an LSV?
+A: No. Adding headlights, mirrors, and a windshield to a golf cart does not turn it into an LSV. It's still a golf cart under Texas law, bound by the same §551.403 restrictions. If you want LSV road access, you have to buy a factory LSV with the FMVSS 500 VIN.
+
+Q: Does my city allow golf carts on public roads?
+A: We checked every city in our service area and none of them — Livingston, Onalaska, Coldspring, Shepherd, Point Blank, Cleveland, Liberty, Dayton, or Huntsville — has passed a golf-cart street ordinance. Huntsville voted one down 7-2 in 2020. That means in our region, public-road use rests entirely on the master-planned-community exception, the golf-course exception, or private POA roads.
+
+Q: Can my county authorize golf carts on county roads?
+A: No. Under §551.404(c), only Red River County or Gulf-coast counties may authorize county-road use. Polk, San Jacinto, Walker, and Liberty counties do not have this authority — and the 2025 Texas Legislature did not change it.
+
+Q: What equipment is required?
+A: A street-eligible golf cart needs: headlamps, taillamps, reflectors, parking brake, mirrors, and a slow-moving-vehicle emblem. That's the full statutory list from §551.402. It does not need turn signals, a windshield, or a horn — though those are good ideas.
+
+Q: Do I need a driver's license to drive one on a road?
+A: Yes. Attorney General Opinion KP-0364 (2021) is clear: operating a golf cart on any public road requires a valid Texas driver's license. The one exception is private roads inside a master planned community where the POA sets its own rules — many allow underage drivers on their internal streets.
+
+Q: Do I need insurance?
+A: Liability insurance is required when operating under a city ordinance (none of our local cities have one). It is not strictly required for the master-planned-community or golf-course exceptions — but we strongly recommend liability coverage on any cart that's driven anywhere other than your own property. Most standard auto insurers will add a cart to your policy for $10-20/month.
+
+Q: Do I need a license plate?
+A: Yes — a Texas Golf Cart plate from TxDMV. It's a one-time, non-expiring plate (statutory cap $10; counties charge about $15 with processing). Fill out Form 130-U at your county tax office. The one exception: carts used only inside a master planned community don't need to be plated.
+
+Q: What about Cape Royale, Elkins Lake, or Waterwood — can I drive my cart there?
+A: Yes. All three qualify as master planned communities with POA-maintained private roads under the §551.403 exception. Each has its own POA rules about equipment and speed, but Texas statute itself allows cart use on those internal streets. That's why these subdivisions have some of the highest cart ownership densities in East Texas.
+

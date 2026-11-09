@@ -70,6 +70,16 @@ NAV = [
 
 def head(title, desc, path="/", og_slug=None, noindex=False, structured_data=None):
     canonical = f"https://polkcountygolfcarts.com{path}"
+    # SEO truncation — Google truncates <title> around 60-65 chars and
+    # meta description around 155-160 chars. Rather than hand-trim every
+    # per-page string, shorten the brand suffix to "PCGC" when the page
+    # title is already long, and truncate descriptions at 158 chars with
+    # an ellipsis. This is applied inside the format string below.
+    brand = BIZ['name'] if len(title) <= 40 else "PCGC"
+    if len(desc) > 158:
+        # Cut on the last word boundary before 158ch so we don't chop a word.
+        cut = desc[:158].rsplit(" ", 1)[0]
+        desc = cut + "…"
     # Version-tag the OG image URL so Facebook/LinkedIn/X scrapers
     # re-fetch when we update the artwork. Bump this string when the
     # image bytes change.
@@ -127,7 +137,7 @@ def head(title, desc, path="/", og_slug=None, noindex=False, structured_data=Non
         <head>
           <meta charset="utf-8">
           <meta name="viewport" content="width=device-width, initial-scale=1">
-          <title>{title} | {BIZ['name']}</title>
+          <title>{title} | {brand}</title>
           <meta name="description" content="{desc}">
           {robots}
           <link rel="canonical" href="{canonical}">
@@ -136,7 +146,7 @@ def head(title, desc, path="/", og_slug=None, noindex=False, structured_data=Non
           <link rel="preconnect" href="https://fonts.cdnfonts.com">
           <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/grobold">
           <link rel="stylesheet" href="/assets/site.css?v={SITE_CSS_VER}">
-          <meta property="og:title" content="{title} | {BIZ['name']}">
+          <meta property="og:title" content="{title} | {brand}">
           <meta property="og:description" content="{desc}">
           <meta property="og:image" content="https://polkcountygolfcarts.com{og_image}">
           <meta property="og:image:width" content="1200">
@@ -144,7 +154,7 @@ def head(title, desc, path="/", og_slug=None, noindex=False, structured_data=Non
           <meta property="og:type" content="website">
           <meta property="og:url" content="{canonical}">
           <meta name="twitter:card" content="summary_large_image">
-          <meta name="twitter:title" content="{title} | {BIZ['name']}">
+          <meta name="twitter:title" content="{title} | {brand}">
           <meta name="twitter:description" content="{desc}">
           <meta name="twitter:image" content="https://polkcountygolfcarts.com{og_image}">
           {sd}{verify}{analytics}
@@ -195,13 +205,26 @@ def bbb_seal(klass=""):
 
 
 def footer():
-    nav_links = "\n".join(f'      <li><a href="{href}">{label}</a></li>' for label, href in NAV)
+    # Footer carries more surface area than the primary nav — include
+    # hubs and secondary landings that the top nav keeps lean. These
+    # were orphan pages (0 inbound internal links) before this fix.
+    FOOTER_LINKS = NAV + [
+        ("Golf Carts by Town", "/golf-carts/"),
+        ("Guides", "/guides/"),
+        ("Lake Communities Guide", "/guides/lake-livingston-golf-cart-communities/"),
+        ("Fleet & STR Service", "/fleet-service/"),
+        ("Rent-to-Own", "/rent-to-own/"),
+        ("Street-Legal in Texas", "/street-legal-texas/"),
+        ("Breezy EV Street-Legal Kit", "/breezy-ev/street-legal/"),
+        ("Leave a Review", "/leave-a-review/"),
+    ]
+    nav_links = "\n".join(f'      <li><a href="{href}">{label}</a></li>' for label, href in FOOTER_LINKS)
     return dedent(f"""\
         <footer class="site-footer">
           <div class="container">
             <div class="foot-grid">
               <div>
-                <img class="foot-mark" src="/assets/logos/logo-white.svg" alt="{BIZ['name']}" width="120" height="92">
+                <img class="foot-mark" src="/assets/logos/logo-white.svg" alt="{BIZ['name']}" width="120" height="92" loading="lazy">
                 <h4 class="brand-text-foot">{BIZ['name']}</h4>
                 <p>{BIZ['tagline']} in Livingston, Texas. {BIZ['inventory_line']} Free pickup &amp; delivery within {BIZ['delivery_radius']} miles, extended service up to {BIZ['extended_radius']} miles for an additional charge.</p>
                 {bbb_seal("bbb-seal-foot")}
@@ -632,6 +655,158 @@ def breezy_model_faqs(model):
     ]
 
 
+
+# =====================================================================
+# FAQ library + helpers — one source of truth for every page's Q&A.
+# =====================================================================
+# Keys match page slugs in FAQS. The faq_section() helper emits both the
+# visible <details> block AND is paired with faq_schema() inside each
+# page so the JSON-LD matches 1:1 with what the visitor sees — Google
+# requires this match for rich-result eligibility.
+
+FAQS = {
+    "home": [
+        ("Where is Polk County Golf Carts located?",
+         "Polk County Golf Carts is at 1732 FM 3277, Livingston, TX 77351. The shop sits about 10 minutes from downtown Livingston and serves Polk, San Jacinto, Walker, Trinity, and Angelina counties."),
+        ("Do you deliver golf carts?",
+         "Yes. Pickup and delivery are free within 25 miles of our Livingston shop. We offer extended service up to 75 miles for an additional charge. Call 936-223-1182 to schedule."),
+        ("What golf cart brands do you sell?",
+         "We are an authorized Breezy EV dealer for East Texas and carry the full lineup (Breeze 4, Breeze 4L, Breeze 6L, Terrain 6). We also stock refurbished and used carts from brands including Club Car, E-Z-GO, and Yamaha."),
+        ("Do you repair all golf cart brands?",
+         "Yes. Our shop services electric and gas golf carts from every major brand, including Club Car, E-Z-GO, Yamaha, ICON, Evolution, and Breezy EV. Battery replacement, controller diagnostics, motor rebuilds, and lithium conversions are all in-house."),
+        ("What are your hours?",
+         "Tuesday through Friday 9am to 4pm, Saturday 9am to 2pm. Closed Sunday and Monday. Emergency service calls can be arranged at an additional rate — call 936-223-1182."),
+    ],
+    "carts": [
+        ("What golf carts for sale do you have in Livingston, TX?",
+         "We stock brand-new Breezy EV carts (Breeze 4, Breeze 4L, Breeze 6L, Terrain 6), refurbished carts, and used carts across electric and gas. Inventory turns over regularly — call 936-223-1182 for what is on the lot today or request pickup from a specific model."),
+        ("How much does a new golf cart cost at PCGC?",
+         "Brand-new Breezy EV carts start at $12,500 and go up depending on the model and options chosen. Used carts typically run $3,000 to $8,000. We finance through HCI AppXpress (rent-to-own, no credit score required) and Lendmark Financial (soft pull, same-day decisions)."),
+        ("Do you have used golf carts for sale?",
+         "Yes. Our used lot generally has 3-6 refurbished and used carts in the $3,000-$8,000 range at any time. Every used cart gets a full pre-sale inspection, and most qualify for our rent-to-own program."),
+        ("Can I finance a golf cart with bad credit?",
+         "Yes. Our HCI AppXpress rent-to-own program is based on income, not FICO score, and does not require a traditional credit pull. Terms run 24-48 months with a $500 security deposit. See the payment calculator at /payment-calculator/ for a monthly estimate in 10 seconds."),
+    ],
+    "services": [
+        ("Where can I find golf cart repair near me in East Texas?",
+         "Polk County Golf Carts is based in Livingston, TX and services every major brand of electric and gas golf cart. We cover Polk, San Jacinto, Walker, Trinity, and Angelina counties with free pickup and delivery within 25 miles. Call 936-223-1182 to book a service ticket."),
+        ("How much does a golf cart repair cost?",
+         "Most repair tickets run $250-$450. Diagnostic time is $110/hr. Common jobs: solenoid replacement, controller testing, motor brush service, battery charger diagnostics, tire mounting, and brake work. Lithium conversions start at $2,900 installed."),
+        ("Do you replace golf cart batteries?",
+         "Yes. A full lead-acid pack replacement is $1,400-$1,850 installed (six 8V batteries plus labor). Lithium conversions run $2,900-$4,500 installed and last 8-10 years versus 3-5 for lead-acid, so most owners break even by year 4."),
+        ("Can you fix a golf cart that won't start?",
+         "Yes — it's one of the most common tickets we see. The cause is usually one of: dead batteries, a failed solenoid, a bad micro-switch in the accelerator, a tripped controller, or a loose battery cable. Bring it in or request pickup and we'll diagnose it on the bench."),
+    ],
+    "rentals": [
+        ("Where can I find golf cart rentals near Lake Livingston?",
+         "Polk County Golf Carts rents 4-seater, 6-seater, and 8-seater carts across Lake Livingston and the surrounding towns (Onalaska, Point Blank, Cape Royale, Coldspring, Livingston). Free pickup and delivery within 25 miles. Book online at /rentals/ or call 936-223-1182."),
+        ("How much does a golf cart rental cost?",
+         "Day rates start at $100, week rates start at $500. Pricing scales by cart size and rental length. The booking tool at /rentals/ shows the exact price for your dates after you pick a cart."),
+        ("Are PCGC rental carts street legal?",
+         "Rental carts are not titled as LSVs by default. They're legal on private roads, in neighborhoods with golf-cart ordinances, and on designated parts of Lake Livingston communities. Check your subdivision's rules before taking one on a public road."),
+        ("Do you deliver rental carts to lake houses?",
+         "Yes. Free delivery and pickup is included in every Lake Livingston area rental within 25 miles of our Livingston shop — Onalaska peninsula, Point Blank, Cape Royale, and the north shore. Longer-range delivery is available for a per-mile fee; ask when you book."),
+    ],
+    "breezy_ev": [
+        ("Who sells Breezy EV golf carts in Texas?",
+         "Polk County Golf Carts is the authorized Breezy EV dealer for East Texas. We stock the full lineup in our Livingston showroom and deliver statewide. Call 936-223-1182."),
+        ("What Breezy EV models are available?",
+         "We carry the Breeze 4 (compact 4-seater, lead-acid), Breeze 4L (same chassis with lithium), Breeze 6L (6-seater lithium family hauler), and Terrain 6 (lifted off-road package with 6 seats)."),
+        ("How much does a Breezy EV golf cart cost?",
+         "Breezy EV carts start at $12,500 and go up depending on the model and options chosen. Call for current pricing — we don't publish per-model MSRP because configurations vary."),
+        ("What's the difference between Breezy EV lithium and lead-acid?",
+         "Lithium packs last 8-10 years versus 3-5 for lead-acid, charge faster, are lighter, and don't lose range in hot weather. The upfront price difference pays back around year 4. See /breezy-ev/lithium-vs-lead-acid/ for a full cost breakdown."),
+    ],
+    "about": [
+        ("How long has Polk County Golf Carts been in business?",
+         "Polk County Golf Carts has been serving the Lake Livingston region since 2020 as a family-owned, BBB Accredited dealer. Founded by John Long with office manager Callie Long."),
+        ("Is Polk County Golf Carts BBB accredited?",
+         "Yes — PCGC is BBB Accredited with an A+ rating. Accreditation details are available on the PCGC BBB profile linked from the footer."),
+        ("What areas do you serve?",
+         "Our primary service area is Polk, San Jacinto, Walker, Trinity, and Angelina counties. We deliver and service free within 25 miles of Livingston (lake communities included). Extended delivery and service up to 75 miles is available for an additional charge."),
+        ("Can I visit the showroom?",
+         "Yes. The showroom is at 1732 FM 3277, Livingston TX 77351. Open Tuesday-Friday 9am-4pm and Saturday 9am-2pm. Closed Sunday and Monday."),
+    ],
+    "fleet_service": [
+        ("Do you service golf cart fleets for short-term rentals or resorts?",
+         "Yes. We maintain golf cart fleets for Lake Livingston short-term rentals, marinas, resorts, and community HOAs. Annual service contracts cover scheduled inspections, battery health checks, tire rotations, and priority dispatch when a cart goes down."),
+        ("How much does a fleet maintenance contract cost?",
+         "Pricing scales with fleet size and service level. A small STR owner with 2-3 carts typically runs $100-$200/month. Resorts and marinas with 10+ carts pay per-cart with a volume discount. Call 936-223-1182 to scope your fleet."),
+        ("Can you service carts on-site at the property?",
+         "Yes. Our mobile service dispatches across Polk and San Jacinto counties. On-site diagnostics avoid the need to trailer a cart off the property, which matters during booked rental weeks when a cart being out of service costs the owner revenue."),
+        ("Do you handle emergency fleet calls during peak season?",
+         "Yes — fleet contract customers get priority dispatch, including weekend calls during the lake season (April-September). Standard emergency rate applies outside normal business hours."),
+    ],
+    "guides": [
+        ("What should I know before buying a golf cart in Texas?",
+         "Start with: new vs refurbished vs used, 4 vs 6 seats, lithium vs lead-acid batteries, and whether you need a street-legal LSV configuration. Our buying guide at /guides/buying-a-used-golf-cart/ walks through each decision, and the /guides/4-seater-vs-6-seater/ page covers the seat-count tradeoff."),
+        ("How much does owning a golf cart really cost?",
+         "Beyond the sticker price, plan for a battery pack replacement every 3-5 years (lead-acid) or 8-10 years (lithium), roughly $150-$300/year in maintenance (brakes, tires, cables), and electricity costs of $30-$60/year for typical use. See /guides/cost-of-owning-a-golf-cart/ for a 5-year total-cost example."),
+        ("Are golf carts street legal in Texas?",
+         "A standard golf cart is legal on private property, in some neighborhoods with golf-cart ordinances, and on public roads with a posted speed limit of 35 mph or less in a county that allows it. Converting a cart to a Low-Speed Vehicle (LSV) requires lights, turn signals, seat belts, mirrors, a VIN, title, insurance, and a plate. See /street-legal-texas/."),
+        ("What's the best golf cart for Lake Livingston?",
+         "For lake-community use the sweet spot is a 6-seat lithium cart with a lift kit — enough capacity for the family plus coolers, lithium for range through the summer, and lift for gravel driveways and ramps. The Breezy EV Terrain 6 is the closest off-the-shelf match. See /guides/lake-livingston-golf-cart-communities/ for neighborhood-specific guidance."),
+    ],
+}
+
+def faq_section(key):
+    """Visible FAQ block — plain <details> list. Rendered inside the main
+    container so it inherits the standard page typography. Uses the
+    existing .faq / .faq-body classes so it matches /financing/ and
+    /rent-to-own/ visually without new CSS."""
+    faqs = FAQS.get(key, [])
+    if not faqs:
+        return ""
+    items = "".join(
+        f'<details><summary>{esc_html(q)}</summary>'
+        f'<div class="faq-body"><p>{esc_html(a)}</p></div></details>'
+        for q, a in faqs
+    )
+    return (
+        '<section class="section" aria-labelledby="faq-heading" style="padding-top:2rem;padding-bottom:2rem;">'
+        '  <div class="container" style="max-width:820px;">'
+        '    <h2 id="faq-heading">Frequently asked</h2>'
+        f'    <div class="faq">{items}</div>'
+        '  </div>'
+        '</section>'
+    )
+
+def esc_html(s):
+    return (str(s).replace("&", "&amp;").replace("<", "&lt;")
+                   .replace(">", "&gt;").replace('"', "&quot;"))
+
+def faq_schema_for(key):
+    """Returns the FAQPage dict for the given library key, or None."""
+    faqs = FAQS.get(key, [])
+    if not faqs: return None
+    return {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {"@type": "Question", "name": q,
+             "acceptedAnswer": {"@type": "Answer", "text": a}}
+            for q, a in faqs
+        ],
+    }
+
+def with_faq_schema(existing_sd_json, key):
+    """Merge FAQPage into an existing structured_data JSON string. Accepts
+    the string that would have been passed to head(structured_data=...);
+    returns the new JSON string with FAQPage appended (always as a list)."""
+    import json
+    faq = faq_schema_for(key)
+    if not faq: return existing_sd_json
+    try:
+        existing = json.loads(existing_sd_json) if existing_sd_json else None
+    except Exception:
+        return existing_sd_json
+    if existing is None:
+        return json.dumps(faq)
+    if isinstance(existing, list):
+        return json.dumps(existing + [faq])
+    return json.dumps([existing, faq])
+
+
 def faq_schema(faqs):
     """JSON-LD FAQPage schema (returns the dict; caller serializes)."""
     return {
@@ -826,7 +1001,7 @@ def page_home():
             "Polk County Golf Carts: brand-new Breezy EV, refurbished, and used carts — electric and gas — plus full service, custom builds, and free pickup & delivery within 25 miles of Livingston, TX (extended service up to 75 miles).",
             "/",
             og_slug="home",
-            structured_data=_json.dumps(site_entity_schemas()),
+            structured_data=with_faq_schema(_json.dumps(site_entity_schemas()), "home"),
         )
         + header("/")
         + dedent(f"""\
@@ -941,6 +1116,7 @@ def page_home():
           </div>
         </section>
         """)
+        + faq_section('home')
         + footer()
     )
 
@@ -948,18 +1124,19 @@ def page_home():
 def page_carts():
     return (
         head(
-            "Brand-New, Refurbished & Used Golf Carts",
-            "We sell brand-new Breezy EV carts, refurbished carts, and used carts — electric and gas — out of Livingston, TX. Lithium battery, 2-year warranty, app speed lock, CarPlay, street-legal option.",
+            "Golf Carts for Sale in Livingston, TX — New, Used, RTO",
+            "Golf carts for sale in Livingston, TX: brand-new Breezy EV, refurbished, and used electric and gas carts — plus rent-to-own with no credit score needed. Serving Polk, San Jacinto, Walker, Trinity, Angelina counties.",
             "/carts/",
             og_slug="carts",
+            structured_data=_json.dumps(faq_schema_for('carts'))
         )
         + header("/carts/")
         + dedent(f"""\
         <section class="hero" style="padding-bottom:3rem">
           <div class="container hero-split">
             <div>
-              <h1>Brand-new. Refurbished. Used.</h1>
-              <p class="lede">{BIZ['inventory_line']} Below: the cart we built our reputation around — the 2026 Breezy EV.</p>
+              <h1>Golf carts for sale in Livingston, TX.</h1>
+              <p class="lede">{BIZ['inventory_line']} Brand-new, refurbished, and used — plus rent-to-own with no credit score required. Below: the cart we built our reputation around, the 2026 Breezy EV.</p>
               <div class="hero-ctas">
                 <a class="btn btn-coral" href="tel:{BIZ['phone_primary'].replace('-','')}">Call {BIZ['phone_primary']}</a>
                 <a class="btn btn-outline" href="/contact/">Get a quote</a>
@@ -1082,6 +1259,7 @@ def page_carts():
           </div>
         </section>
         """)
+        + faq_section('carts')
         + footer()
     )
 
@@ -1093,6 +1271,7 @@ def page_services():
             "Full-service golf cart maintenance and custom builds in Livingston, TX. Batteries, brakes, motors, controllers, lift kits, custom paint, wheels & tires. Service package from $165.",
             "/services/",
             og_slug="services",
+            structured_data=_json.dumps(faq_schema_for('services'))
         )
         + header("/services/")
         + dedent(f"""\
@@ -1440,6 +1619,7 @@ def page_services():
           </div>
         </section>
         """)
+        + faq_section('services')
         + footer()
     )
 
@@ -1451,6 +1631,7 @@ def page_about():
             "Serving our community as a family owned business since 2020. Read our story, see what customers say, and meet John — owner and lead mechanic.",
             "/about-us/",
             og_slug="about",
+            structured_data=_json.dumps(faq_schema_for('about'))
         )
         + header("/about-us/")
         + dedent(f"""\
@@ -1552,6 +1733,7 @@ def page_about():
           </div>
         </section>
         """)
+        + faq_section('about')
         + footer()
     )
 
@@ -2283,7 +2465,7 @@ def page_breezy_lineup():
             "/breezy-ev/",
             og_slug="carts",
 
-            structured_data=_json.dumps(sd),
+            structured_data=with_faq_schema(_json.dumps(sd), 'breezy_ev'),
         )
         + header("/breezy-ev/")
         + dedent(f"""\
@@ -2496,6 +2678,7 @@ def page_breezy_lineup():
           </div>
         </section>
         """)
+        + faq_section('breezy_ev')
         + footer()
     )
 
@@ -2794,7 +2977,7 @@ def page_breezy_financing():
           <div class="container hero-split">
             <div>
               <span class="eyebrow">Pay over time</span>
-              <h1>Golf cart financing, made simple.</h1>
+              <h1>Breezy EV financing — HCI AppXpress + Lendmark.</h1>
               <p class="lede">Two lenders, soft credit pulls, same-day decisions, and a shop that walks you through the application instead of pointing you at a form. {PRICE_TEXT}</p>
               <div class="hero-ctas">
                 <a class="btn btn-coral" href="tel:{BIZ['phone_primary'].replace('-','')}">📞 Call {BIZ['phone_primary']}</a>
@@ -3588,7 +3771,7 @@ def page_guides_index():
             "/guides/",
             og_slug="home",
 
-            structured_data=_json.dumps(sd),
+            structured_data=with_faq_schema(_json.dumps(sd), 'guides'),
         )
         + header("/guides/")
         + dedent(f"""\
@@ -3608,6 +3791,7 @@ def page_guides_index():
           </div>
         </section>
         """)
+        + faq_section('guides')
         + footer()
     )
 
@@ -3729,7 +3913,57 @@ def page_town(slug):
           </div>
         </section>
         """)
+        + nearby_towns_section(slug)
         + footer()
+    )
+
+
+def nearby_towns_section(current_slug):
+    """4 geographically-closest other town pages. Builds internal link
+    equity across the geo cluster — before this each town page had only
+    1 inbound link from /golf-carts/."""
+    cur = TOWN_PAGES.get(current_slug)
+    if not cur: return ""
+    cur_lat = cur.get("lat")
+    cur_lng = cur.get("lng")
+    # Pre-set coordinates for all towns; if missing, fall back to alphabetic
+    coords = {
+        "livingston-tx": (30.7108, -94.9336),
+        "onalaska-tx": (30.8085, -95.1127),
+        "coldspring-tx": (30.5929, -95.1261),
+        "point-blank-tx": (30.7563, -95.2197),
+        "shepherd-tx": (30.4916, -94.9955),
+        "cleveland-tx": (30.3410, -95.0855),
+        "liberty-tx": (30.0577, -94.7955),
+        "dayton-tx": (30.0471, -94.8902),
+        "huntsville-tx": (30.7235, -95.5508),
+        "new-waverly-tx": (30.5349, -95.4805),
+        "lufkin-tx": (31.3382, -94.7291),
+        "woodville-tx": (30.7752, -94.4155),
+    }
+    import math
+    def dist(s1, s2):
+        a, b = coords.get(s1), coords.get(s2)
+        if not a or not b: return 999
+        return math.sqrt((a[0]-b[0])**2 + (a[1]-b[1])**2)
+    neighbors = sorted(
+        [s for s in TOWN_PAGES if s != current_slug],
+        key=lambda s: dist(current_slug, s),
+    )[:4]
+    cards = "".join(
+        f'<a class="card" href="/golf-carts/{s}/" style="text-decoration:none;color:inherit;">'
+        f'<div class="card-body"><h3>{TOWN_PAGES[s]["short_name"]}</h3>'
+        f'<p class="muted">{TOWN_PAGES[s].get("county","")} · '
+        f'{TOWN_PAGES[s]["delivery"].title()} delivery</p></div></a>'
+        for s in neighbors
+    )
+    return (
+        '<section class="alt">'
+        '  <div class="container">'
+        f'    <h2 style="text-align:center;">Golf carts in nearby {cur.get("county","East Texas")} towns</h2>'
+        f'    <div class="cards" style="margin-top:1.5rem;">{cards}</div>'
+        '  </div>'
+        '</section>'
     )
 
 
@@ -4153,6 +4387,7 @@ def page_fleet_service():
             "Annual maintenance contracts for golf cart fleets — Lake Livingston marinas, Cape Royale STRs, resorts, state parks. Fixed per-cart pricing, free pickup within 25 miles of Livingston, 24-hour turnaround on most repairs.",
             "/fleet-service/",
             og_slug="services",
+            structured_data=_json.dumps(faq_schema_for('fleet_service'))
         )
         + header("/fleet-service/")
         + dedent(f"""\
@@ -4333,6 +4568,7 @@ def page_fleet_service():
           <a class="btn btn-outline" href="/services/#request" style="margin-left:.5rem; background:transparent; color:#fff; border-color:#fff; padding:1rem 1.6rem;">Message us</a>
         </section>
         """)
+        + faq_section('fleet_service')
         + footer()
     )
 
@@ -4634,7 +4870,65 @@ Prices start at $12,500 and up depending on the model chosen — call for curren
     with open(os.path.join(ROOT, "llms.txt"), "w") as f:
         f.write(llms)
 
-    print(f"\nDone. Built {len(PAGES)} pages + robots + sitemap + llms.txt.")
+    # ---- llms-full.txt — long-form Q&A index for AI engines ----
+    # Walks every HTML file we just wrote, extracts <details><summary> pairs
+    # (both FAQ schema entries and plain-HTML FAQ blocks produce this shape)
+    # plus FAQPage JSON-LD mainEntity lists, de-dupes, and emits plain text
+    # grouped by source page. AI engines (ChatGPT, Claude, Perplexity, Google
+    # AI Overviews) ingest llms-full.txt specifically and quote from it.
+    import re as _re
+    import json as __json
+    lines = ["# Polk County Golf Carts — Full Q&A Index", "",
+             f"Last updated: {__import__('datetime').date.today().isoformat()}", "",
+             "Every Q&A visible on polkcountygolfcarts.com, grouped by source page.",
+             "Primary source for AI engine citations (llms.txt spec).",
+             "", "---", ""]
+    # Source of truth is FAQPage JSON-LD only; the visible <details>
+    # block is rendered from the same FAQS dict so there's no divergence.
+    # Earlier attempts parsed <summary>...<p>...</p> directly from the HTML
+    # but that picked up the first unrelated <p> when the FAQ answer had
+    # inline formatting (e.g. <b>), producing garbage answers.
+    jsonld_pat = _re.compile(
+        r'<script type="application/ld\+json">(.*?)</script>', _re.S
+    )
+    for rel in sorted(PAGES.keys()):
+        full = os.path.join(ROOT, rel)
+        if not os.path.exists(full): continue
+        html = open(full, encoding="utf-8").read()
+        if 'name="robots" content="noindex' in html: continue
+        page_qa = []
+        for m in jsonld_pat.finditer(html):
+            try:
+                obj = __json.loads(m.group(1))
+                queue = obj if isinstance(obj, list) else [obj]
+                for node in queue:
+                    if not isinstance(node, dict): continue
+                    if node.get("@type") == "FAQPage":
+                        for e in (node.get("mainEntity") or []):
+                            q = (e.get("name") or "").strip()
+                            a = ((e.get("acceptedAnswer") or {}).get("text") or "").strip()
+                            if q and a: page_qa.append((q, a))
+            except Exception:
+                pass
+        if not page_qa: continue
+        # De-dupe by question
+        seen, deduped = set(), []
+        for q, a in page_qa:
+            if q.lower() in seen: continue
+            seen.add(q.lower()); deduped.append((q, a))
+        page_url = "/" if rel == "index.html" else "/" + rel.replace("index.html", "")
+        lines.append(f"## {page_url}")
+        lines.append(f"Source: https://polkcountygolfcarts.com{page_url}")
+        lines.append("")
+        for q, a in deduped:
+            lines.append(f"Q: {q}")
+            lines.append(f"A: {a}")
+            lines.append("")
+        lines.append("")
+    with open(os.path.join(ROOT, "llms-full.txt"), "w") as f:
+        f.write("\n".join(lines))
+
+    print(f"\nDone. Built {len(PAGES)} pages + robots + sitemap + llms.txt + llms-full.txt.")
 
 
 if __name__ == "__main__":
