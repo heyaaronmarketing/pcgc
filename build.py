@@ -93,11 +93,33 @@ def head(title, desc, path="/", og_slug=None, noindex=False, structured_data=Non
             f'\n  <script defer src="https://static.cloudflareinsights.com/beacon.min.js" '
             f"data-cf-beacon='{{\"token\": \"{CLOUDFLARE_ANALYTICS_TOKEN}\"}}'></script>"
         )
+    gtm_noscript = ""
     if GA4_MEASUREMENT_ID:
+        # Direct gtag.js install — no GTM layer. anonymize_ip trims the last
+        # octet of the visitor IP before it's logged, which is both a privacy
+        # improvement and the easiest way to keep GA4 inside most data-
+        # residency expectations without extra config.
         analytics += (
             f'\n  <script async src="https://www.googletagmanager.com/gtag/js?id={GA4_MEASUREMENT_ID}"></script>'
             f'\n  <script>window.dataLayer=window.dataLayer||[];function gtag(){{dataLayer.push(arguments);}}'
             f'gtag("js",new Date());gtag("config","{GA4_MEASUREMENT_ID}",{{anonymize_ip:true}});</script>'
+        )
+    if GTM_CONTAINER_ID:
+        # Standard async GTM loader (Google's recommended form). Must land in
+        # <head> as high as possible. The matching <noscript> iframe is
+        # injected at the top of <body> below.
+        analytics += (
+            f"\n  <!-- Google Tag Manager -->"
+            f"\n  <script>(function(w,d,s,l,i){{w[l]=w[l]||[];w[l].push({{'gtm.start':"
+            f"new Date().getTime(),event:'gtm.js'}});var f=d.getElementsByTagName(s)[0],"
+            f"j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src="
+            f"'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);"
+            f"}})(window,document,'script','dataLayer','{GTM_CONTAINER_ID}');</script>"
+            f"\n  <!-- End Google Tag Manager -->"
+        )
+        gtm_noscript = (
+            f'<noscript><iframe src="https://www.googletagmanager.com/ns.html?id={GTM_CONTAINER_ID}" '
+            f'height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>'
         )
     return dedent(f"""\
         <!doctype html>
@@ -129,6 +151,7 @@ def head(title, desc, path="/", og_slug=None, noindex=False, structured_data=Non
           <script defer src="/assets/track.js?v={TRACK_JS_VER}"></script>
         </head>
         <body>
+        {gtm_noscript}
         <div class="banner">FREE WARRANTIES on every cart purchased through PCGC · BBB Accredited · {BIZ['tagline']}</div>
         """)
 
@@ -268,15 +291,21 @@ DEALER_DIRECT_APPLY_URL = "https://dealerdirect.apptraker.com/my/guest?dealer=11
 #     token below. Free, no cookies, no perf hit, zero PII.
 #
 #   GA4_MEASUREMENT_ID
-#     analytics.google.com -> Create property -> accept defaults ->
-#     pick "Web" data stream for https://polkcountygolfcarts.com ->
+#     analytics.google.com -> Admin -> Data Streams -> Web stream ->
 #     copy the Measurement ID (starts with "G-"). Paste below.
-#     Fires gtag.js from googletagmanager.com, adds a $0 cookie banner
-#     dependency, pairs with the CF Analytics for source attribution.
+#     Fires gtag.js directly (no Tag Manager layer). Pairs with CF
+#     Analytics for source/medium attribution.
+#
+#   GTM_CONTAINER_ID
+#     tagmanager.google.com -> container for polkcountygolfcarts.com ->
+#     copy the ID (starts with "GTM-"). Paste below. Mutually exclusive
+#     with GA4_MEASUREMENT_ID — use one or the other, not both, or GA4
+#     will double-count.
 GOOGLE_SITE_VERIFICATION = ""
 BING_SITE_VERIFICATION = ""
 CLOUDFLARE_ANALYTICS_TOKEN = "fd4f94c888f9437ba7a7b44e9dd051fa"
-GA4_MEASUREMENT_ID = ""
+GA4_MEASUREMENT_ID = "G-XFFL1KTSXP"
+GTM_CONTAINER_ID = ""
 
 import json as _json
 

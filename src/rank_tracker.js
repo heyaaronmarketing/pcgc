@@ -131,21 +131,40 @@ async function ensureRankSchema(env) {
   );
 }
 
+// Pull PCGC's host out of whichever field DataForSEO populated. Google's
+// mobile and now some desktop SERPs wrap every organic click through
+// google.com/goto?url=... — so `domain` is "google.com" and the real host
+// hides in `breadcrumb` (an unredirected canonical URL) or `url` after the
+// redirect is unwound. website_name is a last-resort fuzzy match.
+function itemMatchesUs(it) {
+  const candidates = [it.domain, it.breadcrumb, it.url, it.website_name]
+    .filter(Boolean)
+    .map(String);
+  for (const c of candidates) {
+    // Try to parse as URL first; fall back to raw substring check.
+    let host = "";
+    try { host = new URL(c).hostname.toLowerCase(); }
+    catch { host = c.toLowerCase().replace(/^https?:\/\//, "").split("/")[0]; }
+    if (host === OUR_DOMAIN || host.endsWith("." + OUR_DOMAIN)) return true;
+    // Breadcrumb sometimes comes as "https://polkcountygolfcarts.com › …"
+    if (c.toLowerCase().includes("//" + OUR_DOMAIN) ||
+        c.toLowerCase().includes("//www." + OUR_DOMAIN)) return true;
+  }
+  return false;
+}
+
 function readSerp(payload, cid) {
   const task = (payload?.tasks || [])[0] || {};
   const result = (task.result || [])[0] || {};
   const items = result.items || [];
   let position = null, mapPack = null;
   for (const it of items) {
-    if (it.type === "organic" && position === null) {
-      const d = String(it.domain || "");
-      if (d === OUR_DOMAIN || d.endsWith("." + OUR_DOMAIN)) position = it.rank_group ?? null;
+    if (it.type === "organic" && position === null && itemMatchesUs(it)) {
+      position = it.rank_group ?? null;
     }
     if (it.type === "local_pack" && mapPack === null) {
       const sameCid = cid && String(it.cid || "") === String(cid);
-      const d = String(it.domain || "");
-      const sameDomain = d === OUR_DOMAIN || d.endsWith("." + OUR_DOMAIN);
-      if (sameCid || sameDomain) mapPack = it.rank_group ?? null;
+      if (sameCid || itemMatchesUs(it)) mapPack = it.rank_group ?? null;
     }
   }
   return { position, mapPack };
