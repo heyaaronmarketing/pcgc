@@ -1025,7 +1025,7 @@ def page_home():
         </section>
 
         <section class="band" style="padding:0; background:#000;">
-          <img src="/assets/photos/hero-sign-corvette.jpg" alt="Polk County Golf Carts shop sign with a blue Breezy EV cart parked next to a blue Corvette with BREEZY license plate" style="width:100%; display:block; max-height:520px; object-fit:cover;" loading="lazy">
+          <img src="/assets/photos/hero-sign-corvette.jpg" alt="Polk County Golf Carts shop sign with a blue Breezy EV cart parked next to a blue Corvette with BREEZY license plate" style="width:100%; display:block; max-height:520px; object-fit:cover;" loading="lazy" width="2200" height="828">
         </section>
 
         <section class="alt">
@@ -1122,13 +1122,28 @@ def page_home():
 
 
 def page_carts():
+    # /carts/ is the primary sales landing. Attach the full AutoDealer
+    # graph (same @id as homepage so Google de-dupes) plus a
+    # CollectionPage wrapper + BreadcrumbList + FAQPage. Signals that
+    # this is THE commerce page for the dealer entity, not just a hub.
+    carts_graph = [site_entity_schemas(),
+        {
+            "@context": "https://schema.org",
+            "@type": "CollectionPage",
+            "name": "Golf Carts for Sale in Livingston, TX",
+            "url": "https://polkcountygolfcarts.com/carts/",
+            "about": {"@id": ENTITY_BUSINESS},
+            "breadcrumb": breadcrumb_schema([("Home", "/"), ("Carts", "/carts/")]),
+        },
+        faq_schema_for('carts'),
+    ]
     return (
         head(
             "Golf Carts for Sale in Livingston, TX — New, Used, RTO",
             "Golf carts for sale in Livingston, TX: brand-new Breezy EV, refurbished, and used electric and gas carts — plus rent-to-own with no credit score needed. Serving Polk, San Jacinto, Walker, Trinity, Angelina counties.",
             "/carts/",
             og_slug="carts",
-            structured_data=_json.dumps(faq_schema_for('carts'))
+            structured_data=_json.dumps(carts_graph),
         )
         + header("/carts/")
         + dedent(f"""\
@@ -1239,12 +1254,12 @@ def page_carts():
               <p class="lede-text">A few that have rolled out of our Livingston shop.</p>
             </div>
             <div class="photo-grid">
-              <img src="/assets/photos/sunset-carts-sign.jpg" alt="Two lifted Breezy EV carts photographed at sunset with the PCGC sign between them" loading="lazy">
-              <img src="/assets/photos/texas-cart-alamo.jpg" alt="Yamaha golf cart with a Texas-flag wrap parked in front of the Alamo" loading="lazy">
-              <img src="/assets/photos/breezy-ev-lakeside.jpg" alt="Teal Breezy EV golf cart with quilted leather seats by a lake" loading="lazy">
-              <img src="/assets/photos/cart-red-lifted.jpg" alt="Red lifted EZGO golf cart with off-road tires" loading="lazy">
-              <img src="/assets/photos/cart-blue-tempo.jpg" alt="Blue Club Car Tempo with chrome wheels" loading="lazy">
-              <img src="/assets/photos/cart-white-chrome.jpg" alt="White Club Car Tempo with chrome wheels and grey upholstery" loading="lazy">
+              <img src="/assets/photos/sunset-carts-sign.jpg" alt="Two lifted Breezy EV carts photographed at sunset with the PCGC sign between them" loading="lazy" width="1600" height="1496">
+              <img src="/assets/photos/texas-cart-alamo.jpg" alt="Yamaha golf cart with a Texas-flag wrap parked in front of the Alamo" loading="lazy" width="933" height="1400">
+              <img src="/assets/photos/breezy-ev-lakeside.jpg" alt="Teal Breezy EV golf cart with quilted leather seats by a lake" loading="lazy" width="1400" height="1052">
+              <img src="/assets/photos/cart-red-lifted.jpg" alt="Red lifted EZGO golf cart with off-road tires" loading="lazy" width="960" height="1200">
+              <img src="/assets/photos/cart-blue-tempo.jpg" alt="Blue Club Car Tempo with chrome wheels" loading="lazy" width="1111" height="1200">
+              <img src="/assets/photos/cart-white-chrome.jpg" alt="White Club Car Tempo with chrome wheels and grey upholstery" loading="lazy" width="1200" height="1093">
             </div>
           </div>
         </section>
@@ -1625,13 +1640,27 @@ def page_services():
 
 
 def page_about():
+    # /about-us/ carries the AboutPage schema plus a reference to the
+    # AutoDealer entity (same @id as homepage — Google de-dupes) so the
+    # About page is wired into the dealer entity rather than floating.
+    about_graph = [site_entity_schemas(),
+        {
+            "@context": "https://schema.org",
+            "@type": "AboutPage",
+            "name": "About Polk County Golf Carts",
+            "url": "https://polkcountygolfcarts.com/about-us/",
+            "mainEntity": {"@id": ENTITY_BUSINESS},
+            "breadcrumb": breadcrumb_schema([("Home", "/"), ("About", "/about-us/")]),
+        },
+        faq_schema_for('about'),
+    ]
     return (
         head(
             "About Polk County Golf Carts",
             "Serving our community as a family owned business since 2020. Read our story, see what customers say, and meet John — owner and lead mechanic.",
             "/about-us/",
             og_slug="about",
-            structured_data=_json.dumps(faq_schema_for('about'))
+            structured_data=_json.dumps(about_graph),
         )
         + header("/about-us/")
         + dedent(f"""\
@@ -1660,7 +1689,7 @@ def page_about():
         </section>
 
         <section class="band" style="padding:0; background:#000;">
-          <img src="/assets/photos/shop-exterior.jpg" alt="The Polk County Golf Carts shop building with a teal cart parked out front" style="width:100%; display:block; max-height:480px; object-fit:cover;" loading="lazy">
+          <img src="/assets/photos/shop-exterior.jpg" alt="The Polk County Golf Carts shop building with a teal cart parked out front" style="width:100%; display:block; max-height:480px; object-fit:cover;" loading="lazy" width="1600" height="803">
         </section>
 
         <section class="alt">
@@ -1911,7 +1940,7 @@ def page_financing():
     }
     return (
         head(
-            "Golf Cart Financing in Texas — Apply Now · Polk County Golf Carts",
+            "Golf Cart Financing in Texas — Apply Now",
             "Finance a golf cart in Texas through Polk County Golf Carts — three ways to pay: Lendmark Financial, Dealer Direct, or rent-to-own via HCI AppXpress. Soft credit pull, same-day decisions, no credit minimum for RTO.",
             "/financing/",
             og_slug="financing",
@@ -2197,7 +2226,7 @@ def page_rent_to_own():
 
     return (
         head(
-            "Rent-to-Own Golf Carts — No Big Down Payment, Flexible Terms",
+            "Rent-to-Own Golf Carts in Texas — No Credit Score",
             "Rent-to-own golf carts in East Texas through HCI AppXpress. Soft credit check, approvals for all credit profiles, 36-48 month terms, early buyout, return anytime, free local delivery. Apply in 90 seconds.",
             "/rent-to-own/",
             og_slug="financing",
@@ -2485,7 +2514,7 @@ def page_breezy_lineup():
               <div class="slideshow-stage">
                 {''.join(
                   f'<a class="slide{" is-active" if i == 0 else ""}" href="/breezy-ev/{slug}/" aria-hidden="{"false" if i == 0 else "true"}" tabindex="{"0" if i == 0 else "-1"}" data-slug="{slug}" data-name="{m["name"]}" data-meta="{"Lifted" if m["lifted"] else "Street"} · {m["seats"]}-seater · {m["range_mi"]} mi range">'
-                  f'<img src="/assets/photos/breezy-ev/{slug}.jpg" alt="Breezy EV {m["name"]}" loading="{"eager" if i == 0 else "lazy"}" fetchpriority="{"high" if i == 0 else "auto"}">'
+                  f'<img src="/assets/photos/breezy-ev/{slug}.jpg" alt="Breezy EV {m["name"]}" width="1600" height="1200" loading="{"eager" if i == 0 else "lazy"}" fetchpriority="{"high" if i == 0 else "auto"}">'
                   f'</a>'
                   for i, (slug, m) in enumerate(BREEZY_EV_MODELS.items())
                 )}
@@ -2731,7 +2760,7 @@ def page_breezy_compare():
             </div>
             <div class="cards breezy-grid" style="margin-top:3rem">
               {"".join(
-                f'<a class="card" href="/breezy-ev/{slug}/"><img src="/assets/photos/breezy-ev/{slug}.jpg" alt="{m["name"]}" loading="lazy"><div class="card-body"><h3>{m["name"]}</h3><p class="muted">{m["tagline"]}</p></div></a>'
+                f'<a class="card" href="/breezy-ev/{slug}/"><img src="/assets/photos/breezy-ev/{slug}.jpg" alt="{m["name"]}" width="1600" height="1200" loading="lazy"><div class="card-body"><h3>{m["name"]}</h3><p class="muted">{m["tagline"]}</p></div></a>'
                 for slug, m in BREEZY_EV_MODELS.items()
               )}
             </div>
@@ -3259,7 +3288,7 @@ def page_breezy_lithium_vs_lead_acid():
     )
     return (
         head(
-            "Lithium vs Lead-Acid Golf Cart Batteries — Which Saves Money?",
+            "Lithium vs Lead-Acid Golf Cart Batteries",
             "Lithium vs lead-acid golf cart batteries: real numbers on cost, range, lifespan, and maintenance. Polk County Golf Carts breaks down the math, sells both, and tells you which to pick.",
             "/breezy-ev/lithium-vs-lead-acid/",
             og_slug="carts",
@@ -3580,7 +3609,7 @@ GUIDES = {
         ],
     },
     "lake-livingston-golf-cart-life": {
-        "title": "Lake Livingston golf cart life: where to ride, dock, and park",
+        "title": "Lake Livingston Golf Cart Life — Where to Ride",
         "kicker": "Local",
         "read_time": "5 min read",
         "lede": "Lake Livingston is a 90,000-acre lake with a thousand reasons to own a golf cart. Here's the local guide to riding, parking, and not getting stuck.",
@@ -3653,10 +3682,20 @@ def page_guide(slug):
         f'<details class="faq"><summary>{q}</summary><div class="faq-body"><p>{a}</p></div></details>'
         for q, a in g["faqs"]
     )
+    # Author-supplied related links (usually /carts/, /services/, etc.)
     related = "\n".join(
         f'<a class="card" href="{href}"><div class="card-body"><h3>{label} →</h3></div></a>'
         for label, href in g["related"]
     )
+    # Auto-append the OTHER guides as sibling links. Before this, each
+    # guide child had only 1 inbound link (from /guides/ hub). Linking
+    # sibling guides lifts every guide to ~3-4 inbound each.
+    sibling_links = "\n".join(
+        f'<a class="card" href="/guides/{other_slug}/"><div class="card-body"><h3>{GUIDES[other_slug]["title"]} →</h3></div></a>'
+        for other_slug in GUIDES
+        if other_slug != slug
+    )
+    related = related + "\n" + sibling_links
     sd = _json.dumps([
         breadcrumb_schema([
             ("Home", "/"),
@@ -3946,10 +3985,12 @@ def nearby_towns_section(current_slug):
         a, b = coords.get(s1), coords.get(s2)
         if not a or not b: return 999
         return math.sqrt((a[0]-b[0])**2 + (a[1]-b[1])**2)
+    # Show the 6 closest towns rather than 4 so no sibling town ends up
+    # with fewer than 3-4 inbound links across the cluster.
     neighbors = sorted(
         [s for s in TOWN_PAGES if s != current_slug],
         key=lambda s: dist(current_slug, s),
-    )[:4]
+    )[:6]
     cards = "".join(
         f'<a class="card" href="/golf-carts/{s}/" style="text-decoration:none;color:inherit;">'
         f'<div class="card-body"><h3>{TOWN_PAGES[s]["short_name"]}</h3>'
@@ -3962,6 +4003,9 @@ def nearby_towns_section(current_slug):
         '  <div class="container">'
         f'    <h2 style="text-align:center;">Golf carts in nearby {cur.get("county","East Texas")} towns</h2>'
         f'    <div class="cards" style="margin-top:1.5rem;">{cards}</div>'
+        '    <p style="text-align:center;margin-top:1.5rem;">'
+        '      <a href="/golf-carts/" style="font-weight:600;">See every town we serve →</a>'
+        '    </p>'
         '  </div>'
         '</section>'
     )
@@ -4237,7 +4281,7 @@ def page_street_legal_tx():
 
     return (
         head(
-            "Are Golf Carts Street Legal in Texas? County-by-County Guide",
+            "Street-Legal Golf Carts in Texas — The Guide",
             "Golf cart street-legal rules in Polk, San Jacinto, Walker, and Liberty counties — exact Texas Transportation Code citations, city-by-city ordinance status, LSV vs golf cart differences, equipment requirements, and plates. Written by a Livingston TX dealer.",
             "/street-legal-texas/",
             og_slug="services",
