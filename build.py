@@ -904,7 +904,16 @@ def site_entity_schemas():
                 "paymentAccepted": "Cash, Credit Card, Financing",
                 "currenciesAccepted": "USD",
                 "foundingDate": str(BIZ["founded"]),
-                "founder": {"@type": "Person", "name": BIZ["owner"]},
+                "founder": {
+                    "@type": "Person",
+                    "name": "John Long",
+                    "jobTitle": "Owner / Lead Mechanic",
+                },
+                "employee": {
+                    "@type": "Person",
+                    "name": "Callie Long",
+                    "jobTitle": "Office Manager",
+                },
                 "address": {
                     "@type": "PostalAddress",
                     "streetAddress": "1732 FM 3277",
@@ -913,10 +922,13 @@ def site_entity_schemas():
                     "postalCode": "77351",
                     "addressCountry": "US",
                 },
+                # Verified via OpenStreetMap node 14363130701 (Nov 9, 2026
+                # citation campaign) + Google cross-check. The old value
+                # 30.7128,-94.9319 was downtown Livingston, not the shop.
                 "geo": {
                     "@type": "GeoCoordinates",
-                    "latitude": 30.7128,
-                    "longitude": -94.9319,
+                    "latitude": 30.71881,
+                    "longitude": -95.10124,
                 },
                 "hasMap": "https://maps.google.com/?q=1732+FM+3277+Livingston+TX+77351",
                 "openingHoursSpecification": [
@@ -944,8 +956,8 @@ def site_entity_schemas():
                     "@type": "GeoCircle",
                     "geoMidpoint": {
                         "@type": "GeoCoordinates",
-                        "latitude": 30.7128,
-                        "longitude": -94.9319,
+                        "latitude": 30.71881,
+                        "longitude": -95.10124,
                     },
                     "geoRadius": "120700",  # 75 miles in meters
                 },
@@ -955,11 +967,65 @@ def site_entity_schemas():
                     "Golf cart service and repair",
                     "Golf cart customization",
                     "Lithium battery upgrades",
+                    "Bolt Energy lithium batteries",
+                    "Trojan OnePack lithium batteries",
                     "Lifted golf carts",
                     "Street-legal golf cart conversions",
+                    "Golf cart rentals",
                 ],
-                "brand": {"@type": "Brand", "name": "Breezy EV"},
-                "sameAs": [BIZ["bbb_url"]],
+                "brand": [
+                    {"@type": "Brand", "name": "Breezy EV"},
+                    {"@type": "Brand", "name": "Bolt Energy"},
+                    {"@type": "Brand", "name": "Trojan Battery"},
+                ],
+                "hasOfferCatalog": {
+                    "@type": "OfferCatalog",
+                    "name": "Golf Cart Sales, Service & Rentals",
+                    "itemListElement": [
+                        {"@type": "Offer", "itemOffered": {
+                            "@type": "Service",
+                            "name": "New & Used Golf Cart Sales",
+                            "description": "Authorized Breezy EV dealer (Breeze 4, 4L, 6L, Terrain 6) plus refurbished and used Club Car, E-Z-GO and Yamaha carts. Financing and rent-to-own available.",
+                        }},
+                        {"@type": "Offer", "itemOffered": {
+                            "@type": "Service",
+                            "name": "Golf Cart Service & Repair",
+                            "description": "Service and repair on all major brands including Club Car, E-Z-GO, Yamaha, ICON, Evolution, Star EV and Breezy EV. Free pickup and delivery within 25 miles; extended service to 75 miles.",
+                        }},
+                        {"@type": "Offer", "itemOffered": {
+                            "@type": "Service",
+                            "name": "Lithium Battery Conversions",
+                            "description": "In-house lithium conversions and installs: Bolt Energy and Trojan OnePack lithium systems for electric golf carts.",
+                        }},
+                        {"@type": "Offer", "itemOffered": {
+                            "@type": "Service",
+                            "name": "Golf Cart Custom Builds & Parts",
+                            "description": "Custom builds, lift kits, accessories and parts (Bolt Energy, Navitas controllers).",
+                        }},
+                        {"@type": "Offer", "itemOffered": {
+                            "@type": "Service",
+                            "name": "Golf Cart Rentals",
+                            "description": "4, 6 and 8-seat golf cart rentals serving Livingston and Lake Livingston.",
+                        }},
+                    ],
+                },
+                # sameAs glue — expanded from BBB-only to 11 verified profile
+                # URLs per the Nov 10 schema pack + the newly-live TripAdvisor
+                # listing (Nov 11). These are the machine-readable identity
+                # links AI engines follow to cross-reference the entity.
+                "sameAs": [
+                    BIZ["bbb_url"],
+                    "https://www.facebook.com/polkcountygolfcart",
+                    "https://www.instagram.com/polkcountygolfcarts",
+                    "https://www.yelp.com/biz/polk-county-golf-carts-livingston",
+                    "https://reviews.birdeye.com/polk-county-golf-carts-175829456628371",
+                    "https://www.crunchbase.com/organization/polk-county-golf-carts",
+                    "https://www.trustpilot.com/review/polkcountygolfcarts.com",
+                    "https://nextdoor.com/page/polk-county-golf-carts-livingston-tx/",
+                    "https://www.chamberofcommerce.com/business-directory/texas/livingston/golf-cart-dealer/2034582949-polk-county-golf-carts-llc",
+                    "https://www.openstreetmap.org/node/14363130701",
+                    "https://www.tripadvisor.com/34809721",
+                ],
                 "parentOrganization": {"@id": ENTITY_ORG},
             },
             {
@@ -981,7 +1047,20 @@ def site_entity_schemas():
                     "areaServed": "US-TX",
                     "availableLanguage": "English",
                 },
-                "sameAs": [BIZ["bbb_url"]],
+                # Mirror the AutoDealer sameAs — same 11 verified profiles.
+                "sameAs": [
+                    BIZ["bbb_url"],
+                    "https://www.facebook.com/polkcountygolfcart",
+                    "https://www.instagram.com/polkcountygolfcarts",
+                    "https://www.yelp.com/biz/polk-county-golf-carts-livingston",
+                    "https://reviews.birdeye.com/polk-county-golf-carts-175829456628371",
+                    "https://www.crunchbase.com/organization/polk-county-golf-carts",
+                    "https://www.trustpilot.com/review/polkcountygolfcarts.com",
+                    "https://nextdoor.com/page/polk-county-golf-carts-livingston-tx/",
+                    "https://www.chamberofcommerce.com/business-directory/texas/livingston/golf-cart-dealer/2034582949-polk-county-golf-carts-llc",
+                    "https://www.openstreetmap.org/node/14363130701",
+                    "https://www.tripadvisor.com/34809721",
+                ],
             },
             {
                 "@type": "WebSite",
@@ -990,18 +1069,11 @@ def site_entity_schemas():
                 "name": BIZ["name"],
                 "publisher": {"@id": ENTITY_ORG},
                 "inLanguage": "en-US",
-                # Google uses potentialAction to show a site-search box
-                # directly in the SERP under the brand result. Points at a
-                # Google-site: query since PCGC doesn't run its own site
-                # search engine — still enables the SERP feature.
-                "potentialAction": {
-                    "@type": "SearchAction",
-                    "target": {
-                        "@type": "EntryPoint",
-                        "urlTemplate": "https://www.google.com/search?q=site%3Apolkcountygolfcarts.com+{search_term_string}",
-                    },
-                    "query-input": "required name=search_term_string",
-                },
+                # Earlier draft had a SearchAction pointing at
+                # google.com/search?site:polkcountygolfcarts.com. Removed per
+                # the Nov 10 schema pack — it wasn't a real site-search
+                # endpoint and misrepresented the site. Re-add only if PCGC
+                # launches a real on-site search.
             },
         ],
     }
@@ -1305,7 +1377,7 @@ def page_services():
             "provider": {"@id": ENTITY_BUSINESS},
             "areaServed": {
                 "@type": "GeoCircle",
-                "geoMidpoint": {"@type": "GeoCoordinates", "latitude": 30.7128, "longitude": -94.9319},
+                "geoMidpoint": {"@type": "GeoCoordinates", "latitude": 30.71881, "longitude": -95.10124},
                 "geoRadius": "40000",  # 40 km ≈ 25 miles
             },
             "offers": {
@@ -1570,7 +1642,7 @@ def page_services():
             <div class="cards">
               <div class="card">
                 <h3>New batteries</h3>
-                <p>Lead-acid or Lithium, including <b>Bolt Energy</b> and <b>White Lightening</b>'s new line of Lithium batteries. We size, install, and dispose of the old set.</p>
+                <p>Lead-acid or Lithium, including <b>Bolt Energy</b> and <b>Trojan OnePack</b> lithium systems. We size, install, and dispose of the old set.</p>
               </div>
               <div class="card">
                 <h3>Battery problems</h3>
@@ -1626,7 +1698,7 @@ def page_services():
               <div class="card">
                 <div class="icon">🔋</div>
                 <h3>Lithium battery upgrades</h3>
-                <p>Premium Lithium packs from <b>Bolt Energy</b> and <b>White Lightening</b>'s new line — drop-in replacements, longer range, no acid topping.</p>
+                <p>Premium Lithium packs from <b>Bolt Energy</b> and <b>Trojan OnePack</b> — drop-in replacements, longer range, no acid topping.</p>
               </div>
               <div class="card alt">
                 <div class="icon">🔊</div>
@@ -3376,7 +3448,7 @@ def page_breezy_lithium_vs_lead_acid():
         ("Will Lithium really give me more range?",
          "Yes — <b>30-50% more</b> in real-world conditions. A new Breezy EV with the standard 48V/125Ah Lithium pack delivers 45-55 miles per charge. The same cart with comparable lead-acid would do 25-35 miles before voltage sag becomes noticeable."),
         ("Is the Lithium battery safer?",
-         "The cells we install — including the <b>Bolt Energy</b> and <b>White Lightening</b> lines — are LiFePO4 (Lithium Iron Phosphate). LiFePO4 is the safest Lithium chemistry on the market, with a much higher thermal-runaway threshold than the Lithium-ion in laptops or EVs. They're more thermally stable than a lead-acid pack actually."),
+         "The cells we install — including the <b>Bolt Energy</b> and <b>Trojan OnePack</b> lines — are LiFePO4 (Lithium Iron Phosphate). LiFePO4 is the safest Lithium chemistry on the market, with a much higher thermal-runaway threshold than the Lithium-ion in laptops or EVs. They're more thermally stable than a lead-acid pack actually."),
         ("Can I upgrade my existing cart to Lithium?",
          "Yes. We pull the lead-acid pack, install the Lithium pack and a compatible charger, and reprogram the controller for the Lithium voltage curve. <b>Typical conversion: $3,500-$5,500</b> depending on the pack size. Most customers see the range boost on the first drive."),
         ("What about charging — does Lithium charge faster?",
@@ -3439,7 +3511,7 @@ def page_breezy_lithium_vs_lead_acid():
               <span class="eyebrow">The case for Lithium</span>
               <h2>Why most new carts ship Lithium now.</h2>
               <p>Five years ago Lithium was a premium upgrade. Today every Breezy EV ships Lithium standard — because the math finally caught up. Buy it once, get 8-12 years out of it, get 30-50% more range every charge, and never check water levels again.</p>
-              <p>The Lithium packs we install — <b>Bolt Energy</b> and <b>White Lightening</b>'s new line — are LiFePO4 (Lithium Iron Phosphate), the safest and most stable Lithium chemistry. Same family as solar storage banks and grid backups, not the energy-dense Lithium-ion you'd find in a laptop.</p>
+              <p>The Lithium packs we install — <b>Bolt Energy</b> and <b>Trojan OnePack</b> — are LiFePO4 (Lithium Iron Phosphate), the safest and most stable Lithium chemistry. Same family as solar storage banks and grid backups, not the energy-dense Lithium-ion you'd find in a laptop.</p>
               <ul class="checks">
                 <li>30-50% more range per charge</li>
                 <li>Charges in half the time</li>
@@ -3451,8 +3523,8 @@ def page_breezy_lithium_vs_lead_acid():
             </div>
             <div class="price-box">
               <span class="eyebrow">Lithium upgrade</span>
-              <h3 class="mt-0" style="color:var(--ink)">Bolt Energy &amp; White Lightening</h3>
-              <p class="muted">We install both lines. White Lightening's newest pack is particularly strong for the Breeze 6L and Terrain 6 — pairs with their motor-upgrade kit.</p>
+              <h3 class="mt-0" style="color:var(--ink)">Bolt Energy &amp; Trojan OnePack</h3>
+              <p class="muted">We install both lithium lines; the Trojan OnePack is a single integrated pack while Bolt Energy ships a complete kit. We pick the fit for your cart and how you use it.</p>
               <a class="btn btn-teal" href="tel:{BIZ['phone_primary'].replace('-','')}">Quote a Lithium upgrade</a>
             </div>
           </div>
@@ -3999,7 +4071,7 @@ def page_town(slug):
                 "postalCode": "77351",
                 "addressCountry": "US",
             },
-            "geo": {"@type": "GeoCoordinates", "latitude": 30.7128, "longitude": -94.9319},
+            "geo": {"@type": "GeoCoordinates", "latitude": 30.71881, "longitude": -95.10124},
             "areaServed": {
                 "@type": "Place",
                 "name": t["name"],
@@ -4640,7 +4712,7 @@ def page_fleet_service():
             "provider": {"@id": ENTITY_BUSINESS},
             "areaServed": {
                 "@type": "GeoCircle",
-                "geoMidpoint": {"@type": "GeoCoordinates", "latitude": 30.7128, "longitude": -94.9319},
+                "geoMidpoint": {"@type": "GeoCoordinates", "latitude": 30.71881, "longitude": -95.10124},
                 "geoRadius": "40000",
             },
             "offers": {
@@ -5151,7 +5223,7 @@ def main():
 ## About
 - Founded {BIZ['founded']} · Family-owned · BBB Accredited
 - Address: 1732 FM 3277, Livingston, TX 77351
-- Phone: {BIZ['phone_primary']} (alt {BIZ['phone_secondary']})
+- Phone: {BIZ['phone_primary']}
 - Email: {BIZ['email']}
 - Hours: Tue-Fri 9a-4p, Saturday 9a-2p, Closed Sun-Mon and holidays
 - Service area: {BIZ['service_area']} — free pickup & delivery within {BIZ['delivery_radius']} miles, extended up to {BIZ['extended_radius']} miles for a flat $75
@@ -5168,7 +5240,7 @@ Prices start at $12,500 and up depending on the model chosen — call for curren
 ## Services
 - 20-Point Inspection (Full Service Package) from $165
 - Repair tickets $250-$450 (gas and electric, all brands)
-- Battery service (lead-acid $1,400-$1,850 installed, Lithium — Bolt Energy + White Lightening)
+- Battery service (lead-acid $1,400-$1,850 installed, Lithium — Bolt Energy + Trojan OnePack)
 - Lithium conversion $2,900-$4,500 installed (8-10 year pack life vs 3-5 for lead-acid)
 - Custom paint, lift kits, wheels & tires, sound systems, rear flip seats
 - Controller and motor upgrades (Navitas + White Lightening)

@@ -1,6 +1,6 @@
 # Polk County Golf Carts — Full Content Index
 
-Last updated: 2026-11-09
+Last updated: 2026-11-15
 
 > Serving our community as a family owned business since 2020 in Livingston, Texas.
 > Authorized Breezy EV golf cart dealer for East Texas — sales, service, custom builds, and rentals.
@@ -388,7 +388,7 @@ Q: Will Lithium really give me more range?
 A: Yes — 30-50% more in real-world conditions. A new Breezy EV with the standard 48V/125Ah Lithium pack delivers 45-55 miles per charge. The same cart with comparable lead-acid would do 25-35 miles before voltage sag becomes noticeable.
 
 Q: Is the Lithium battery safer?
-A: The cells we install — including the Bolt Energy and White Lightening lines — are LiFePO4 (Lithium Iron Phosphate). LiFePO4 is the safest Lithium chemistry on the market, with a much higher thermal-runaway threshold than the Lithium-ion in laptops or EVs. They're more thermally stable than a lead-acid pack actually.
+A: The cells we install — including the Bolt Energy and Trojan OnePack lines — are LiFePO4 (Lithium Iron Phosphate). LiFePO4 is the safest Lithium chemistry on the market, with a much higher thermal-runaway threshold than the Lithium-ion in laptops or EVs. They're more thermally stable than a lead-acid pack actually.
 
 Q: Can I upgrade my existing cart to Lithium?
 A: Yes. We pull the lead-acid pack, install the Lithium pack and a compatible charger, and reprogram the controller for the Lithium voltage curve. Typical conversion: $3,500-$5,500 depending on the pack size. Most customers see the range boost on the first drive.
@@ -722,7 +722,7 @@ A: Yes. All three qualify as master planned communities with POA-maintained priv
 ## File metadata
 
 - File: llms-full.txt
-- Generated: 2026-11-09
+- Generated: 2026-11-15
 - Total pages indexed: 44
 - Total Q&A pairs: 126
 - Breezy EV models documented: 4
