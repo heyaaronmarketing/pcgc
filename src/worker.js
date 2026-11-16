@@ -224,15 +224,43 @@ export default {
       return getConfig(request, env);
     }
 
-    // Legacy URLs from the original site — 301 to the new locations
-    // so search engines (and bookmarks) move with us.
-    if (url.pathname === "/about" || url.pathname === "/about/") {
-      return Response.redirect(`${url.origin}/about-us/`, 301);
+    // Legacy URLs from the original GoDaddy / Online Store (OLS) site —
+    // 301 to the new locations so search engines (and bookmarks) move
+    // with us. Any path under /golf-carts-for-sale/ that isn't matched
+    // above lands on /carts/ too; the OLS checkout pages (cart/login/
+    // create-account) go to the natural human equivalents since the
+    // storefront was retired when the Worker rebuild shipped.
+    const LEGACY_301 = {
+      "/about": "/about-us/",
+      "/about/": "/about-us/",
+      "/carts2": "/carts/",
+      "/carts2/": "/carts/",
+      "/new-breezy-ev": "/breezy-ev/",
+      "/new-breezy-ev/": "/breezy-ev/",
+      "/golf-carts-for-sale": "/carts/",
+      "/golf-carts-for-sale/": "/carts/",
+      "/golf-carts-for-sale/ols/all": "/carts/",
+      "/golf-carts-for-sale/ols/all/": "/carts/",
+      "/golf-carts-for-sale/ols/cart": "/carts/",
+      "/golf-carts-for-sale/ols/cart/": "/carts/",
+      "/golf-carts-for-sale/ols/categories/carts-for-sale": "/carts/",
+      "/golf-carts-for-sale/ols/categories/carts-for-sale/": "/carts/",
+      "/golf-carts-for-sale/ols/categories/breezy-ev-golf-carts": "/breezy-ev/",
+      "/golf-carts-for-sale/ols/categories/breezy-ev-golf-carts/": "/breezy-ev/",
+      "/privacy-policy": "/privacy/",
+      "/privacy-policy/": "/privacy/",
+      "/m/login": "/contact/",
+      "/m/login/": "/contact/",
+      "/m/create-account": "/contact/",
+      "/m/create-account/": "/contact/",
+    };
+    if (LEGACY_301[url.pathname]) {
+      return Response.redirect(`${url.origin}${LEGACY_301[url.pathname]}`, 301);
     }
-    // /carts2/ was an abandoned duplicate of /carts/ that showed up as an
-    // orphan in the SEO audit. Delete + 301 so any lingering inbound link
-    // consolidates to the real page instead of 404ing.
-    if (url.pathname === "/carts2" || url.pathname === "/carts2/") {
+    // Catch-all for any other /golf-carts-for-sale/ols/... path still in
+    // Google's index — send to the real sales page so Google doesn't keep
+    // crawling the ghost of a dead storefront.
+    if (url.pathname.startsWith("/golf-carts-for-sale/")) {
       return Response.redirect(`${url.origin}/carts/`, 301);
     }
 
