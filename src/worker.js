@@ -1989,15 +1989,30 @@ function escHtmlNode(s) {
 }
 
 async function renderListingDetailPage(request, env, slug) {
-  const raw = env.FEEDBACK_KV ? await env.FEEDBACK_KV.get(`listing:${slug}`) : null;
-  if (!raw) {
-    // Fall through to env.ASSETS for the 404 page
-    return env.ASSETS.fetch(request);
-  }
+  // KV reads on Workers are per-POP cached for up to ~60s after a new
+  // write. If a KV miss falls through to env.ASSETS.fetch(), the asset
+  // binding returns 404.html with its own cache headers — and CF edge
+  // then caches that 404 under the slug URL, so even after KV catches
+  // up, the POP keeps serving the stale 404. We saw this on 2026-11-17
+  // with John's first live listing: 200 from the deploy POP (Dallas),
+  // 404 from Callie's POP, and both kept returning that until the edge
+  // cache expired. Fix: always use a locally-rendered 404 with
+  // Cache-Control: no-store so a KV miss never poisons the edge cache.
+  const missing = () => new Response(KV_MISS_HTML, {
+    status: 404,
+    headers: {
+      "Content-Type": "text/html; charset=utf-8",
+      "Cache-Control": "no-store, max-age=0, must-revalidate",
+      "CDN-Cache-Control": "no-store",
+      "Cloudflare-CDN-Cache-Control": "no-store",
+    },
+  });
+  const raw = env.FEEDBACK_KV ? await env.FEEDBACK_KV.get(`listing:${slug}`, { cacheTtl: 60 }) : null;
+  if (!raw) return missing();
   let listing;
   try { listing = JSON.parse(raw); }
-  catch { return env.ASSETS.fetch(request); }
-  if (listing.status !== "active") return env.ASSETS.fetch(request);
+  catch { return missing(); }
+  if (listing.status !== "active") return missing();
 
   const dollars = c => c == null ? null : "$" + Math.round(Number(c) / 100).toLocaleString();
   const title = listing.seo_title
@@ -2319,10 +2334,40 @@ async function renderListingDetailPage(request, env, slug) {
   return new Response(html, {
     headers: {
       "content-type": "text/html; charset=utf-8",
-      "cache-control": "public, max-age=60, s-maxage=60",
+      // Short browser cache + tell CF edge not to store the response at
+      // all. A per-POP edge cache on this URL turns stale the moment an
+      // owner edits the listing from /admin/carts/; without s-maxage
+      // CF honors our public, max-age=60 only in the client. Edge is
+      // explicitly no-store via CDN-Cache-Control.
+      "cache-control": "public, max-age=60",
+      "CDN-Cache-Control": "no-store",
+      "Cloudflare-CDN-Cache-Control": "no-store",
     },
   });
 }
+
+// Stand-in body for a listing-detail 404. Short, in-brand, and critically
+// — paired with Cache-Control: no-store so a transient KV miss never
+// poisons the edge cache for a slug that's about to be readable.
+const KV_MISS_HTML = `<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Not found · Polk County Golf Carts</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="/assets/site.css?v=carts2v1">
+<style>
+  main { max-width:640px; margin:3rem auto; padding:1.5rem; text-align:center; }
+  h1 { font: 800 clamp(2rem,5vw,2.6rem)/1.1 Georgia, serif; color: var(--teal-dk); margin:0 0 .75rem; }
+  p { color: var(--ink); margin:.5rem 0; }
+  .btn { display:inline-block; margin-top:1rem; padding:.9rem 1.4rem; background: var(--coral); color:#fff; text-decoration:none; border-radius:10px; font-weight:700; }
+</style></head>
+<body>
+<main>
+  <h1>That listing isn't here.</h1>
+  <p>It may have sold, been renamed, or just gone off the lot.</p>
+  <p><a class="btn" href="/carts2/">Browse all carts for sale →</a></p>
+  <p><a href="tel:9362231182">📞 Or call 936-223-1182</a></p>
+</main></body></html>`;
 
 // The single source of truth for the "leave us a Google review"
 // call-to-action URL. Owner-supplied share.google link jumps directly
