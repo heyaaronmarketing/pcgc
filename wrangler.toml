@@ -11,15 +11,25 @@ compatibility_date = "2026-04-01"
 #   301 (below) never fires because no www request reaches the
 #   Worker.
 
-# Static-asset bucket: the worker calls env.ASSETS.fetch(request) for
-# anything not handled by /api/booking. Directory-index resolution
-# (e.g. /about-us/ -> site/about-us/index.html) happens automatically.
-# not_found_handling = "404-page" makes the assets handler serve
-# /404.html for any request that doesn't resolve to a real asset.
+# Static-asset bucket.
+#
+# run_worker_first = true forces every request through the worker fetch
+# handler FIRST, with the worker able to delegate to static assets via
+# env.ASSETS.fetch(request). Without this, CF Static Assets short-
+# circuits navigation requests to extensionless paths (e.g.
+# /carts2/<slug>/) with the 404-page handler BEFORE the worker gets a
+# chance to render them — asymmetric with AJAX fetch, which does fall
+# through to the worker. That broke the /carts2/<slug>/ listing detail
+# route on Nov 17: HTML navigations 404'd, fetch()s 200'd, from the
+# same POP. run_worker_first = true restores the expected order.
+#
+# not_found_handling = "404-page" still applies, but ONLY when the
+# worker itself calls env.ASSETS.fetch(request) and no asset matches.
 [assets]
 directory = "./site"
 binding = "ASSETS"
 not_found_handling = "404-page"
+run_worker_first = true
 
 # Stores one record per rental booking under the `booking:<ts>:<id>`
 # prefix. (The name FEEDBACK_KV is kept as the binding for backwards
