@@ -251,7 +251,7 @@ def footer():
                 <h4>Hours</h4>
                 <ul class="foot-hours">
                   <li>Tue–Fri · 9a–4p</li>
-                  <li>Saturday · 9a–2p</li>
+                  <li>Saturday · By appointment only</li>
                   <li class="muted">Closed Sun–Mon &amp; holidays</li>
                   <li class="muted">Emergency calls billed at additional rate</li>
                 </ul>
@@ -675,7 +675,7 @@ FAQS = {
         ("Do you repair all golf cart brands?",
          "Yes. Our shop services electric and gas golf carts from every major brand, including Club Car, E-Z-GO, Yamaha, ICON, Evolution, and Breezy EV. Battery replacement, controller diagnostics, motor rebuilds, and lithium conversions are all in-house."),
         ("What are your hours?",
-         "Tuesday through Friday 9am to 4pm, Saturday 9am to 2pm. Closed Sunday and Monday. Emergency service calls can be arranged at an additional rate — call 936-223-1182."),
+         "Tuesday through Friday 9am to 4pm. Saturday by appointment only. Closed Sunday and Monday. Call 936-223-1182 to schedule a Saturday visit or an emergency service call."),
     ],
     "carts": [
         ("What golf carts for sale do you have in Livingston, TX?",
@@ -725,7 +725,7 @@ FAQS = {
         ("What areas do you serve?",
          "Our primary service area is Polk, San Jacinto, Walker, Trinity, and Angelina counties. We deliver and service free within 25 miles of Livingston (lake communities included). Extended delivery and service up to 75 miles is available for an additional charge."),
         ("Can I visit the showroom?",
-         "Yes. The showroom is at 1732 FM 3277, Livingston TX 77351. Open Tuesday-Friday 9am-4pm and Saturday 9am-2pm. Closed Sunday and Monday."),
+         "Yes. The showroom is at 1732 FM 3277, Livingston TX 77351. Open Tuesday-Friday 9am-4pm. Saturday by appointment only — call 936-223-1182 to schedule. Closed Sunday and Monday."),
     ],
     "fleet_service": [
         ("Do you service golf cart fleets for short-term rentals or resorts?",
@@ -938,12 +938,12 @@ def site_entity_schemas():
                         "opens": "09:00",
                         "closes": "16:00",
                     },
-                    {
-                        "@type": "OpeningHoursSpecification",
-                        "dayOfWeek": "Saturday",
-                        "opens": "09:00",
-                        "closes": "14:00",
-                    },
+                    # Saturday is by appointment only — no regular open hours.
+                    # schema.org doesn't model "by appointment" cleanly; we
+                    # omit the Saturday OpeningHoursSpecification so Google
+                    # sees "no posted hours" instead of fixed open hours.
+                    # The visible footer + FAQ + contact page copy says
+                    # "Saturday by appointment only".
                 ],
                 "areaServed": [
                     {"@type": "AdministrativeArea", "name": "Polk County, Texas"},
@@ -1964,7 +1964,7 @@ def page_contact():
                 <h3>Hours</h3>
                 <p>
                   Tue–Fri · 9a–4p<br>
-                  Saturday · 9a–2p<br>
+                  Saturday · By appointment only<br>
                   <span class="muted">Closed Sun–Mon &amp; holidays. Emergency calls billed at additional rate.</span>
                 </p>
               </div>
@@ -2942,7 +2942,7 @@ def page_breezy_compare():
         <section class="alt">
           <div class="container center">
             <h2>Still on the fence?</h2>
-            <p class="lede-text">Come ride them all. We're in Livingston off FM 3277 and the shop is open Tue–Sat.</p>
+            <p class="lede-text">Come ride them all. We're in Livingston off FM 3277 — open Tuesday through Friday, Saturdays by appointment.</p>
             <a class="btn btn-coral" href="tel:{BIZ['phone_primary'].replace('-','')}">📞 Call {BIZ['phone_primary']}</a>
           </div>
         </section>
@@ -4089,8 +4089,8 @@ def page_town(slug):
                 {"@type": "OpeningHoursSpecification",
                  "dayOfWeek": ["Tuesday","Wednesday","Thursday","Friday"],
                  "opens": "09:00", "closes": "16:00"},
-                {"@type": "OpeningHoursSpecification",
-                 "dayOfWeek": "Saturday", "opens": "09:00", "closes": "14:00"},
+                # Saturday by appointment only — omitted from schema per
+                # the same rationale as the homepage AutoDealer graph.
             ],
         },
         {
@@ -5225,7 +5225,7 @@ def main():
 - Address: 1732 FM 3277, Livingston, TX 77351
 - Phone: {BIZ['phone_primary']}
 - Email: {BIZ['email']}
-- Hours: Tue-Fri 9a-4p, Saturday 9a-2p, Closed Sun-Mon and holidays
+- Hours: Tue-Fri 9a-4p, Saturday by appointment only, Closed Sun-Mon and holidays
 - Service area: {BIZ['service_area']} — free pickup & delivery within {BIZ['delivery_radius']} miles, extended up to {BIZ['extended_radius']} miles for a flat $75
 
 ## What we sell
@@ -5323,7 +5323,7 @@ Prices start at $12,500 and up depending on the model chosen — call for curren
         f"- Phone (primary): {BIZ['phone_primary']} · tel:{BIZ['phone_primary'].replace('-','')}",
         f"- Phone (secondary): {BIZ['phone_secondary']} · tel:{BIZ['phone_secondary'].replace('-','')}",
         f"- Email: {BIZ['email']}",
-        "- Hours: Tue-Fri 9am-4pm, Saturday 9am-2pm, Closed Sunday-Monday and holidays",
+        "- Hours: Tue-Fri 9am-4pm, Saturday by appointment only, Closed Sunday-Monday and holidays",
         "- Emergency service calls can be arranged at an additional rate — call to schedule",
         f"- Service area: {BIZ['service_area']}",
         f"- Free delivery radius: {BIZ['delivery_radius']} miles of Livingston TX",
