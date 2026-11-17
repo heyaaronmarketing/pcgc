@@ -233,8 +233,11 @@ export default {
     const LEGACY_301 = {
       "/about": "/about-us/",
       "/about/": "/about-us/",
-      "/carts2": "/carts/",
-      "/carts2/": "/carts/",
+      // (/carts2/ IS the public inventory listings page — John publishes
+      // cart listings there from /admin/carts/. Earlier audit wrongly
+      // flagged it as an orphan duplicate and added a 301 here; that
+      // redirect sent John + buyers to /carts/ after a listing was saved
+      // so he couldn't see his own inventory. Removed Nov 17.)
       "/new-breezy-ev": "/breezy-ev/",
       "/new-breezy-ev/": "/breezy-ev/",
       "/golf-carts-for-sale": "/carts/",

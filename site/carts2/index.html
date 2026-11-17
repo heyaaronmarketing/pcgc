@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Golf Carts for Sale · New & Used · Polk County Golf Carts</title>
+  <meta name="description" content="Browse golf carts for sale at Polk County Golf Carts in Livingston, TX — brand-new Breezy EV lineup and quality refurbished used carts. Filter by condition, make, and price. Free pickup within 25 miles.">
+  <link rel="canonical" href="https://polkcountygolfcarts.com/carts2/">
+  <meta name="theme-color" content="#e85a4f">
+  <link rel="icon" type="image/png" href="/assets/logos/favicon.png">
+
+  <meta property="og:title" content="Golf Carts for Sale · New & Used · Polk County Golf Carts">
+  <meta property="og:description" content="Browse the full inventory of new Breezy EV and quality used golf carts. Livingston, TX.">
+  <meta property="og:image" content="https://polkcountygolfcarts.com/assets/og/carts.png?v=v2sunset">
+  <meta property="og:url" content="https://polkcountygolfcarts.com/carts2/">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Golf Carts for Sale · New & Used · Polk County Golf Carts">
+  <meta name="twitter:description" content="Browse the full inventory of new Breezy EV and quality used golf carts.">
+  <meta name="twitter:image" content="https://polkcountygolfcarts.com/assets/og/carts.png?v=v2sunset">
+
+  <link rel="stylesheet" href="/assets/site.css?v=carts2v1">
+  <style>
+    .ctg-hero { background: linear-gradient(180deg, #fbf8f3 0%, #f4efe4 100%); padding: 2.5rem 0 2rem; }
+    .ctg-hero .container { text-align: center; }
+    .ctg-hero h1 { font: 700 clamp(2rem, 5vw, 2.8rem)/1.15 Georgia, serif; color: var(--teal-dk); margin: .25rem 0 .75rem; }
+    .ctg-hero .lede { color: var(--ink); font-size: 1.1rem; max-width: 680px; margin: 0 auto 1rem; }
+    .ctg-hero .eyebrow { display:inline-block; font: 700 .82rem/1 system-ui, sans-serif; letter-spacing:.08em; text-transform:uppercase; color: var(--coral); background: #fde9e6; padding: .35rem .7rem; border-radius: 999px; }
+
+    .ctg-filters { display: flex; justify-content: center; gap: .5rem; flex-wrap: wrap; margin: 1.5rem 0 .5rem; }
+    .ctg-filter { background: #fff; border: 2px solid var(--line); color: var(--ink); padding: .55rem 1.2rem; border-radius: 999px; font: 600 .95rem system-ui, sans-serif; cursor: pointer; transition: all .15s; }
+    .ctg-filter:hover { border-color: var(--coral); color: var(--coral); }
+    .ctg-filter.active { background: var(--coral); border-color: var(--coral); color: #fff; }
+    .ctg-filter .count { opacity: .7; margin-left: .3rem; font-weight: 500; }
+
+    .ctg-list { max-width: 1120px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+    .ctg-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
+
+    .ctg-card { background: #fff; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,.04); transition: transform .15s, box-shadow .15s; }
+    .ctg-card:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(31,90,104,.1); }
+    .ctg-card a { color: inherit; text-decoration: none; display: block; }
+    .ctg-card .img { aspect-ratio: 4/3; background: #f4efe4; overflow: hidden; position: relative; }
+    .ctg-card .img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .ctg-card .img.empty { display: flex; align-items: center; justify-content: center; color: var(--ink-soft); font-size: .9rem; }
+    .ctg-card .badge { position: absolute; top: .75rem; left: .75rem; padding: .25rem .65rem; border-radius: 999px; font: 700 .72rem/1 system-ui, sans-serif; letter-spacing: .05em; text-transform: uppercase; }
+    .ctg-card .badge.new { background: #dff0e1; color: #2f6b3b; }
+    .ctg-card .badge.used { background: #e6f1f3; color: #1f5a68; }
+    .ctg-card .body { padding: 1rem 1.1rem 1.1rem; }
+    .ctg-card h3 { margin: 0 0 .25rem; font: 700 1.1rem/1.25 Georgia, serif; color: var(--teal-dk); }
+    .ctg-card .meta { color: var(--ink-soft); font-size: .85rem; margin: 0 0 .55rem; }
+    .ctg-card .meta span + span::before { content: " · "; }
+    .ctg-card .price { color: var(--coral); font: 800 1.15rem/1 Georgia, serif; }
+    .ctg-card .price-call { color: var(--teal-dk); font: 700 .95rem/1 Georgia, serif; }
+    .ctg-card .msrp { color: var(--ink-soft); font-size: .82rem; text-decoration: line-through; margin-left: .35rem; }
+
+    .ctg-empty { text-align: center; padding: 4rem 1rem; }
+    .ctg-empty h2 { font: 700 1.5rem/1.2 Georgia, serif; color: var(--teal-dk); margin: 0 0 .5rem; }
+    .ctg-empty p { color: var(--ink-soft); max-width: 480px; margin: 0 auto 1.25rem; }
+
+    .ctg-skeleton { background: #fff; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+    .ctg-skeleton .img { aspect-ratio: 4/3; background: linear-gradient(90deg, #f4efe4 0%, #fbf8f3 50%, #f4efe4 100%); background-size: 200% 100%; animation: skeleton 1.4s infinite; }
+    .ctg-skeleton .body { padding: 1rem 1.1rem 1.1rem; }
+    .ctg-skeleton .line { height: 1rem; background: #f4efe4; border-radius: 4px; margin-bottom: .5rem; }
+    .ctg-skeleton .line.short { width: 60%; }
+    @keyframes skeleton { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="/">
+        <img src="/assets/logos/logo-color.png" alt="Polk County Golf Carts" width="60" height="60">
+        <span class="brand-word">Polk County Golf Carts<small>Livingston, TX</small></span>
+      </a>
+      <nav class="site-nav">
+        <a href="/carts2/" aria-current="page">Carts</a>
+        <a href="/rentals/">Rentals</a>
+        <a href="/services/">Service</a>
+        <a href="/financing/">Financing</a>
+        <a href="/about-us/">About</a>
+        <a class="btn btn-coral" href="tel:9362231182">📞 936-223-1182</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="ctg-hero">
+    <div class="container">
+      <span class="eyebrow">For sale</span>
+      <h1>Carts for sale.</h1>
+      <p class="lede">Brand-new Breezy EV. Refurbished used carts. All serviced by us, delivered by us, warrantied by us.</p>
+      <div class="ctg-filters" id="ctg-filters">
+        <button class="ctg-filter active" data-condition="">All <span class="count" id="count-all">—</span></button>
+        <button class="ctg-filter" data-condition="new">New <span class="count" id="count-new">—</span></button>
+        <button class="ctg-filter" data-condition="used">Used <span class="count" id="count-used">—</span></button>
+      </div>
+    </div>
+  </section>
+
+  <main class="ctg-list">
+    <div id="ctg-grid" class="ctg-grid"></div>
+    <div id="ctg-empty" class="ctg-empty" hidden>
+      <h2>No carts to show yet.</h2>
+      <p>Our inventory page is going live soon. In the meantime, call <a href="tel:9362231182" style="color:var(--teal-dk); font-weight:700;">936-223-1182</a> for current inventory or <a href="/rentals/" style="color:var(--teal-dk); font-weight:700;">book a rental</a>.</p>
+      <a class="btn btn-coral" href="tel:9362231182">📞 Call 936-223-1182</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container"><p style="text-align:center; color:var(--ink-soft); font-size:.85rem;">Polk County Golf Carts · 1732 FM 3277, Livingston, TX 77351 · <a href="tel:9362231182" style="color:var(--teal-dk);">936-223-1182</a></p></div>
+  </footer>
+
+  <script>
+    const grid = document.getElementById("ctg-grid");
+    const emptyEl = document.getElementById("ctg-empty");
+    const filterBar = document.getElementById("ctg-filters");
+    let ALL = [];
+    let currentFilter = "";
+
+    function escHtml(s) {
+      return String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+    }
+
+    function skeleton() {
+      let out = "";
+      for (let i = 0; i < 6; i++) {
+        out += '<div class="ctg-skeleton"><div class="img"></div><div class="body"><div class="line"></div><div class="line short"></div></div></div>';
+      }
+      return out;
+    }
+
+    function render() {
+      const items = currentFilter ? ALL.filter(l => l.condition === currentFilter) : ALL;
+      if (!items.length) {
+        grid.innerHTML = "";
+        emptyEl.hidden = false;
+        return;
+      }
+      emptyEl.hidden = true;
+      grid.innerHTML = items.map(l => {
+        const title = [l.year, l.make, l.model].filter(Boolean).join(" ") || l.slug;
+        const metaBits = [];
+        if (l.color) metaBits.push(escHtml(l.color));
+        if (l.seats) metaBits.push(escHtml(l.seats) + "-seater");
+        if (l.drivetrain) metaBits.push(escHtml(l.drivetrain === "electric" ? "Electric" : "Gas"));
+        if (l.mileage_hours && l.condition === "used") metaBits.push(escHtml(l.mileage_hours) + " hrs");
+        const price = l.price_cents
+          ? '<span class="price">$' + Math.round(l.price_cents / 100).toLocaleString() + '</span>' +
+            (l.msrp_cents && l.msrp_cents > l.price_cents ? '<span class="msrp">$' + Math.round(l.msrp_cents / 100).toLocaleString() + '</span>' : "")
+          : '<span class="price-call">Call for pricing</span>';
+        const img = l.hero_image_id
+          ? '<div class="img"><img src="/api/listings/' + encodeURIComponent(l.slug) + '/image/' + encodeURIComponent(l.hero_image_id) + '" alt="' + escHtml(title) + '" loading="lazy"><span class="badge ' + l.condition + '">' + (l.condition === "new" ? "New" : "Used") + '</span></div>'
+          : '<div class="img empty"><span>No photo yet</span><span class="badge ' + l.condition + '">' + (l.condition === "new" ? "New" : "Used") + '</span></div>';
+        return '<article class="ctg-card"><a href="/carts2/' + encodeURIComponent(l.slug) + '/">'
+          + img
+          + '<div class="body">'
+          +   '<h3>' + escHtml(title) + '</h3>'
+          +   (metaBits.length ? '<p class="meta">' + metaBits.map(b => '<span>' + b + '</span>').join("") + '</p>' : "")
+          +   price
+          + '</div></a></article>';
+      }).join("");
+    }
+
+    function updateCounts() {
+      document.getElementById("count-all").textContent = ALL.length;
+      document.getElementById("count-new").textContent = ALL.filter(l => l.condition === "new").length;
+      document.getElementById("count-used").textContent = ALL.filter(l => l.condition === "used").length;
+    }
+
+    filterBar.addEventListener("click", (ev) => {
+      const btn = ev.target.closest(".ctg-filter");
+      if (!btn) return;
+      filterBar.querySelectorAll(".ctg-filter").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      currentFilter = btn.dataset.condition || "";
+      // Keep filter in URL so copy-paste shares the view
+      const u = new URL(location.href);
+      if (currentFilter) u.searchParams.set("condition", currentFilter); else u.searchParams.delete("condition");
+      history.replaceState(null, "", u);
+      render();
+    });
+
+    grid.innerHTML = skeleton();
+    fetch("/api/listings").then(r => r.json()).then(data => {
+      ALL = data.listings || [];
+      updateCounts();
+      // Honor ?condition= on load
+      const u = new URL(location.href);
+      const q = u.searchParams.get("condition");
+      if (q === "new" || q === "used") {
+        currentFilter = q;
+        filterBar.querySelectorAll(".ctg-filter").forEach(b => b.classList.toggle("active", b.dataset.condition === q));
+      }
+      render();
+    }).catch(() => {
+      grid.innerHTML = "";
+      emptyEl.hidden = false;
+    });
+  </script>
+</body>
+</html>

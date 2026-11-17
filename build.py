@@ -5189,7 +5189,7 @@ def main():
         )
     # Public URLs for the sitemap. Phase 1-3 pages (Breezy EV product
     # tree, town service-area pages, pillar guides) added below.
-    urls = ["/", "/carts/", "/services/", "/rentals/", "/financing/", "/rent-to-own/", "/street-legal-texas/", "/fleet-service/", "/about-us/", "/contact/", "/privacy/", "/leave-a-review/"]
+    urls = ["/", "/carts/", "/carts2/", "/services/", "/rentals/", "/financing/", "/rent-to-own/", "/street-legal-texas/", "/fleet-service/", "/about-us/", "/contact/", "/privacy/", "/leave-a-review/"]
     urls += [
         "/breezy-ev/",
         "/breezy-ev/compare/",

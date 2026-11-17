@@ -1,6 +1,6 @@
 # Polk County Golf Carts — Full Content Index
 
-Last updated: 2026-11-15
+Last updated: 2026-11-17
 
 > Serving our community as a family owned business since 2020 in Livingston, Texas.
 > Authorized Breezy EV golf cart dealer for East Texas — sales, service, custom builds, and rentals.
@@ -722,8 +722,8 @@ A: Yes. All three qualify as master planned communities with POA-maintained priv
 ## File metadata
 
 - File: llms-full.txt
-- Generated: 2026-11-15
-- Total pages indexed: 44
+- Generated: 2026-11-17
+- Total pages indexed: 45
 - Total Q&A pairs: 126
 - Breezy EV models documented: 4
 - Guides documented: 5
