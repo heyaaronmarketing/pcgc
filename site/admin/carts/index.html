@@ -673,6 +673,46 @@
       }
       data = await res.json().catch(() => ({}));
       if (!res.ok) {
+        // Admin session expired mid-edit — don't make the owner close
+        // the modal and lose every field they just typed. Show an
+        // inline password re-auth right inside the modal; on success,
+        // automatically re-submit the save with their current data.
+        if (res.status === 401) {
+          modalMsg.innerHTML = '<div style="padding:10px;background:#fff4e6;border:1px solid #f0c674;border-radius:6px;color:#8a4a00;">' +
+            '<p style="margin:0 0 8px;font-weight:600;">Session expired. Log in to save this listing:</p>' +
+            '<form id="relogin-form" style="display:flex;gap:8px;align-items:center;">' +
+            '<input id="relogin-password" type="password" placeholder="Admin password" required autofocus style="flex:1;padding:8px 10px;border:1px solid #ddd;border-radius:6px;font:inherit;">' +
+            '<button type="submit" class="btn" style="padding:8px 14px;">Log in &amp; retry</button>' +
+            '</form>' +
+            '<p id="relogin-err" style="margin:8px 0 0;color:#a11616;font-size:.85rem;" hidden></p>' +
+            '</div>';
+          modalMsg.className = "modal-msg";
+          modalMsg.hidden = false;
+          const reForm = document.getElementById("relogin-form");
+          const reErr = document.getElementById("relogin-err");
+          reForm.addEventListener("submit", async (ev) => {
+            ev.preventDefault();
+            reErr.hidden = true;
+            const pwd = document.getElementById("relogin-password").value;
+            const loginRes = await fetch("/api/admin/login", {
+              method: "POST", headers: { "content-type": "application/json" },
+              credentials: "same-origin",
+              body: JSON.stringify({ password: pwd }),
+            });
+            if (!loginRes.ok) {
+              const err = await loginRes.json().catch(() => ({}));
+              reErr.textContent = err.error || ("Login failed (HTTP " + loginRes.status + ")");
+              reErr.hidden = false;
+              return;
+            }
+            // Re-submit the save with the now-fresh cookie.
+            modalMsg.textContent = "Logged in. Saving listing…";
+            modalMsg.className = "modal-msg";
+            modalSave.click();
+          });
+          modalSave.disabled = false; modalSave.textContent = prev;
+          return;
+        }
         modalMsg.textContent = data.error || "Save failed (HTTP " + res.status + ")";
         modalMsg.className = "modal-msg error";
         modalSave.disabled = false; modalSave.textContent = prev;
